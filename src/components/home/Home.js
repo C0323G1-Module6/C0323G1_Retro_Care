@@ -14,6 +14,9 @@ import {
   Autoplay,
   EffectCoverflow,
 } from "swiper/modules";
+import { CiSearch } from "react-icons/ci";
+import { FiShoppingCart } from "react-icons/fi";
+import { BsMeta, BsTwitter, BsYoutube, BsInstagram } from "react-icons/bs";
 
 export function AddScript(url) {
   const script = document.createElement("script");
@@ -61,14 +64,14 @@ const Home = () => {
                       placeholder="Tìm kiếm..."
                     />
                     <button type="submit">
-                      <i className="uil uil-search"></i>
+                      <CiSearch />
                     </button>
                   </form>
                   <a
                     href="/prototype/cart/HanhNLM_cart.html"
                     className="header-btn header-cart"
                   >
-                    <i className="uil uil-shopping-bag"></i>
+                    <FiShoppingCart />
                     <span className="cart-number">3</span>
                   </a>
                   <a
@@ -136,7 +139,7 @@ const Home = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <div className="brand-title mb-5">
+              <div className="brand-title">
                 <h5 className="h5-title">Đối tác của chúng tôi</h5>
               </div>
               <div className="brands-row">
@@ -181,7 +184,7 @@ const Home = () => {
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-3">Sản phẩm</p>
+                <p className="sec-sub-title mb-5">Sản phẩm</p>
               </div>
             </div>
           </div>
@@ -195,7 +198,7 @@ const Home = () => {
             <div className="product-container">
               <Swiper
                 slidesPerView={4}
-                spaceBetween={35}
+                spaceBetween={30}
                 cssMode={true}
                 navigation={{ nextEl: "#arrow-prev-1", prevEl: "#arrow-nxt-1" }}
                 loop={true}
@@ -393,7 +396,7 @@ const Home = () => {
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-3">Được yêu thích</p>
+                <p className="sec-sub-title mb-5">Được yêu thích</p>
               </div>
             </div>
           </div>
@@ -408,7 +411,7 @@ const Home = () => {
             <div className="product-container">
               <Swiper
                 slidesPerView={4}
-                spaceBetween={35}
+                spaceBetween={30}
                 cssMode={true}
                 navigation={{ nextEl: "#arrow-prev-2", prevEl: "#arrow-nxt-2" }}
                 loop={true}
@@ -614,7 +617,7 @@ const Home = () => {
             <div className="row">
               <div className="col-lg-12">
                 <div className="sec-title text-center mb-5">
-                  <p className="sec-sub-title mb-3">Khuyến mãi</p>
+                  <p className="sec-sub-title mb-5">Khuyến mãi</p>
                 </div>
               </div>
             </div>
@@ -696,7 +699,7 @@ const Home = () => {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="sec-title text-center pt-5 mb-3">
-                    <p className="sec-sub-title mb-3">Blog</p>
+                    <p className="sec-sub-title mb-5">Blog</p>
                   </div>
                 </div>
               </div>
@@ -732,7 +735,8 @@ const Home = () => {
                     <div
                       className="blog-img back-img"
                       style={{
-                        backgroundImage: "url(assets/images/blog/blog2.jpg)",
+                        backgroundImage:
+                          "url(https://vhnbio.vn/assets/upload/images/news/chat_dinh_duong_vi_luong_va_suc_khoe.jpg)",
                       }}
                     />
 
@@ -745,7 +749,7 @@ const Home = () => {
                         Dinh dưỡng là một phần thiết yếu đối với sức khỏe của
                         con người. Thông qua chế độ dinh dưỡng hàng ngày, bạn có
                         thể nhận biết được tình trạng sức khỏe hiện tại và tương
-                        lai của mình.
+                        lai.
                       </p>
                       <a href="#" className="sec-btn">
                         Xem
@@ -758,7 +762,8 @@ const Home = () => {
                     <div
                       className="blog-img back-img"
                       style={{
-                        backgroundImage: "url(assets/images/blog/blog3.jpg)",
+                        backgroundImage:
+                          "url(https://www.cet.edu.vn/wp-content/uploads/2019/04/fastfood-la-gi.jpg)",
                       }}
                     />
 
@@ -801,22 +806,22 @@ const Home = () => {
                       <ul>
                         <li>
                           <a href="#">
-                            <i className="uil uil-facebook-f"></i>
+                            <BsMeta />
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <i className="uil uil-instagram"></i>
+                            <BsInstagram />
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <i className="uil uil-github-alt"></i>
+                            <BsTwitter />
                           </a>
                         </li>
                         <li>
                           <a href="#">
-                            <i className="uil uil-youtube"></i>
+                            <BsYoutube />
                           </a>
                         </li>
                       </ul>
@@ -883,7 +888,7 @@ const Home = () => {
                 <div className="copyright-text">
                   <p>
                     Copyright &copy; 2023
-                    <span className="name">C0323G1 </span>CodeGym Đà Nẵng.
+                    <span className="name"> C0323G1 </span>CodeGym Đà Nẵng.
                   </p>
                 </div>
               </div>
