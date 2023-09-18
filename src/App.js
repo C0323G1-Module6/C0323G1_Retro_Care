@@ -2,7 +2,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/home/Home";
 import Dashboard from "./components/dashboard/Dashboard";
-import PrescriptionList from "./components/presciption/PrescriptionList";
+import PrescriptionList from "./components/prescription/PrescriptionList";
 
 function App() {
   return (
@@ -10,7 +10,7 @@ function App() {
       <Route path="/home" element={<Home />}></Route>
       <Route path="/dashboard" element={<Dashboard />}>
         <Route
-          path="/dashboard/presciption"
+          path="/dashboard/prescription"
           element={<PrescriptionList />}
         ></Route>
       </Route>
