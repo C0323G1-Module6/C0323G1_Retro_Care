@@ -33,7 +33,7 @@ const Home = () => {
             <div className="col-lg-2">
               <div className="header-logo">
                 <a href="/HuyL_home.html">
-                  <img src={logo} width={160} height={36} alt="Logo" />
+                  <img src={logo} width={160} height={40} alt="Logo" />
                 </a>
               </div>
             </div>
