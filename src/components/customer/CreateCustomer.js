@@ -2,7 +2,7 @@ import { Field, Form, Formik, ErrorMessage } from "formik";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { addCustomer } from "../../../services/customer/CustomerService";
+import { addCustomer } from "../../services/customer/CustomerService";
 const CreateCustomer = () => {
     const navigate = useNavigate();
     const [customerCode,setCustomerCode]=useState();
