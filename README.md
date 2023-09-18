@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# Một số lưu ý đối với project Frontend của [C0323G1] - Module6 - Sprint 1:
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Git structure: (theo thứ tự quan trọng trên xuống)
 
-## Available Scripts
+    ### main: nhánh chính - nơi lưu source code phiên bản cuối cùng trước khi deploy
+    ### dev: nhánh dev - nơi lưu trữ source code chung của tất cả members sau khi đáp ứng yêu cầu và được approve merge request.
+    ### <nhánh cá nhân> (ví dụ customer_QuyenHT): Nhánh cá nhân của từng member, dùng để push source code phần cá nhân của mình.
+    Tên nhánh cá nhân tương tự phần back-end để tránh nhầm lẫn.
+
+## Git rules (Quy tắc):
+
+    ### Các quy tắc cơ bản tương tự thao tác tại back-end. (git status, git add, git commit, git push origin <tên nhánh cá nhân>)
+    ### Đầu phiên làm việc nhớ git pull để update code mới (git status để kiểm tra trước khi pull).
+    ### Trước khi commit và push để làm cơ sở merge vào dev, phải kiểm tra file chạy được, không xảy ra lỗi run-time và các lỗi khác. Ai vi phạm sẽ phạt nhé.
+
+## Package structure:
+
+    ### components: Mọi người lưu tất cả components của mình vào đây, lưu theo chức năng. Ví dụ components/customer/CustomerList.js. Các file css, js liên quan mọi người lưu vào package này luôn cho dễ quản lý.
+    ### services: Mọi người lưu service liên quan. Ví dụ: services/CustomerService.js
+    ### js, css: Các file js, css thư viện dùng chung. Ví dụ bootstrap, swiper,.. nếu có.
+    ### img: Các file ảnh xài chung như logo, background.
+
+## Các thư viện đã build:
+
+Lưu ý: Mọi người muốn build thư viện thì liên hệ HuyL để build chung.
+
+    "axios": "^1.5.0",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.11.0",
+    "formik": "^2.4.4",
+    "json-server": "^0.17.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.11.0",
+    "react-redux": "^8.1.2",
+    "react-router-dom": "^6.15.0",
+    "react-scripts": "5.0.1",
+    "react-toastify": "^9.1.3",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.2.3",
+    "sweetalert2": "^11.7.28",
+    "swiper": "^10.2.0",
+    "yup": "^1.2.0"
+    "jwt-decode": "^3.1.2",
+
+## Các script quan trọng:
 
 In the project directory, you can run:
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### `npm start`: Đã mặc định cổng port là 3000.
