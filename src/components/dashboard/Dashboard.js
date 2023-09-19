@@ -6,6 +6,7 @@ import { AiOutlineAreaChart } from "react-icons/ai";
 import { GiMedicines, GiHumanTarget } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
 import { Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,6 +14,11 @@ const Dashboard = () => {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const menus = [
+    { name: "Báo cáo", link: "/dashboard/report", icon: AiOutlineAreaChart },
+    { name: "Khách hàng", link: "/dashboard/customer", icon: GiHumanTarget },
+  ];
 
   return (
     <>
@@ -29,6 +35,17 @@ const Dashboard = () => {
           ></BiMenu>
         </div>
         <ul class="nav-list">
+          {menus?.map((menu, i) => (
+            <li key={i}>
+              <Link to={menu?.link}>
+                <div>
+                  {React.createElement(menu?.icon, { className: "mx-1" })}
+                </div>
+                <span className="links_name">{menu?.name}</span>
+              </Link>
+              <span className="tooltip">{menu?.name}</span>
+            </li>
+          ))}
           <li>
             <a href="#">
               <AiOutlineAreaChart className="icon" />
