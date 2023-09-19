@@ -7,6 +7,7 @@ export const addCustomer = async (customer) => {
   }
   export const getCustomerCode = async () => {
    const result =  await axios.get(`http://localhost:8080/customers/api/dto/create`);
+   console.log(result);
    return result.data;
   }
   export const getCustomerDetail = async (id) =>{

@@ -1,7 +1,8 @@
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getCustomerDetail} from "../../services/customer/CustomerService";
-import { Field, Form, Formik, ErrorMessage } from "formik";
+import {Field, Form, Formik, ErrorMessage} from "formik";
+
 const CustomerUpdate = () => {
     const params = useParams();
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const CustomerUpdate = () => {
     }
     return (
         <>
-            <Formik >
+            <Formik>
                 <div className="d-flex justify-content-center">
                     <Form>
                         <fieldset className="form-input shadow">
@@ -37,7 +38,7 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <input
+                                    <Field
                                         className="form-control mt-2"
                                         disabled=""
                                         defaultValue="KH001"
@@ -50,7 +51,7 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <Field className="form-control mt-2 border border-dark" type="text" />
+                                    <Field className="form-control mt-2 border border-dark" type="text"/>
                                     <small className="p-3 mb-2 text-danger">Error</small>
                                 </div>
                                 <div className="col-4 p-2">
@@ -59,14 +60,14 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <input className="form-control mt-2 border border-dark" type="text" />
+                                    <Field className="form-control mt-2 border border-dark" type="text"/>
                                     <small className="p-3 mb-2 text-danger">Error</small>
                                 </div>
                                 <div className="col-4 p-2">
                                     <label>Ngày sinh </label>
                                 </div>
                                 <div className="col-8">
-                                    <input className="form-control mt-2 border border-dark" type="date" />
+                                    <Field className="form-control mt-2 border border-dark" type="date"/>
                                     <small className="p-3 mb-2 text-danger">Error</small>
                                 </div>
                                 <div className="col-4 p-2">
@@ -75,7 +76,7 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <input
+                                    <Field
                                         className="form-control mt-2 border border-dark"
                                         type="email"
                                     />
@@ -87,10 +88,11 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <textarea
+                                    <Field
                                         className="form-control mt-2 border border-dark"
-                                        type="text"
+                                        as="textarea"
                                         defaultValue={""}
+                                        name = "address"
                                     />
                                     <small className="p-3 mb-2 text-danger">Error</small>
                                 </div>
@@ -100,10 +102,12 @@ const CustomerUpdate = () => {
                                     </label>
                                 </div>
                                 <div className="col-8">
-                                    <textarea
+                                    <Field
                                         className="form-control mt-2 border border-dark"
-                                        type="text"
                                         defaultValue={""}
+                                        as="textarea"
+                                        name ="note"
+
                                     />
                                     <small className="p-3 mb-2 text-danger">Error</small>
                                 </div>
@@ -113,26 +117,26 @@ const CustomerUpdate = () => {
                                     </div>
                                 </div>
                                 <div className="col-8 mt-3">
-                                    <a
-                                        href="/retro_care/prototype/customer/QuyenHT_CustomerList.html"
+                                    <Link
+                                        // to = {"/"}
                                         className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
                                     >
-                                        <i className="fa-solid fa-rotate-left" /> Trở về
-                                    </a>
+                                        <i className="fa-solid fa-rotate-left"/> Trở về
+                                    </Link>
                                     <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
-                                        <i className="fa-solid fa-plus" /> Hoàn thành
+                                        <i className="fa-solid fa-plus"/> Hoàn thành
 
                                     </button>
                                 </div>
                             </div>
                         </fieldset>
-                        <div className="form-btn" />
+                        <div className="form-btn"/>
                     </Form>
                 </div>
 
             </Formik>
         </>
 
-)
-    ;
+    )
+        ;
 }

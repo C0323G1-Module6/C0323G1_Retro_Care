@@ -1,0 +1,41 @@
+.form-input {
+    width: 600px;
+    border: 1px solid black;
+    padding: 20px;
+    border-radius: 20px;
+    height: auto;
+}
+
+.form-btn {
+    width: 600px;
+}
+
+body {
+    padding: 20px;
+}
+
+.form-input {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.form-input label {
+}
+
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+.form-select {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+.form-btn {
+    text-align: right;
+}
+span {
+    color: red;
+}
