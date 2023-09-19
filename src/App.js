@@ -7,6 +7,7 @@ import Login from "./components/user/Login";
 import Register from "./components/user/Register";
 import KindOfMedicineList from "./components/kindOfMedicine/KindOfMedicineList";
 import CustomerList from "./components/customer/CustomerList";
+import ListEmployee from "./components/employee/ListEmployee";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           element={<KindOfMedicineList />}
         />
         <Route path="/dashboard/customer" element={<CustomerList />} />
+          <Route path="/dashboard/list-employee" element={<ListEmployee />}/>
       </Route>
     </Routes>
   );
