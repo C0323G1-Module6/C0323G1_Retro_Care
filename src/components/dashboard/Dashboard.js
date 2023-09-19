@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
 import logo from "../../img/logo.jpg";
-import { BiMenu, BiSolidReport, BiSolidTruck, BiLogOut } from "react-icons/bi";
+import {
+  BiMenu,
+  BiSolidReport,
+  BiSolidTruck,
+  BiLogOut,
+  BiGrid,
+} from "react-icons/bi";
 import { AiOutlineAreaChart } from "react-icons/ai";
 import { GiMedicines, GiHumanTarget, GiMedicinePills } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
@@ -26,6 +32,7 @@ const Dashboard = () => {
     },
     { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
     { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
+    { name: "Nhà cung cấp", link: "/dashboard/supplier", icon: BiGrid },
     { name: "Nhập kho", link: "/dashboard/warehouse", icon: BiSolidTruck },
   ];
 
