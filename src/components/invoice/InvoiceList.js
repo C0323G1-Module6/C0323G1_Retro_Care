@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {getInvoiceList, searchInvoice} from "../../services/invoice/InvoiceService";
 import '../../components/invoice/HuyDH_Invoice.css'
+import Swal from "sweetalert2";
 
 /**
  * Create by: HuyHD
@@ -12,23 +13,70 @@ import '../../components/invoice/HuyDH_Invoice.css'
 
 function InvoiceList() {
     const [invoiceList, setInvoiceList] = useState([])
+    const [invoicess, setInvoicess] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [searchPage, setSearchPage] = useState(0);
+
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+    const [sortColumn, setSortColumn] = useState(null);
+    const [displayedList, setDisplayedList] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+
+
+    const [searchTotalPages, setSearchTotalPages] = useState(0);
+
+
     const getListInvoice = async (page) => {
-        const data = await getInvoiceList(page)
-        console.log(data)
-        setInvoiceList(data.content);
-        setTotalPages(data.totalPages);
-    }
-    console.log(invoiceList)
+        const data = await getInvoiceList(page);
+        if (isSearching) {
+            setInvoiceList(displayedList);
+            setTotalPages(searchTotalPages);
+        } else {
+            setInvoiceList(data.content);
+            setTotalPages(data.totalPages);
+            setDisplayedList(data.content);
+        }
+    };
+
+    const handleFilter = async () => {
+        const data = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, 0, 2);
+
+        if (data.content == undefined || data.content.length === 0) {
+            setInvoiceList([]);
+            setDisplayedList([]);
+            setIsSearching(true);
+
+            await Swal.fire({
+                icon: 'error',
+                text: 'Không tìm thấy hoá đơn với thông tin này!',
+                showConfirmButton: false,
+                timer: 2000,
+            });
+
+            return;
+        }
+
+        console.log(data);
+        setIsSearching(true);
+        setDisplayedList(data.content);
+        setSearchTotalPages(data.totalPages);
+        setSearchPage(currentPage);
+    };
+
+    console.log(displayedList);
     useEffect(() => {
-        getListInvoice(0)
-    }, [])
+        getListInvoice(searchPage);
+    }, [searchPage]);
 
     const handlePageChange = async (page) => {
         setCurrentPage(page);
-        await getListInvoice(page);
-    }
+        setSearchPage(page);
+    };
+
 
     return (
         <div>
@@ -54,23 +102,37 @@ function InvoiceList() {
                     {/*                <div class="row text-center" style="border: 2px solid #5f8ef3; border-radius: 10px; padding: 10px">*/}
                     <div className="col">
                         <label>Từ ngày:</label>
-                        <input type="date" id="start-date" className="filter-input_huyhd"/>
+                        <input type="date" id="start-date" className="filter-input_huyhd"
+                               onChange={(e) => setStartDate(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Đến ngày:</label>
-                        <input type="date" id="end-date" className="filter-input_huyhd"/>
+                        <input type="date" id="end-date" className="filter-input_huyhd"
+                               onChange={(e) => setEndDate(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Từ giờ:&nbsp;&nbsp;&nbsp;</label>
-                        <input type="time" id="start-time" className="filter-input_huyhd"/>
+                        <input
+                            type="text"
+                            id="start-time"
+                            className="filter-input_huyhd"
+                            pattern="(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]"
+                            onChange={(e) => {
+                                const inputTime = e.target.value;
+                                const formattedTime = inputTime + ":00";
+                                setStartTime(formattedTime);
+                            }}
+                        />
                     </div>
                     <div className="col">
                         <label>Đến giờ:</label>
-                        <input type="time" id="end-time" className="filter-input_huyhd"/>
+                        <input type="time" id="end-time" className="filter-input_huyhd"
+                               onChange={(e) => setEndTime(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Sắp xếp theo: </label>
-                        <select style={{height: '35px', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}>
+                        <select style={{height: '35px', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}
+                                onChange={(e) => setSortColumn(e.target.value)}>
                             <option value="Mã hoá đơn">Mã hóa đơn</option>
                             <option value="Tên khách hàng">Số CT</option>
                             <option value="Ngày lập">Ngày lập</option>
@@ -82,7 +144,7 @@ function InvoiceList() {
                     </div>
                     <div className="col"
                          style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                        <button className="btn btn-outline-primary "><span><i
+                        <button className="btn btn-outline-primary " onClick={handleFilter}>><span><i
                             className="fa-solid fa-magnifying-glass"/></span>
                             Lọc kết quả
                         </button>
@@ -172,9 +234,9 @@ function InvoiceList() {
                         <div
                             className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div className=" justify-content-center d-flex ">
-                                {currentPage !== 0 && ( <button
+                                {currentPage !== 0 && (<button
                                     className={`btn btn-primary`}
-                                    style={{ margin: '5px' }}
+                                    style={{margin: '5px'}}
                                     disabled={currentPage === 0}
                                     title="Trang trước"
                                     onClick={() => handlePageChange(currentPage - 1)}

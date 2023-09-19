@@ -12,7 +12,7 @@ export async function deleteInvoice(id) {
 
 export async function searchInvoice(startDate, endDate, startTime, endTime, sortColumn, page, size) {
     try {
-        const response = await axios.get('http://localhost:8080/api/invoice/search', {
+        const response = await axios.get('http://localhost:8080/api/invoice/search/result', {
             params: {
                 page: page,
                 size: size,
