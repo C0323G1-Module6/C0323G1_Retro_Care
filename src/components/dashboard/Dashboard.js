@@ -11,6 +11,7 @@ import {
 import { AiOutlineAreaChart } from "react-icons/ai";
 import { GiMedicines, GiHumanTarget, GiMedicinePills } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
+import { TbReportMedical } from "react-icons/tb";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -29,6 +30,11 @@ const Dashboard = () => {
       name: "Nhóm thuốc",
       link: "/dashboard/kind-of-medicine",
       icon: GiMedicinePills,
+    },
+    {
+      name: "Toa thuốc",
+      link: "/dashboard/prescription",
+      icon: TbReportMedical,
     },
     { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
     { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
