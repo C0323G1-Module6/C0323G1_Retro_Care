@@ -40,19 +40,19 @@ const Register = () => {
             .required("Không để trống tài khoản")
             .test('check-userName', 'Không để trống tài khoản', (value) => value.trim().length !== 0)
             .min(3, 'Số lượng ký tự phải lớn hơn hoặc bằng 3')
-            .max(100, 'Số lượng ký tự bé hơn hoặc bằng 100'),
+            .max(50, 'Số lượng ký tự bé hơn hoặc bằng 100'),
 
         password: Yup.string()
             .required("Không để trống mật khẩu")
             .test('check-userName', 'Không để trống mật khẩu', (value) => value.trim().length !== 0)
             .min(3, 'Số lượng ký tự phải lớn hơn hoặc bằng 3')
-            .max(100, 'Số lượng ký tự bé hơn hoặc bằng 100'),
+            .max(50, 'Số lượng ký tự bé hơn hoặc bằng 100'),
 
         confirmPassword: Yup.string()
             .required("Không để trống mật khẩu")
             .test('check-userName', 'Không để trống mật khẩu', (value) => value.trim().length !== 0)
             .min(3, 'Số lượng ký tự phải lớn hơn hoặc bằng 3')
-            .max(100, 'Số lượng ký tự bé hơn hoặc bằng 100')
+            .max(50, 'Số lượng ký tự bé hơn hoặc bằng 50')
             .test('check-confirm-password', 'Mật khẩu không khớp', (value) => checkConfirmPassword(value))
     }
 

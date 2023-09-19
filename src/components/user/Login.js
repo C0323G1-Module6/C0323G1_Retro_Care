@@ -8,7 +8,6 @@ import { LoginSocialFacebook } from "reactjs-social-login";
 import Swal from "sweetalert2";
 
 const Login = () => {
-    const FBID = process.env.REACT_APP_KEY;
     const navigate = useNavigate();
 
     const loginWithFacebook = async (resolve) => {
@@ -25,7 +24,7 @@ const Login = () => {
         }
     }
 
-    const loginByUserName = async (appUser, setErrors) => {
+    const loginByUserName = async (appUser) => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
