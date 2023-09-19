@@ -29,7 +29,7 @@ function App() {
           element={<KindOfMedicineList />}
         />
         <Route path="/dashboard/customer" element={<CustomerList />} />
-        <Route path="/dashboard/list-employee" element={<ListEmployee />} />
+        <Route path="/dashboard/employee" element={<ListEmployee />} />
       </Route>
     </Routes>
   );
