@@ -37,9 +37,9 @@ const Dashboard = () => {
         <ul class="nav-list">
           {menus?.map((menu, i) => (
             <li key={i}>
-              <Link to={menu?.link}>
+              <Link className="link" to={menu?.link}>
                 <div>
-                  {React.createElement(menu?.icon, { className: "mx-1" })}
+                  {React.createElement(menu?.icon, { className: "icon" })}
                 </div>
                 <span className="links_name">{menu?.name}</span>
               </Link>
