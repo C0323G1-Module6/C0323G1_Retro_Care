@@ -6,11 +6,30 @@ import { BsFacebook } from "react-icons/bs"
 import { AiFillGoogleCircle } from "react-icons/ai"
 import { Link, useNavigate } from "react-router-dom";
 import { LoginSocialFacebook } from "reactjs-social-login";
+import Swal from "sweetalert2";
+
 
 const Login = () => {
     const FBID = process.env.REACT_APP_KEY;
     const navigate = useNavigate();
 
+    const loginWithFacebook = async (resolve) => {
+        try {
+            const result = await appUserService.loginWithFacebook(resolve.data.email);
+            localStorage.setItem("JWT", result.data.jwtToken);
+        } catch (e) {
+            if (e.response.status === 406) {
+                // setErrors(e.response.data);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: e.response.data,
+                    footer: '<a href="">Why do I have this issue?</a>'
+                })
+            }
+        }
+    }
     const loginByUserName = async (appUser, setErrors) => {
         try {
             const result = await appUserService.loginByUserName(appUser);
@@ -20,15 +39,15 @@ const Login = () => {
             if (e.response.status === 406) {
                 setErrors(e.response.data);
             } else {
-                alert(e.response.data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: e.response.data,
+                    footer: '<a href="">Why do I have this issue?</a>'
+                })
             }
         }
-        // Swal.fire({
-        //     icon: 'error',
-        //     title: 'Oops...',
-        //     text: e.response.data,
-        //     footer: '<a href="">Why do I have this issue?</a>'
-        // })
+
 
 
     }
@@ -104,19 +123,19 @@ const Login = () => {
                             <div>
                                 <LoginSocialFacebook
                                     className="btn border-0"
-                                    appId={`${FBID}`}
+                                    appId={FBID}
                                     onResolve={(resolve) => {
                                         console.log(resolve);
-                                        // loginWithFacebook(resolve);
+                                        loginWithFacebook(resolve);
                                     }}
                                     onReject={(reject) => console.log(reject)}
                                 >
                                     <BsFacebook color="blue" size={30} />
                                 </LoginSocialFacebook>
-                           
-                            <a href="#">
-                                <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
-                            </a>
+
+                                <a href="#">
+                                    <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
+                                </a>
                             </div>
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
