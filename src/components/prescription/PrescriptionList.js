@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
@@ -6,7 +6,81 @@ import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
 } from "react-icons/ai";
+import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
+import { getAllPatient } from "../../services/prescription/patient";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+
 const PrescriptionList = () => {
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const [id, setId] = useState();
+  const [prescription, setPrescription] = useState();
+  const findAllPrescription = async () => {
+    const res = await getAllPrescription(page);
+    console.log(res);
+    console.log(res.data.totalPage);
+    setTotalPage(res.data.totalPages);
+    setPrescriptions(res.data.content)
+  }
+
+
+  const nextPage = () => {
+    if (page < totalPage) {
+      setPage((prev) => prev + 1)
+    }
+  }
+
+  const prevPage = () => {
+    if (page > -1) {
+      setPage((prev) => prev - 1)
+    }
+  }
+
+  const handleRecordClick = async (id) => {
+    console.log(id);
+    setId(id);
+    const res = await getPrescriptionById(id);
+    setPrescription(res.data);
+  }
+  console.log(prescription);
+
+  const deletePrescription = async () => {
+    Swal.fire({
+      title: "Xác nhận xoá !",
+      text: "Bạn có xác nhận xoá toa thuốc có mã :" + prescription.code,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: "Xoá",
+      cancelButtonText: "Huỷ",
+      icon: "question",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await removePrescription(id);
+        if (response.status === 200) {
+          Swal.fire({
+            text: "Xoá thành công ! ",
+            icon: "success",
+            timer: 1500,
+          });
+        }
+        await findAllPrescription();
+      } else {
+        Swal.fire({
+          text: "Huỷ xoá toa thuốc ! ",
+          icon: "warning",
+          timer: 1500,
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    findAllPrescription();
+  }, [page])
+
+
   return (
     <div className="container">
       <div className="py-8">
@@ -117,161 +191,45 @@ const PrescriptionList = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
+                {
+                  prescriptions.map((p) => (
+                    <tr key={p.id} onClick={() => handleRecordClick(p.id)}>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <div className="flex items-center">
+                          <div className="ml-3">
+                            <p className="text-gray-900 whitespace-no-wrap">1</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">{p.code}</p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.name}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">{p.patient.name}</p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.symptoms}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.note}
+                        </p>
+                      </td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </table>
             <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
               <div className="justify-content-center d-flex">
-                <button className="btn btn-primary" style={{ margin: 5 }}>
+                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => prevPage()}>
                   <AiOutlineDoubleLeft />
                 </button>
                 <div
@@ -283,9 +241,9 @@ const PrescriptionList = () => {
                     borderRadius: 5,
                   }}
                 >
-                  1/5
+                  {page + 1}/{totalPage}
                 </div>
-                <button className="btn btn-primary" style={{ margin: 5 }}>
+                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => nextPage()}>
                   <AiOutlineDoubleRight />
                 </button>
                 <div
@@ -302,13 +260,16 @@ const PrescriptionList = () => {
           </div>
         </div>
         <div className="d-flex align-items-center justify-content-end gap-3">
-          <a
+          <Link to={"/dashboard/prescription/create"} className="btn btn-outline-primary">
+            <FaPlus className="mx-1" />
+            Thêm mới
+          </Link>
+          {/* <a
             className="btn btn-outline-primary"
             href="ThanhKN_CreatePrescription.html"
           >
-            <FaPlus className="mx-1" />
-            Thêm mới
-          </a>
+
+          </a> */}
           <a
             className="btn btn-outline-primary"
             href="ThanhKN_EditPrescription.html"
@@ -319,8 +280,7 @@ const PrescriptionList = () => {
           <button
             type="button"
             className="btn btn-outline-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            onClick={() => deletePrescription()}
           >
             <FaRegTrashAlt className="mx-1" />
             Xoá
