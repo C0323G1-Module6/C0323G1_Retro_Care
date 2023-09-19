@@ -2,6 +2,7 @@ import "antd/dist/reset.css";
 import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
+
 export function SelectBox({ options, name, onChange }) {
     const [optionSelected, setSelectedOptions] = useState([]);
 
