@@ -1,41 +1,36 @@
+import {Link, useNavigate, useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {getCustomerDetail} from "../../services/customer/CustomerService";
 import { Field, Form, Formik, ErrorMessage } from "formik";
-import { useEffect, useState } from "react";
-import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
-import { addCustomer } from "../../services/customer/CustomerService";
-const CreateCustomer = () => {
+const CustomerUpdate = () => {
+    const params = useParams();
     const navigate = useNavigate();
-    const [customerCode,setCustomerCode]=useState();
-    const handleSubmit = async (values, setErrors) => {
-        try {
-            const result = await addCustomer(values);
-            navigate("/");
-        } catch (err) {
-            console.log(err);
-            if (err.response.data) setErrors(err.response.data);
-
-        }
+    const [customer, setCustomer] = useState();
+    const loadCustomerDetail = async (id) => {
+        const result = await getCustomerDetail(id);
+        setCustomer(result);
+    }
+    useEffect(
+        () => {
+            if (params.id) {
+                loadCustomerDetail(params.id)
+            }
+        }, [params]
+    )
+    if (!customer) {
+        return null;
     }
     return (
         <>
-            <Formik>
+            <Formik >
                 <div className="d-flex justify-content-center">
                     <Form>
                         <fieldset className="form-input shadow">
                             <legend className="float-none w-auto px-3">
-                                <h2>Thêm thông tin khách hàng</h2>
+                                <h2>Cập thông tin khách hàng</h2>
                             </legend>
                             <div className="row p-2">
-                                <div className="col-4 p-2">
-                                    <label>Nhóm khách hàng</label>
-                                </div>
-                                <div className="col-8">
-                                    <select className="form-select mt-2 border border-dark">
-                                        <option>Khách Online</option>
-                                        <option>Khách Offline</option>
-                                    </select>
-                                    <small className="p-3 mb-2 text-danger">Error</small>
-                                </div>
+
                                 <div className="col-4 p-2">
                                     <label>
                                         Mã khách hàng <span>*</span>{" "}
@@ -125,7 +120,8 @@ const CreateCustomer = () => {
                                         <i className="fa-solid fa-rotate-left" /> Trở về
                                     </a>
                                     <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
-                                        <i className="fa-solid fa-plus" /> Thêm Mới
+                                        <i className="fa-solid fa-plus" /> Hoàn thành
+
                                     </button>
                                 </div>
                             </div>
@@ -136,5 +132,7 @@ const CreateCustomer = () => {
 
             </Formik>
         </>
-    )
+
+)
+    ;
 }

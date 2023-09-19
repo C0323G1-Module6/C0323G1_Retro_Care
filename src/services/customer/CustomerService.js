@@ -10,6 +10,20 @@ export const addCustomer = async (customer) => {
    return result.data;
   }
   export const getCustomerDetail = async (id) =>{
-    const result = await axios.get(`http://localhost:8080/customers/api/${id}`);
-    return result.data;
+    try{
+        const result = await axios.get(`http://localhost:8080/customers/api/${id}`);
+        return result.data;
+    }catch (e){
+        console.log(e);
+    }
+
+  }
+  export const getCodeCustomer = async ()=>{
+    try{
+        const result = await axios.get(`http://localhost:8080/customers/api/dto/create`);
+        console.log(result);
+        return result.data;
+    }catch (e){
+        console.log(e);
+    }
   }
