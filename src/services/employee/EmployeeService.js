@@ -18,6 +18,6 @@ export async function searchListEmployee(page, limit, sort, idPosition, nameEmpl
     return res.data;
 }
 
-export async function deleteEmployee(idEmployee) {
+export async function deleteEmployees(idEmployee) {
     await axios.delete("/employees/delete-employee", {params: {id: idEmployee}})
 }
