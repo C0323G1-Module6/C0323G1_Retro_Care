@@ -20,6 +20,7 @@ export const getCustomerDetail = async (id) => {
     console.log(e);
   }
 
+
 }
 export const getCodeCustomer = async () => {
   try {
