@@ -3,6 +3,8 @@
 }
 
 .input-search {
+    margin-left: 5px;
+    margin-right: 5px;
     height: 2.3rem;
     border-radius: 0.25rem;
     border: 1px black solid;
@@ -12,12 +14,14 @@
 }
 .button-search {
     padding: 6px 12px;
-    margin-top: -5px;
+    margin-top: -3px;
 }
 
 .table-container {
     overflow-x: auto;
     background-color: white;
+    color: gray;
+    height: 22.8em;
 }
 
 .th-list {
