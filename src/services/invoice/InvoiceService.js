@@ -10,7 +10,7 @@ export async function deleteInvoice(id) {
     return response.data;
 }
 
-export async function searchInvoice(startDate,endDate,startTime,endTime,sortColumn,  page, size) {
+export async function searchInvoice(startDate, endDate, startTime, endTime, sortColumn, page, size) {
     try {
         const response = await axios.get('http://localhost:8080/api/invoice/search', {
             params: {
@@ -29,12 +29,12 @@ export async function searchInvoice(startDate,endDate,startTime,endTime,sortColu
         console.error(error);
         throw error;
     }
+}
 
-    export function getMaxCode() {
-        try {
-            const result = axios.get("http://localhost:8080/api/invoice/code")
-        } catch (e) {
-            console.log(e);
-        }
+export function getMaxCode() {
+    try {
+        const result = axios.get("http://localhost:8080/api/invoice/code")
+    } catch (e) {
+        console.log(e);
     }
 }
