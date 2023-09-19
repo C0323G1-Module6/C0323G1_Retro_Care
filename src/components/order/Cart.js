@@ -337,7 +337,8 @@ export default function Cart() {
                         })}
                     </tbody>
                   </table>
-                  <div className=" w-50">
+                  <div className=" w-50 mb-3">
+                    
                     <Formik
                       initialValues={{
                         name: "",
@@ -457,6 +458,7 @@ export default function Cart() {
                       </Form>
                     </Formik>
                   </div>
+
                   <div id="paypal-button-container" className="w-50"></div>
 
                   <Link to="/home" className="btn btn-outline-primary">
