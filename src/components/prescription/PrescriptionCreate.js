@@ -14,6 +14,8 @@ function PrescriptionCreate() {
     const indicationValue = {
         indication: [
             {
+                dosage :"",
+                frequency : "",
 
             }
         ]
@@ -27,9 +29,24 @@ function PrescriptionCreate() {
 
             <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                 <fieldset className="border border-dark rounded-3 p-3 w-50" style={{ backgroundColor: '#f8f9fa' }}>
-                    <Formik>
+                    <Formik
+                    initialValues={{
+                        code:"",
+                        name:"",
+                        symptoms:"",
+                        patient: "",
+                        duratiton: "",
+                        note: ""
+                    }}
+                    >
                         <Form>
                             <legend className="float-none w-auto px-3">Thông tin đơn thuốc</legend>
+                            <div className="mb-3 row">
+                                <label className="col-sm-3 col-form-label" id="label-input">Mã toa thuốc</label>
+                                <div className="col-sm-9">
+                                    <Field type="text" className="form-control" name='code' />
+                                </div>
+                            </div>
                             <div className="mb-3 row">
                                 <label className="col-sm-3 col-form-label" id="label-input">Tên đơn thuốc</label>
                                 <div className="col-sm-9">
@@ -72,7 +89,6 @@ function PrescriptionCreate() {
                                 <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                                     <fieldset className="border border-dark rounded-3 p-3 w-100">
                                         <legend className="float-none w-auto px-3">Chỉ định</legend>
-
                                         <div className="mb-3 row d-flex align-items-center justify-content-start">
                                             <label className="col-sm-1 col-form-label">1.</label>
                                             <div className="col-sm-4">
