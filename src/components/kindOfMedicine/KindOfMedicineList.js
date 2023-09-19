@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
@@ -6,8 +6,50 @@ import {
     AiOutlineDoubleLeft,
     AiOutlineDoubleRight,
 } from "react-icons/ai";
+import { getList, pagination } from '../../services/kindOfMedicine/KindOfMedicineService';
 
 function KindOfMedicineList(props) {
+    const [kindOfMedicines, setKindOfMedicine] = useState([]);
+    const [searchCodes, setSearchCode] = useState("");
+    const [searchNames, setSearchName] = useState("");
+    const [page, setPage] = useState(0);
+
+
+
+    const showList = async () => {
+        
+        const data = await pagination(page, searchCodes, searchNames);
+       
+        setKindOfMedicine(data.content);
+    }
+
+    const handleButtonSearch = () => {
+        setSearchCode(document.getElementById('medicineCode').value)
+        setSearchName(document.getElementById('medicineName').value)
+      
+    }
+
+    const handlePrevPage = () => {
+        const previousPages = page - 1;
+        if (page > 0) {
+            setPage (previousPages)
+        }
+    }
+    const handleNextPage = async () => {
+        const data = await getList();
+        console.log(data.length);
+        
+        if (page < Math.ceil((data.length -2)/ 5)) {
+            console.log(page);
+            const nextPage = page + 1;
+            setPage(nextPage);
+        }
+    }
+
+
+    useEffect(() => {
+        showList()
+    }, [page, searchCodes, searchNames])
     return (
         <div>
             <div className="container">
@@ -23,11 +65,17 @@ function KindOfMedicineList(props) {
                         </div>
                         {/* search */}
                         <div className="d-flex gap-3 my-3">
-                            <input
+                            <input id='medicineCode'
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control"
+                                placeholder='Mã nhóm Thuốc'
                             />
-                            <button className="btn btn-outline-primary" style={{ width: 120 }}>
+                            <input id='medicineName'
+                                style={{ width: 250, borderRadius: 5 }}
+                                className="form-control" nhómThuốc
+                                placeholder='Tên nhóm thuốc'
+                            />
+                            <button className="btn btn-outline-primary" style={{ width: 120 }} type="submit" onClick={handleButtonSearch} >
                                 <i className="fa-solid fa-magnifying-glass" />
                                 Tìm kiếm
                             </button>
@@ -45,37 +93,24 @@ function KindOfMedicineList(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>BG-01</td>
-                                    <td>Bổ gan</td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>BM-02</td>
-                                    <td>Bổ máu</td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>BP-03</td>
-                                    <td>Bổ phổi</td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>BT-04</td>
-                                    <td>Bổ tim</td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>BT-05</td>
-                                    <td>Bổ tim</td>
-                                </tr>
+                                {kindOfMedicines ? (kindOfMedicines.map((kindOfMedicine, index) => (
+                                    <tr key={kindOfMedicine.id}>
+                                        <td>{ kindOfMedicine.id}</td>
+                                        <td>{kindOfMedicine.code}</td>
+                                        <td>{kindOfMedicine.name}</td>
+                                    </tr>
+                                ))) : (<h1>Not found data</h1>)}
+
+
+
+
+
                             </tbody>
                         </table>
                         {/* pagination */}
                         <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div className="justify-content-center d-flex">
-                                <button className="btn btn-primary" style={{ margin: 5 }}>
+                                <button className="btn btn-primary" style={{ margin: 5 }} onClick={handlePrevPage}>
                                     <AiOutlineDoubleLeft />
                                 </button>
                                 <div
@@ -89,7 +124,7 @@ function KindOfMedicineList(props) {
                                 >
                                     1/5
                                 </div>
-                                <button className="btn btn-primary" style={{ margin: 5 }}>
+                                <button className="btn btn-primary" style={{ margin: 5 }} onClick={handleNextPage}>
                                     <AiOutlineDoubleRight />
                                 </button>
                                 <div
