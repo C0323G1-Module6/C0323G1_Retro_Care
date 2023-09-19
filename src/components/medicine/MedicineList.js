@@ -123,7 +123,7 @@ function MedicineList() {
                                     medicineList.map((value, key) => (
                                         <tr key={key}>
                                             <td>{value.id}</td>
-                                            <td>{value.code}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm"><p>{value.code}</p></td>
                                             <td>{value.kindOfMedicine.name}</td>
                                             <td>{value.name}</td>
                                             <td>{value.activeElement}</td>
