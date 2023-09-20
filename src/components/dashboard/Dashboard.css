@@ -107,6 +107,7 @@ a {
   white-space: nowrap;
   pointer-events: none;
   transition: 0s;
+  color: black;
 }
 .sidebar li:hover .tooltip {
   opacity: 1;
@@ -262,7 +263,6 @@ a {
 }
 .home-section {
   position: relative;
-  background: #e4e9f7;
   min-height: 100vh;
   top: 0;
   left: 78px;

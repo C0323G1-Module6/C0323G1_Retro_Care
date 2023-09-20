@@ -6,7 +6,7 @@ export const addCustomer = async (customer) => {
   await axios.post(`http://localhost:8080/customers/api/create`, customer);
 }
 export const updateCustomer = async (customer) => {
-  await axios.put(`http://localhost:8080/customers/api/update`, customer);
+  await axios.patch(`http://localhost:8080/customers/api/update/${customer.id}`, customer);
 }
 export const getCustomerCode = async () => {
   const result = await axios.get(`http://localhost:8080/customers/api/dto/create`);
@@ -34,9 +34,9 @@ export const getCodeCustomer = async () => {
 
 // QuyenHT
 
-export const getAllCustomers = async (page, searchItem, code, address, phoneNumber, groupValue, sortItem) => {
+export const getAllCustomers = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
   try {
-    const result = await axios.get(`http://localhost:8080/customers/api/list?page=${page}&searchInput=${searchItem}&code=${code}&address=${address}&phoneNumber=${phoneNumber}&groupValue=${groupValue}&sortItem=${sortItem}`);
+    const result = await axios.get(`http://localhost:8080/customers/api/list?page=${page}&name=${name}&code=${code}&address=${address}&phoneNumber=${phoneNumber}&groupValue=${groupValue}&sortItem=${sortItem}`);
     return result;
   } catch (e) {
     console.log(e);
@@ -45,6 +45,7 @@ export const getAllCustomers = async (page, searchItem, code, address, phoneNumb
 export const deleteCustomer = async (id) => {
   try {
     const result = await axios.delete(`http://localhost:8080/customers/api/delete/${id}`);
+    console.log(result)
     return result;
   } catch (e) {
     console.log(e);
