@@ -18,6 +18,7 @@ import CreateSupplierComponent from "./components/supplier/CreateSupplierCompone
 import UpdateSupplierComponent from "./components/supplier/UpdateSupplierComponent";
 import DetailSupplierComponent from "./components/supplier/DetailSupplierComponent";
 import SupplierListComponent from "./components/supplier/SupplierListComponent";
+import InvoiceList from "./components/invoice/InvoiceList";
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
           path="/dashboard/supplier/update-supplier/:idSupplier"
           element={<UpdateSupplierComponent />}
         />
+        <Route path="/dashboard/invoice" element={<InvoiceList />} />
       </Route>
     </Routes>
   );
