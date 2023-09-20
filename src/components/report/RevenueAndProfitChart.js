@@ -35,8 +35,11 @@ const RevenueAndProfitChart = () => {
                     id="endDate"
                   />
                   <div className="d-flex justify-content-center">
-                    <button type="submit"  className="btn btn-outline-primary my-3">
-                      <AiOutlineLineChart className="mx-1"/>
+                    <button
+                      type="submit"
+                      className="btn btn-outline-primary my-3"
+                    >
+                      <AiOutlineLineChart className="mx-1" />
                       Biểu đồ
                     </button>
                   </div>
@@ -95,7 +98,7 @@ const RevenueAndProfitChart = () => {
                 </fieldset>
               </div>
               <Link
-                to={"/dashboard/generalReport"}
+                to={"/dashboard/report"}
                 className="btn btn-outline-primary float-end mx-3"
               >
                 <AiOutlineRollback className="mx-1" />

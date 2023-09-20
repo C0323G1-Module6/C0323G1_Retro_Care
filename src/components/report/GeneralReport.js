@@ -62,8 +62,6 @@ const GeneralReport = () => {
     }
   };
 
-
-
   return (
     <>
       <Formik>
@@ -205,12 +203,14 @@ const GeneralReport = () => {
                   className="justify-content-center mx-auto"
                   style={{ width: "95%", height: "95%" }}
                 >
-                  <button className="btn btn-outline-primary float-end mx-3">
-                    <AiOutlineRollback className="mx-1" />
-                    Trở về
-                  </button>
+                  <Link to="/home">
+                    <button className="btn btn-outline-primary float-end mx-3">
+                      <AiOutlineRollback className="mx-1" />
+                      Trở về
+                    </button>
+                  </Link>
                   <Link
-                    to={"/dashboard/chartReport"}
+                    to={"/dashboard/report/chart"}
                     className="btn btn-outline-primary float-end"
                   >
                     <AiOutlineLineChart className="mx-1" />
