@@ -1,4 +1,4 @@
-import { useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
@@ -101,49 +101,75 @@ function CustomerList() {
     setGroupValue(event.target.value);
     setName(searchValue)
   }
+
   const handleDelete = async () => {
-    Swal.fire({
-      title: "Xóa khách hàng",
-      text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
-      showCancelButton: true,
-      showConfirmButton: true,
-      confirmButtonText: "Đúng vậy",
-      icon: "question",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const response = await customerService.deleteCustomer(selectedCustomer.id);
-        if (response?.status === 200) {
-          Swal.fire({
-            text: "Xóa thành công! ",
-            icon: "success",
-            timer: 1500,
-          });
+    if (selectedCustomer.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn khách hàng trước khi thực hiện thao tác này!',
+      })
+    } else {
+      Swal.fire({
+        title: "Xóa khách hàng",
+        text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Đúng vậy",
+        icon: "question",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await customerService.deleteCustomer(selectedCustomer.id);
+          if (response?.status === 200) {
+            Swal.fire({
+              text: "Xóa thành công! ",
+              icon: "success",
+              timer: 1000,
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Rất tiếc...',
+              text: 'Xóa thất bại!',
+            })
+          }
         } else {
           Swal.fire({
-            icon: 'error',
-            title: 'Rất tiếc...',
-            text: 'Xóa thất bại!',
-          })
+            text: "Không ",
+            icon: "warning",
+            timer: 1000,
+          });
         }
-      } else {
-        Swal.fire({
-          text: "Không ",
-          icon: "warning",
-          timer: 1500,
-        });
-      }
-      await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
-    });
+        await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+      });
+    }
   };
-
+  const handleEditEvent = () => {
+    if (selectedCustomer.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn khách hàng trước khi thực hiện thao tác này!',
+      })
+    } else {
+      navigate(`/dashboard/customer/update/${selectedCustomer.id}`)
+    }
+  }
   useEffect(() => {
     loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
   }, [page, name, code, address, phoneNumber, groupValue, sortItem, visible]);
 
   const handleOptionSearchChange = (e) => {
-    const {value} = e.target;
-    setOptionSearch(+value)
-  }
+    const { value } = e.target;
+    setOptionSearch(+value);
+    setPage(0);
+    setName("");
+    setAddress("");
+    setPhoneNumber("");
+    setCode("");
+    setGroupValue("");
+    setSortItem("");
+    }
 
 
   if (!customers) {
@@ -288,7 +314,7 @@ function CustomerList() {
                 margin: 5,
                 borderRadius: 5,
               }}>
-              <span>{page+1}/{totalPage}</span>
+              <span>{page + 1}/{totalPage}</span>
             </div>
             <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => nextPage()} href="#">
               <AiOutlineDoubleRight />
@@ -307,7 +333,7 @@ function CustomerList() {
       </div>
 
       <div className="d-flex align-items-center justify-content-end gap-3">
-        <Link to ="/dashboard/customer/create"
+        <Link to="/dashboard/customer/create"
           className="btn btn-outline-primary"
         >
           <FaPlus className="mx-1" />
@@ -315,7 +341,7 @@ function CustomerList() {
         </Link>
         <button
           className="btn btn-outline-primary"
-          onClick={()=>{navigate(`/dashboard/customer/update/${selectedCustomer.id}`)}}
+          onClick={handleEditEvent}
         >
           <FiEdit className="mx-1" />
           Sửa
