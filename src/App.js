@@ -24,6 +24,9 @@ import RetailListPrescriptionList from "./components/retail/RetailListPrescripti
 import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
 import GeneralReport from "./components/report/GeneralReport";
 import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
+import MedicineCreate from "./components/medicine/MedicineCreate";
+import MedicineEdit from "./components/medicine/MedicineEdit";
+
 function App() {
   return (
     <Routes>
@@ -80,6 +83,11 @@ function App() {
         <Route
           path="/dashboard/report/chart"
           element={<RevenueAndProfitChart />}
+        />
+        <Route path="/dashboard/medicine/create" element={<MedicineCreate />} />
+        <Route
+          path="/dashboard/medicine/update/:id"
+          element={<MedicineEdit />}
         />
       </Route>
     </Routes>
