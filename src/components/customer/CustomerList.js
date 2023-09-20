@@ -101,6 +101,7 @@ function CustomerList() {
     setGroupValue(event.target.value);
     setName(searchValue)
   }
+
   const handleOptionSearchChange = (e) => {
     const { value } = e.target;
     setOptionSearch(+value);
