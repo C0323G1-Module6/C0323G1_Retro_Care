@@ -60,7 +60,9 @@ function CustomerList() {
   }
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
-      handleSearchEvent();
+      handleSearch
+
+      Event();
     }
   }
   const handleSearchEvent = () => {
