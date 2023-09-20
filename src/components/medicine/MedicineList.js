@@ -1,24 +1,77 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {findAll, getListMedicine} from "../../services/medicine/MedicineService";
+import * as medicineService from "../../services/medicine/MedicineService";
+import swal from "sweetalert2";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
+import Swal from "sweetalert2";
 
 function MedicineList() {
     const navigate = useNavigate()
-    const [medicineList, setMedicineList] = useState()
-    // const [currentPage, setCurrentPage] = useState(0);
-    // const [totalPage, setTotalPage] = useState(0);
+    const [medicineList, setMedicineList] = useState([])
+    const [page, setPage] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const [selectMedicine, setSelectMedicine] = useState({
+        id: null,
+        name: ""
+    });
 
-    // const pageSize = 5;
 
-    const getListMedicine = async () => {
-        const result = await findAll();
-        // setTotalPage(result.totalPages);
-        setMedicineList(result.content);
+    const getListMedicine = async (page) => {
+        const result = await medicineService.findAll(page);
+        setMedicineList(result?.data.content);
+        setTotalPage(result?.data.totalPages);
     }
 
+
+    const previousPage = () => {
+        if (page > 0) {
+            setPage((pre) => pre - 1)
+        }
+    }
+
+    const nextPage = () => {
+        if (page + 1 < totalPage) {
+            setPage((pre) => pre + 1)
+        }
+    }
+    const handleShowCondition = () => {
+        let select = document.getElementById("select").value;
+        const conditional = document.getElementById("conditional");
+        if (select === "4") {
+            conditional.style.display = "inline";
+        } else {
+            conditional.style.display = "none";
+        }
+    }
+
+    const handleDelete = async () => {
+        swal.fire({
+            title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+            text: selectMedicine.name,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085D6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Đồng ý!",
+        })
+            .then(async (willDelete) => {
+                if (willDelete.isConfirmed) {
+                     medicineService.deleteMedicine(selectMedicine.id);
+                     swal.fire("Xoá sản phẩm thành công!", "", "success");
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Rất tiếc...',
+                        text: 'Xóa thất bại!'
+                    })
+                }
+                await getListMedicine(page)
+            });
+    };
+
     useEffect(() => {
-        getListMedicine();
-    }, [])
+        getListMedicine(page);
+    }, [page])
 
     if (!medicineList) {
         return null;
@@ -33,17 +86,18 @@ function MedicineList() {
                     <div className="col-9 col-search d-flex align-items-center justify-content-start gap-3">
 
                         <label>Lọc theo: </label>
-                        <select style={{width: '150px', borderRadius: '5px', color: 'blue'}}
-                                className="appearance-none pl-8 pr-6 py-2">
+                        <select onClick={() => handleShowCondition()}
+                                style={{width: '150px', borderRadius: '5px', color: 'blue'}}
+                                id="select" className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
-                            <option value="searchByNameKindOf">Nhóm thuốc</option>
+                            <option value="searchByNameKindOfMedicine">Nhóm thuốc</option>
                             <option value="searchByName">Tên thuốc</option>
                             <option value="searchByActiveElement">Hoạt chất</option>
                             <option value="4">Giá bán lẻ</option>
                         </select>
 
-                        <select style={{width: '150px', borderRadius: '5px', color: 'blue'}}
-                                className="appearance-none pl-8 pr-6 py-2">
+                        <select style={{width: '150px', borderRadius: '5px', color: 'blue', display: "none"}}
+                                id="conditional" className="appearance-none pl-8 pr-6 py-2">
                             <option selected>Điều kiện</option>
                             <option value="1">Bằng</option>
                             <option value="2">Lớn hơn</option>
@@ -67,8 +121,8 @@ function MedicineList() {
 
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
-                        <div className="table-responsive ">
-                            <table className="table w-100 leading-normal overflow-hidden rounded-3 table-hover ">
+                        <div className="table table-container ">
+                            <table className="table  w-100 leading-normal overflow-hidden rounded-3 table-hover ">
                                 <thead>
                                 <tr style={{background: '#0d6efd', color: '#ffffff'}}>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
@@ -99,16 +153,10 @@ function MedicineList() {
                                         Giá nhập
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá sĩ
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         Giá lẻ
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         % CK
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % LN XC
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         %LN XL
@@ -120,42 +168,58 @@ function MedicineList() {
                                 </thead>
                                 <tbody>
                                 {
-                                    medicineList.map((value, key) => (
-                                        <tr key={key}>
-                                            <td>{value.id}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm"><p>{value.code}</p></td>
-                                            <td>{value.kindOfMedicine.name}</td>
-                                            <td>{value.name}</td>
-                                            <td>{value.activeElement}</td>
-                                            {/*<td>${value.unit.name}</td>*/}
-                                            {/*<td>${value.unitDetail.converSionUnit}</td>*/}
-                                            <td>{value.quantity}</td>
-                                            <td>{value.price}</td>
-                                            <td>{value.vat}</td>
+                                    medicineList.map((item, index) => (
+                                        <tr key={index} id={index} onClick={() => {
+                                            setSelectMedicine({id: item.id, name: item?.name});
+                                        }} style={(selectMedicine.id === item?.id) ? {background: 'red'} : {}}>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price - (item.price / (100 + (item.vat + item.retailProfits)) * 100)}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
                                         </tr>
                                     ))}
-
                                 </tbody>
                             </table>
                         </div>
                         <div
                             className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div className="justify-content-center d-flex">
-                                <button className="btn btn-primary" style={{margin: '5px'}}>
-                                    <i className="fa-solid fa-angles-left"></i>
+                                <button className="btn btn-primary" style={{margin: 5}} onClick={() => previousPage()}
+                                        href="#">
+                                    <AiOutlineDoubleLeft/>
                                 </button>
-                                <div className="text-sm py-2 px-4" style={{
-                                    background: '#0d6efd',
-                                    color: '#ffffff',
-                                    margin: '5px',
-                                    borderRadius: '5px'
-                                }}>
-                                    1/5
+                                <div
+                                    className="text-sm py-2 px-4"
+                                    style={{
+                                        background: "#0d6efd",
+                                        color: "#ffffff",
+                                        margin: 5,
+                                        borderRadius: 5,
+                                    }}>
+                                    <span>{page + 1}/{totalPage}</span>
                                 </div>
-                                <button className="btn btn-primary" style={{margin: '5px'}}>
-                                    <i className="fa-solid fa-angles-right"></i>
+                                <button className="btn btn-primary" style={{margin: 5}} onClick={() => nextPage()}
+                                        href="#">
+                                    <AiOutlineDoubleRight/>
                                 </button>
-
+                                <div
+                                    className="rounded-lg"
+                                    style={{
+                                        background: "#0d6efd",
+                                        color: "black",
+                                        margin: 5,
+                                        borderRadius: 5,
+                                    }}>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -175,9 +239,8 @@ function MedicineList() {
                         </a>
                         <button
                             type="button"
-                            className="btn btn-outline-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                            onClick={() => handleDelete()}
+                            className="btn btn-outline-primary">
                             <i className="fa-solid fa-trash"></i>
                             Xoá
                         </button>

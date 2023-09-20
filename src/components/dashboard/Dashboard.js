@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 import logo from "../../img/logo.jpg";
 import {
@@ -14,8 +14,20 @@ import { IoIosPeople } from "react-icons/io";
 import { TbReportMedical } from "react-icons/tb";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
+import * as userService from "../../services/user/AppUserService";
 
 const Dashboard = () => {
+  const [userName, setUsername] = useState("");
+
+  useEffect(() => {
+    getUsername();
+  }, []);
+
+  const getUsername = async () => {
+    const response = await userService.infoAppUserByJwtToken();
+    setUsername(response);
+  };
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -39,7 +51,7 @@ const Dashboard = () => {
     { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
     { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
     { name: "Nhà cung cấp", link: "/dashboard/supplier", icon: BiGrid },
-    { name: "Nhập kho", link: "/dashboard/warehouse", icon: BiSolidTruck },
+    { name: "Nhập kho", link: "/dashboard/invoice", icon: BiSolidTruck },
   ];
 
   return (
@@ -71,7 +83,7 @@ const Dashboard = () => {
             </li>
           ))}
           <li className="profile">
-            <div className="profile-details">Username</div>
+            <div className="profile-details">{userName?.sub}</div>
             <Link id="log_out" to={"/home"}>
               <BiLogOut color="white" size={30} />
             </Link>

@@ -18,10 +18,12 @@ export const loginWithFacebook = async (facebookMail) => {
 
 export const addJwtTokenToLocalStorage = (jwtToken) => {
     localStorage.setItem("JWT", jwtToken);
-} 
+}
 
 export const infoAppUserByJwtToken = () => {
     const jwtToken = localStorage.getItem("JWT");
-    const result = jwt_decode(jwtToken);
-    return result; 
+    if (jwtToken) {
+        const result = jwt_decode(jwtToken); 
+        return result;
+    }
 }

@@ -45,6 +45,7 @@ export const getAllCustomers = async (page, name, code, address, phoneNumber, gr
 export const deleteCustomer = async (id) => {
   try {
     const result = await axios.delete(`http://localhost:8080/customers/api/delete/${id}`);
+    console.log(result)
     return result;
   } catch (e) {
     console.log(e);

@@ -11,19 +11,28 @@ const initialValues = {
         {
             medicine: "",
             dosage: "",
-            frequency: "",
+            frequency: ""
         }
     ]
 };
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
     const [chooseMedicines, setChooseMedicines] = useState([]);
+    const [indications, setIndications] = useState([]);
     const btnRef = useRef(null);
 
     const findAllPatient = async () => {
         const res = await getAllPatient();
         setPatients(res)
     };
+
+    console.log(indications);
+    const handleAddFieldArray = async () => {
+        const indicationsToCreate = indications.slice(0, -1);
+        await Promise.all(indicationsToCreate.map(async (i) => {
+          await createIndication(i);
+        }));
+      };
 
     const findAllMedicine = async () => {
         const res = await findAll();
@@ -33,13 +42,6 @@ function PrescriptionCreate() {
     const createNewPrescription = async (value) => {
         await createPrescription(value);
     }
-
-    const createNewIndication = async (value) => {
-        await createIndication(value);
-    }
-
-
-
 
     useEffect(() => {
         findAllPatient();
@@ -54,13 +56,12 @@ function PrescriptionCreate() {
                         code: "",
                         name: "",
                         symptoms: "",
-                        patient: "",
+                        patient: 1,
                         duration: "",
                         note: ""
                     }}
 
                     onSubmit={(values) => {
-                        console.log(values);
                         createNewPrescription(values);
                     }}
                 >
@@ -92,7 +93,7 @@ function PrescriptionCreate() {
                                     <Field as='select' className="form-select" aria-label="Default select example" name='patient'>
                                         {
                                             patients.map((t) => (
-                                                <option value={`${JSON.stringify(t)}`}>{t.name}</option>
+                                                <option value={t.id}>{t.name}</option>
                                             ))
                                         }
                                     </Field>
@@ -108,7 +109,7 @@ function PrescriptionCreate() {
                                     <Field type="text" className="form-control" name='note' />
                                 </div>
                             </div>
-                            <button type="submit" ref={btnRef} >oke</button>
+                            <button type="submit" ref={btnRef} onClick={() => handleAddFieldArray()} hidden>oke</button>
                         </Form >
 
 
@@ -116,8 +117,8 @@ function PrescriptionCreate() {
                         <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                             <Formik
                                 initialValues={initialValues}
-                                onSubmit={(value)=>{
-                                    // console.log(value);
+                                onSubmit={(value) => {
+                                    setIndications([...indications, value]);
                                 }}
                             >
                                 {({ values }) => (
@@ -136,7 +137,7 @@ function PrescriptionCreate() {
                                                                         className="form-control"
                                                                         placeholder="Tìm thuốc..."
                                                                         id="search-input"
-                                                                        // value={inputMedicine}
+                                                                        // value={medicine.id}
                                                                         // onChange={(event) => {
                                                                         //     setInputMedicine(event.target.value);
                                                                         // }}
@@ -146,10 +147,10 @@ function PrescriptionCreate() {
 
                                                                     <datalist id="medicine-options">
                                                                         {chooseMedicines.map((medicine, index) => (
-                                                                            <option key={medicine.id} value={medicine.name}></option>
+                                                                            <option key={medicine.id} value={medicine.id}>{medicine.name}</option>
                                                                         ))}
                                                                     </datalist>
-                                                                    
+
                                                                 </div>
                                                                 <label className="col-sm-3 col-form-label">Số viên:</label>
                                                                 <div className="col-sm-2">
@@ -179,12 +180,12 @@ function PrescriptionCreate() {
                                                     ))}
                                                     <div className="d-flex justify-content-left align-items-center">
                                                         <button
-                                                            className="btn btn-outline-primary" 
+                                                            className="btn btn-outline-primary"
                                                             onClick={() => {
                                                                 push({ medicine: '', dosage: '', frequency: '' });
-                                                                
+
                                                             }}
-                                                            
+                                                            type="submit"
                                                         ><i className="fa-solid fa-plus" />Thêm mới thuốc</button>
                                                     </div>
                                                 </fieldset>
@@ -195,7 +196,7 @@ function PrescriptionCreate() {
                                 )}
                             </Formik >
                             <div className="d-flex justify-content-end w-100 gap-2">
-                                <button onClick={()=> btnRef.current.click()}  className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
+                                <button onClick={() => btnRef.current.click()} className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
                                     Thêm mới</button>
                                 <a href="ThanhKN_ListPrescription.html" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a>
                             </div>
