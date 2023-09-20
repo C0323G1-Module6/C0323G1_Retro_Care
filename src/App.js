@@ -14,6 +14,10 @@ import CustomerCreate from "./components/customer/CustomerCreate";
 import CustomerUpdate from "./components/customer/CustomerUpdate";
 import CreateEmployee from "./components/employee/CreateEmployee";
 import UpdationEmployee from "./components/employee/UpdationEmployee";
+import CreateSupplierComponent from "./components/supplier/CreateSupplierComponent";
+import UpdateSupplierComponent from "./components/supplier/UpdateSupplierComponent";
+import DetailSupplierComponent from "./components/supplier/DetailSupplierComponent";
+import SupplierListComponent from "./components/supplier/SupplierListComponent";
 
 function App() {
   return (
@@ -43,6 +47,19 @@ function App() {
         <Route
           path="/dashboard/employee/update/:id"
           element={<UpdationEmployee />}
+        />
+        <Route path="/dashboard/supplier" element={<SupplierListComponent />} />
+        <Route
+          path="/dashboard/supplier/create-supplier"
+          element={<CreateSupplierComponent />}
+        />
+        <Route
+          path="/dashboard/supplier/detail-supplier/:idSupplier"
+          element={<DetailSupplierComponent />}
+        />
+        <Route
+          path="/dashboard/supplier/update-supplier/:idSupplier"
+          element={<UpdateSupplierComponent />}
         />
       </Route>
     </Routes>
