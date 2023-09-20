@@ -3,6 +3,7 @@ import {Formik,Form,Field,ErrorMessage} from 'formik'
 import {useEffect, useState} from "react";
 import * as Yup from "yup";
 import {crateEmployee, createUserEmployee, getNewEmployee} from "../../services/employee/EmployeeService";
+import {Link} from "react-router-dom";
 
 const CreationEmployee = ()=>{
     const [employee,setEmployee] = useState()
@@ -155,11 +156,11 @@ const CreationEmployee = ()=>{
                                         <span>(<span style={{color: 'red'}}>*</span>) Thông tin bắt buộc</span>
                                     </div>
                                     <div className="col-8 mt-3">
-                                        <a href="/#">
+                                        <Link to={"/dashboard/employee"}>
                                             <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
                                                 className="fa-solid fa-rotate-left"></i> Trở về
                                             </button>
-                                        </a>
+                                        </Link>
                                         <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
                                             <i className="fa-solid fa-rotate-right"></i>
                                             Làm mới

@@ -100,7 +100,9 @@
     width: 600px;
 }
 
-
+.selected_invoice {
+    background-color: #807f7f !important;
+}
 
 /*.form-input {*/
 /*    background-color: #f8f9fa;*/

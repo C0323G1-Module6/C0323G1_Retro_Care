@@ -18,6 +18,10 @@ import CreateSupplierComponent from "./components/supplier/CreateSupplierCompone
 import UpdateSupplierComponent from "./components/supplier/UpdateSupplierComponent";
 import DetailSupplierComponent from "./components/supplier/DetailSupplierComponent";
 import SupplierListComponent from "./components/supplier/SupplierListComponent";
+import InvoiceList from "./components/invoice/InvoiceList";
+import Retail from "./components/retail/Retail";
+import RetailListPrescriptionList from "./components/retail/RetailListPrescriptionList";
+import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
 
 function App() {
   return (
@@ -60,6 +64,16 @@ function App() {
         <Route
           path="/dashboard/supplier/update-supplier/:idSupplier"
           element={<UpdateSupplierComponent />}
+        />
+        <Route path="/dashboard/invoice" element={<InvoiceList />} />
+        <Route path="/dashboard/retail" element={<Retail />} />
+        <Route
+          path="/dashboard/retail/prescription-list"
+          element={<RetailListPrescriptionList />}
+        />
+        <Route
+          path="/dashboard/retail/prescription-information/:id"
+          element={<RetailPrescriptionInformation />}
         />
       </Route>
     </Routes>
