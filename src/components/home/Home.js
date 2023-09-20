@@ -15,7 +15,6 @@ import {
 } from "swiper/modules";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
-
 const Home = () => {
   return (
     <div>

@@ -16,15 +16,19 @@ import { Formik, Form, ErrorMessage, Field } from "formik";
 import * as yup from "yup";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCarts } from "./redux/cartAction";
+import { el } from "date-fns/locale";
 
 export default function Cart() {
-  const [carts, setCarts] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
   const [point, setPoint] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [quantities, setQuantities] = useState({});
   const [checkout, setCheckOut] = useState(false);
   const [showCf, setShowCf] = useState(false);
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
 
   const navigate = useNavigate();
 
@@ -65,6 +69,7 @@ export default function Cart() {
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
             confirmButtonText: "Đồng ý",
+            cancelButtonText: "Huỷ",
           })
           .then(async (willDelete) => {
             if (willDelete.isConfirmed) {
@@ -100,6 +105,7 @@ export default function Cart() {
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
         confirmButtonText: "Đồng ý!",
+        cancelButtonText: "Huỷ",
       })
       .then(async (willDelete) => {
         if (willDelete.isConfirmed) {
@@ -121,12 +127,8 @@ export default function Cart() {
   };
 
   const proceedOrder = async () => {
-    const shouldPaypalRender = await checkQuantityBeforePayment();
-    // the checkout here is to temporarily fix paypal bug somehow :)
-    if (shouldPaypalRender && !checkout) {
-      renderPaypal();
-      setCheckOut(true);
-    }
+    const shouldShowCf = await checkQuantityBeforePayment();
+    if (shouldShowCf) setShowCf(true);
   };
 
   const renderPaypal = () => {
@@ -196,10 +198,6 @@ export default function Cart() {
       currency: "VND",
     }).format(money);
 
-  const getAllCarts = async () => {
-    const data = await getCarts(2);
-    setCarts(data);
-  };
   const getLoyaltyPoint = async () => {
     const data = await getPoint(2);
     setPoint(data);
@@ -208,8 +206,18 @@ export default function Cart() {
   const checkLoyaltyPoint = async () => {
     const inputPoint = document.querySelector(".input-point");
     console.log(parseInt(inputPoint.value));
+
     if (parseInt(inputPoint.value) <= point) {
-      setDiscount(parseInt(inputPoint.value));
+      if (parseInt(inputPoint.value) <= totalPrice) {
+        setDiscount(parseInt(inputPoint.value));
+      } else {
+        setDiscount(0);
+        swal.fire(
+          "Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!",
+          "",
+          "warning"
+        );
+      }
     } else {
       setDiscount(0);
       swal.fire("Vượt quá số điểm hiện có!", "", "warning");
@@ -217,8 +225,8 @@ export default function Cart() {
   };
 
   useEffect(() => {
-    getAllCarts();
-  }, [isUpdated, showCf]);
+    dispatch(getAllCarts(2));
+  }, [isUpdated]);
   useEffect(() => {
     getLoyaltyPoint();
   }, []);
@@ -247,14 +255,14 @@ export default function Cart() {
                     </thead>
                     <tbody>
                       {carts.length > 0 &&
-                        carts.map((el, index) => {
+                        carts.map((el) => {
                           return (
-                            <tr>
+                            <tr key={`el_${el.cartId}`}>
                               <td>
                                 <td className="d-flex align-items-center h-100">
                                   <span>
                                     <button
-                                      className="bg-transparent border-0 fs-5"
+                                      className="bg-transparent border-0 fs-4 mx-3"
                                       onClick={() =>
                                         handleDelete(el.cartId, el.medicineName)
                                       }
@@ -392,7 +400,11 @@ export default function Cart() {
                             "",
                             "success"
                           );
-                          proceedOrder();
+                          // the checkout here is to temporarily fix paypal bug somehow :)
+                          if (!checkout) {
+                            renderPaypal();
+                            setCheckOut(true);
+                          }
                         } catch (error) {
                           if (error.response && error.response.data) {
                             setErrors(error.response.data);
@@ -541,9 +553,7 @@ export default function Cart() {
                     </div>
                     <button
                       className="w-100 btn btn-warning mt-3 fw-bold"
-                      onClick={() => {
-                        setShowCf(true);
-                      }}
+                      onClick={proceedOrder}
                       disabled={showCf}
                     >
                       TIẾN HÀNH THANH TOÁN

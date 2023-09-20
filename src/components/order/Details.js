@@ -9,8 +9,13 @@ import {
 import { toast } from "react-toastify";
 import swal from "sweetalert2";
 import Header from "../layout/Header";
+import Footer from "../layout/Footer";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCarts } from "./redux/cartAction";
 
 export default function Details() {
+  const dispatch = useDispatch();
+
   const [activeIndex, setActiveIndex] = useState(0); // this is to control 'active' value
   const { id } = useParams();
   console.log(id);
@@ -36,15 +41,8 @@ export default function Details() {
       const res = await checkQuantity(id, parseInt(quantity) + quantityInCart);
       console.log(res);
       const add = await addToCartFromHomeAndDetails(2, medicineId, quantity);
-      toast.success(
-        "Thêm sản phẩm thành công!"
-        // , {
-        //   style: {
-        //     color: "red",
-        //     border: "1px solid pink",
-        //   },
-        // }
-      );
+      dispatch(getAllCarts(2));
+      toast.success("Thêm sản phẩm thành công!");
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
     }
@@ -256,6 +254,7 @@ export default function Details() {
           </div>
         )}
       </div>
+      <Footer />
     </>
   );
 }

@@ -1,10 +1,19 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCarts } from "../order/redux/cartAction";
 
 const Header = () => {
+  // replace 2 with userId
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
+  useEffect(() => {
+    dispatch(getAllCarts(2));
+  }, []);
+
   return (
     <header className="site-header">
       <div className="container">
@@ -51,7 +60,7 @@ const Header = () => {
                   className="header-btn header-cart"
                 >
                   <FiShoppingCart />
-                  <span className="cart-number">3</span>
+                  <span className="cart-number">{carts.length}</span>
                 </a>
                 <a href="prototype/account/NhatNHH_login.html" className="user">
                   <img
