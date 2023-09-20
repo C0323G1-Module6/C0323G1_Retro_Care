@@ -17,7 +17,6 @@ import {
 import { Line } from "react-chartjs-2";
 import { getProfit, getRevenue } from "../../services/report/ReportService";
 import { format, parseISO } from "date-fns";
-
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,14 +26,12 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 const RevenueAndProfitChart = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [revenues, setRevenue] = useState([]);
   const [profits, setProfit] = useState([]);
   const [periodRevenue, setPeriodRevenue] = useState(0);
-
   const drawChart = (revenue, profit) => {
     const options = {
       responsive: true,
@@ -56,12 +53,10 @@ const RevenueAndProfitChart = () => {
         },
       },
     };
-
     const labels = revenue.map((item) =>
       format(parseISO(item.sellDate), "dd/MM/yyyy")
     );
     console.log(labels);
-
     const data = {
       labels,
       datasets: [
@@ -82,7 +77,6 @@ const RevenueAndProfitChart = () => {
     console.log(data);
     return <Line options={options} data={data} />;
   };
-
   const handleSubmit = async (values, setErrors) => {
     try {
       const revenueResult = await getRevenue(values.startDate, values.endDate);
