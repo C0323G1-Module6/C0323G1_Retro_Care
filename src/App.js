@@ -26,13 +26,18 @@ import GeneralReport from "./components/report/GeneralReport";
 import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
 import MedicineCreate from "./components/medicine/MedicineCreate";
 import MedicineEdit from "./components/medicine/MedicineEdit";
-
+// import Details from "./components/order/Details";
+import SearchPage from "./components/search/SearchPage";
+// import Cart from "./components/order/Cart";
 function App() {
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      {/* <Route path="/detail/:id" element={<Details />} /> */}
+      <Route path="/search" element={<SearchPage />} />
+      {/* <Route path="/cart/:id" element={<Cart />} /> */}
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
@@ -93,4 +98,5 @@ function App() {
     </Routes>
   );
 }
+
 export default App;
