@@ -22,12 +22,11 @@ function DetailSupplierComponent() {
         }
     }
 
-    const getListInVoice = async (id, pageable) => {
+    const getListInVoice = async ( pageable) => {
         try {
             const invoiceData = await detailSupplierById(idSupplier, pageable);
             setInvoices(invoiceData);
         } catch (error) {
-            await (getListInVoice(idSupplier, 0));
             Swal.fire({
                 icon: "error",
                 title: "Không tìm thấy dữ liệu!",
@@ -43,6 +42,7 @@ function DetailSupplierComponent() {
     const setPageFunction = async (pageAfter) => {
         setPage(pageAfter)
     }
+    console.log(invoices);
 
     const nextPage = async () => {
         page += 1;
@@ -183,9 +183,9 @@ function DetailSupplierComponent() {
                                             </th>
                                         </tr>
                                         </thead>
-                                        {invoices.length !== 0 ?
+                                        {invoices.content && invoices.content.length !== 0 ?
                                             <tbody>
-                                            {invoices.length !== 0 && invoices.content && invoices.content.map((item, index) => {
+                                            {  invoices.content.map((item, index) => {
                                                 return (
                                                     <tr>
                                                         <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
