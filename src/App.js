@@ -26,8 +26,10 @@ import GeneralReport from "./components/report/GeneralReport";
 import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
 import MedicineCreate from "./components/medicine/MedicineCreate";
 import MedicineEdit from "./components/medicine/MedicineEdit";
+import { axiosClient } from "./services/user/AxiosClient";
 
 function App() {
+  axiosClient();
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
