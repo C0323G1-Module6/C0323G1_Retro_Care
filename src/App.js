@@ -24,7 +24,6 @@ import RetailListPrescriptionList from "./components/retail/RetailListPrescripti
 import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
 import GeneralReport from "./components/report/GeneralReport";
 import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
-
 function App() {
   return (
     <Routes>
@@ -86,5 +85,4 @@ function App() {
     </Routes>
   );
 }
-
 export default App;
