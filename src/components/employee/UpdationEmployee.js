@@ -2,7 +2,7 @@ import './style.css'
 import {Formik,Form,Field,ErrorMessage} from 'formik'
 import {useEffect, useState} from "react";
 import * as Yup from "yup";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {getEmployee, updateEmployee} from "../../services/employee/EmployeeService";
 
 const UpdationEmployee = ()=>{
@@ -144,11 +144,11 @@ const UpdationEmployee = ()=>{
                                         <span>(<span style={{color: 'red'}}>*</span>) Thông tin bắt buộc</span>
                                     </div>
                                     <div className="col-8 mt-3">
-                                        <a href="/#">
+                                        <Link to={"/dashboard/employee"}>
                                             <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
                                                 className="fa-solid fa-rotate-left"></i> Trở về
                                             </button>
-                                        </a>
+                                        </Link>
                                         <button type="submit" className="btn btn-outline-primary float-end mx-1 mt-2 shadow"><i
                                             className="fa-solid fa-plus"></i>Hoàn tất
                                         </button>
