@@ -12,6 +12,7 @@ import MedicineList from "./components/medicine/MedicineList";
 import PrescriptionCreate from "./components/prescription/PrescriptionCreate";
 import CustomerCreate from "./components/customer/CustomerCreate";
 import CustomerUpdate from "./components/customer/CustomerUpdate";
+import CreateEmployee from "./components/employee/CreateEmployee";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           element={<CustomerUpdate />}
         />
         <Route path="/dashboard/employee" element={<ListEmployee />} />
+        <Route path="/dashboard/employee/create" element={<CreateEmployee />} />
       </Route>
     </Routes>
   );
