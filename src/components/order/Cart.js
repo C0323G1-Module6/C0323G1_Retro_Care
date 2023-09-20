@@ -12,7 +12,6 @@ import { createOrder } from "../../services/order/OrderService";
 import swal from "sweetalert";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage, Field } from "formik";
-import * as yup from "yup";
 
 export default function Cart() {
   const [carts, setCarts] = useState([]);
