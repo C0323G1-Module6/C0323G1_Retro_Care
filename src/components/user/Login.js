@@ -1,35 +1,41 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import React from "react";
-import * as Yup from 'yup';
 import * as appUserService from '../../services/user/AppUserService';
 import { BsFacebook } from "react-icons/bs"
 import { AiFillGoogleCircle } from "react-icons/ai"
 import { Link, useNavigate } from "react-router-dom";
 import { LoginSocialFacebook } from "reactjs-social-login";
+import Swal from "sweetalert2";
 
 const Login = () => {
-    const FBID = process.env.REACT_APP_KEY;
     const navigate = useNavigate();
 
-    const loginByUserName = async (appUser, setErrors) => {
+    const loginWithFacebook = async (resolve) => {
+        try {
+            const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
+            console.log(result);
+            appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
+            navigate("/home");
+        } catch (e) {
+            Swal.fire({
+                icon: 'error',
+                title: e.response.data,
+            })
+        }
+    }
+
+    const loginByUserName = async (appUser) => {
         try {
             const result = await appUserService.loginByUserName(appUser);
-            localStorage.setItem("JWT", result.data.jwtToken)
+            appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             navigate("/home")
         } catch (e) {
-            if (e.response.status === 406) {
-                setErrors(e.response.data);
-            } else {
-                alert(e.response.data);
-            }
-        }
-        // Swal.fire({
-        //     icon: 'error',
-        //     title: 'Oops...',
-        //     text: e.response.data,
-        //     footer: '<a href="">Why do I have this issue?</a>'
-        // })
+            Swal.fire({
+                icon: 'error',
+                title: e.response.data,
+            })
 
+        }
 
     }
 
@@ -39,21 +45,8 @@ const Login = () => {
                 userName: "",
                 password: ""
             }}
-            validationSchema={Yup.object({
-                userName: Yup.string()
-                    .required("Không để trống tài khoản")
-                    .test('check-userName', 'Không để trống tài khoản', (value) => value.trim().length !== 0)
-                    .min(3, 'Số lượng ký tự phải lớn hơn hoặc bằng 3')
-                    .max(100, 'Số lượng ký tự bé hơn hoặc bằng 100'),
 
-                password: Yup.string()
-                    .required("Không để trống mật khẩu")
-                    .test('check-userName', 'Không để trống mật khẩu', (value) => value.trim().length !== 0)
-                    .min(3, 'Số lượng ký tự phải lớn hơn hoặc bằng 3')
-                    .max(100, 'Số lượng ký tự bé hơn hoặc bằng 100'),
-
-            })}
-            onSubmit={(values, { setSubmitting, setErrors }) => {
+            onSubmit={(values, { setSubmitting }) => {
 
                 setSubmitting(false);
 
@@ -61,7 +54,7 @@ const Login = () => {
                     ...values,
 
                 }
-                loginByUserName(cloneValues, setErrors);
+                loginByUserName(cloneValues);
             }}
         >
             <Form>
@@ -75,7 +68,6 @@ const Login = () => {
                             </label>
                             <Field type="text" className="form-control border border-primary" name="userName" />
                             <div style={{ height: '15px' }}>
-                                <ErrorMessage component='small' className="text-danger" name="userName" />
                             </div>
                         </div>
 
@@ -86,15 +78,11 @@ const Login = () => {
                             </label>
                             <Field type="password" className="form-control border border-primary" name="password" />
                             <div style={{ height: '15px' }}>
-                                <ErrorMessage component='small' className="text-danger" name="password" />
                             </div>
                         </div>
 
-                        <p className="small">
-                            <a className="text-primary" href="forget-password.html">Quên mật khẩu?</a>
-                        </p>
                         {/* Button Login */}
-                        <div className="d-grid">
+                        <div className="d-grid mt-4">
                             <button className="btn btn-primary" type="submit">
                                 Đăng nhập
                             </button>
@@ -104,19 +92,19 @@ const Login = () => {
                             <div>
                                 <LoginSocialFacebook
                                     className="btn border-0"
-                                    appId={`${FBID}`}
+                                    appId="294412776626440"
                                     onResolve={(resolve) => {
                                         console.log(resolve);
-                                        // loginWithFacebook(resolve);
+                                        loginWithFacebook(resolve);
                                     }}
                                     onReject={(reject) => console.log(reject)}
                                 >
                                     <BsFacebook color="blue" size={30} />
                                 </LoginSocialFacebook>
-                           
-                            <a href="#">
-                                <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
-                            </a>
+
+                                <a href="#">
+                                    <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
+                                </a>
                             </div>
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
