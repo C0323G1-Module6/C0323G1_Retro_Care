@@ -36,10 +36,10 @@ const CustomerCreate = () => {
       if (err.response.data) {
         setErrors(err.response.data);
       }
-      if (err.response.status === 406) {
-        console.log(err);
-        setErrors(err.response.data);
-      }
+      // if (err.response.status === 406) {
+      //   console.log(err);
+      //   setErrors(err.response.data);
+      // }
     }
   };
   if (customerCode == "") {
@@ -61,7 +61,7 @@ const CustomerCreate = () => {
           validationSchema={Yup.object({
             name: Yup.string()
               .max(50)
-              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm"),
+              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm").required("Vui lòng không bỏ trống tên"),
             birthday: Yup.string().required(
               "Vui lòng nhập ngày sinh khách hàng"
             ),
