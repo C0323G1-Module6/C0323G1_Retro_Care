@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export async function getList() {
-    const res = await axios.get(` http://localhost:8080/api/kindOfMedicine`);
+    const res = await axios.get(`http://localhost:8080/api/kindOfMedicine`);
     return res.data;
 }
 
@@ -17,11 +17,13 @@ export async function add(kindOfMedicine) {
 }
 
 // delete
-
-export async function deleteProduct(id) {
-    await axios.delete(`http://localhost:8080/api/kindOfMedicine/${id}`)
+export async function deleteKindOfMedicine(id) {
+    await axios.delete(`http://localhost:8080/api/kindOfMedicine/delete/${id}`)
 }
-
+// deletes
+export async function deleteKindOfMedicines(choseRow) {
+    await axios.post(`http://localhost:8080/api/kindOfMedicine/delete-items`, { ids: choseRow })
+}
 // get list by id
 
 export async function getListById(id) {

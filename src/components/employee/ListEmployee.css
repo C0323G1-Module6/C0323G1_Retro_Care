@@ -44,7 +44,9 @@
 .tr-employee {
     border-bottom: 1px solid rgba(164, 164, 164, 0.71);
 }
-
+.check-delete-employee {
+    background-color: rgba(252, 245, 76, 0.73) !important;
+}
 
 
 
