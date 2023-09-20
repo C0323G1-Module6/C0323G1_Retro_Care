@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {
     detailSupplierById,
     getSupplierDetailById
@@ -7,15 +7,14 @@ import {
 import Swal from "sweetalert2";
 
 function DetailSupplierComponent() {
-    const {id} = useParams();
-    // const [invoices, setInvoices] = useState([]);
+    const {idSupplier} = useParams();
+    const [invoices, setInvoices] = useState([]);
     const [supplier, setSupplier] = useState({});
-    // const navigate = useNavigate();
-    // let [page, setPage] = useState(0)
+    let [page, setPage] = useState(0)
 
     const getSupplier = async () => {
         try {
-            const data = await getSupplierDetailById(id);
+            const data = await getSupplierDetailById(idSupplier);
             setSupplier(data);
             console.log(data);
         } catch (error) {
@@ -23,45 +22,46 @@ function DetailSupplierComponent() {
         }
     }
 
-    // const getListInVoice = async (id, pageable) => {
-    //     try {
-    //         const invoiceData = await detailSupplierById(id, pageable);
-    //         setInvoices(invoiceData);
-    //     } catch (error) {
-    //         await (getListInVoice(id, 0));
-    //         Swal.fire({
-    //             icon: "error",
-    //             title: "Không tìm thấy dữ liệu!",
-    //             showConfirmButton: false,
-    //             timer: 2000,
-    //         })
-    //     }
-    // }
+    const getListInVoice = async (id, pageable) => {
+        try {
+            const invoiceData = await detailSupplierById(idSupplier, pageable);
+            setInvoices(invoiceData);
+        } catch (error) {
+            await (getListInVoice(idSupplier, 0));
+            Swal.fire({
+                icon: "error",
+                title: "Không tìm thấy dữ liệu!",
+                showConfirmButton: false,
+                timer: 2000,
+            })
+        }
+    }
     useEffect(() => {
         getSupplier()
-    },[id])
-        console.log(supplier);
-    // useEffect(() => {
-    //     // getListInVoice(id, page)
-    // }, [id])
-    // const setPageFunction = async (pageAfter) => {
-    //     setPage(pageAfter)
-    // }
-    //
-    // const nextPage = async () => {
-    //     page += 1;
-    //     if (page < invoices.totalPages) {
-    //         await setPageFunction(page).then((await getListInVoice(id, page)))
-    //     } else {
-    //         page -= 1
-    //     }
-    // }
-    // const previousPage = async () => {
-    //     if (page >= 1) {
-    //         page -= 1
-    //     }
-    //     await setPageFunction(page).then((await getListInVoice(id, page)))
-    // }
+        getListInVoice(idSupplier,page)
+    },[idSupplier])
+    const setPageFunction = async (pageAfter) => {
+        setPage(pageAfter)
+    }
+
+    const nextPage = async () => {
+        page += 1;
+        if (page < invoices.totalPages) {
+            await setPageFunction(page).then((await getListInVoice(idSupplier, page)))
+        } else {
+            page -= 1
+        }
+    }
+    const previousPage = async () => {
+        if (page >= 1) {
+            page -= 1
+        }
+        await setPageFunction(page).then((await getListInVoice(idSupplier, page)))
+    }
+
+    if (!invoices){
+        return null;
+    }
 
     return (
         <>
@@ -108,22 +108,18 @@ function DetailSupplierComponent() {
                                 <div className="row row-information1">
                                     <div className="col-6 col-information"
                                          style={{fontFamily: 'Poppins, Arial, Helvetica Neue, sans-serif'}}>Địa
-                                        chỉ:
-                                        {supplier.address}
+                                        chỉ: {supplier.address}
                                     </div>
                                     <div className="col-6 col-information"
                                          style={{fontFamily: 'Poppins, Arial, Helvetica Neue, sans-serif'}}>Số
-                                        điện
-                                        thoại:
-                                        {supplier.phoneNumber}
+                                        điện thoại: {supplier.phoneNumber}
                                     </div>
                                 </div>
                                 <hr/>
                                 <div className="row row-information1">
                                     <div className="col-6 col-information"
                                          style={{fontFamily: 'Poppins, Arial, Helvetica Neue, sans-serif'}}>Công
-                                        nợ:
-                                        {supplier.debt}
+                                        nợ: {supplier.debt} VNĐ
                                     </div>
                                     <div className="col-6 col-information"
                                          style={{fontFamily: 'Poppins, Arial, Helvetica Neue, sans-serif'}}>Chú
@@ -161,7 +157,7 @@ function DetailSupplierComponent() {
                             <div className="block relative">
                             </div>
                             <div className="-mx-4 sm:-mx-8 sm:px-8 py-4 overflow-x-auto">
-                                <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                                <div className="inline-block min-w-full shadow rounded-lg overflow-hidden"  style={{borderRadius: '10px'}}>
                                     <table className="min-w-full leading-normal table table-hover">
                                         <thead>
                                         <tr style={{background: '#0d6efd', color: '#ffffff'}}>
@@ -187,86 +183,89 @@ function DetailSupplierComponent() {
                                             </th>
                                         </tr>
                                         </thead>
-                                        {/*{invoices.length !== 0 ?*/}
-                                        {/*    <tbody>*/}
-                                        {/*    {invoices.content.map((item, index) => (*/}
-                                        {/*        <tr>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <div className="flex items-center">*/}
-                                        {/*                    <div className="ml-3">*/}
-                                        {/*                        <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                            /!*{(page * 5) + (index + 1)}*!/*/}
-                                        {/*                        </p>*/}
-                                        {/*                    </div>*/}
-                                        {/*                </div>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                    /!*{item.codeInvoice}*!/*/}
-                                        {/*                </p>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                    /!*{item.documentNumber}*!/*/}
-                                        {/*                </p>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                    /!*{item.createDate}*!/*/}
-                                        {/*                </p>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                    /!*{item.createTime}*!/*/}
-                                        {/*                </p>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                <p className="text-gray-900 whitespace-no-wrap">*/}
-                                        {/*                    /!*{item.totalAmount} VNĐ*!/*/}
-                                        {/*                </p>*/}
-                                        {/*            </td>*/}
-                                        {/*            <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">*/}
-                                        {/*                /!*{item.amountDue} VNĐ*!/*/}
-                                        {/*            </td>*/}
-                                        {/*        </tr>*/}
-                                        {/*    ))}*/}
-                                        {/*    </tbody> : <tbody>*/}
-                                        {/*    <tr style={{height: '150px'}}>*/}
-                                        {/*        <td style={{color: "red", fontSize: '50px'}} colSpan="9">Không có dữ*/}
-                                        {/*            liệu*/}
-                                        {/*        </td>*/}
-                                        {/*    </tr>*/}
-                                        {/*    </tbody>*/}
-                                        {/*}*/}
+                                        {invoices.length !== 0 ?
+                                            <tbody>
+                                            {invoices.length !== 0 && invoices.content && invoices.content.map((item, index) => {
+                                                return (
+                                                    <tr>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <div className="flex items-center">
+                                                                <div className="ml-3">
+                                                                    <p className="text-gray-900 whitespace-no-wrap">
+                                                                        {(page * 5) + (index + 1)}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                                {item.codeInvoice}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                                {item.documentNumber}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                                {item.createDate}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                                {item.createTime}
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                                {item.totalAmount} VNĐ
+                                                            </p>
+                                                        </td>
+                                                        <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                                                            {item.amountDue} VNĐ
+                                                        </td>
+                                                    </tr>
+                                                    )
+
+                                            })}
+                                            </tbody> : <tbody>
+                                            <tr style={{height: '150px'}}>
+                                                <td style={{color: "red", fontSize: '50px',textAlign:'center'}} colSpan="9">Không có dữ
+                                                    liệu
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        }
                                     </table>
-                                    <a className="btn btn-outline-primary"
-                                       href="/FE-Prototype/prototype_all/supplier/ThanhVH_listSupplier.html"
+                                    <Link className="btn btn-outline-primary"
+                                      to={`/supplier`}
                                        style={{
                                            position: 'absolute',
                                            marginTop: '8px',
                                            marginLeft: '26px',
                                            width: '87px'
-                                       }}>Trở về</a>
+                                       }}>Trở về</Link>
                                     <div className="justify-content-center d-flex rounded-bottom shadow m-3">
-                                        {/*{page !== 0 ?*/}
+                                        {page !== 0 ?
                                             <button className="btn btn-primary" style={{margin: '5px'}}
-                                                    // onClick={async () => {
-                                                    //
-                                                    //     await previousPage()
-                                                    // }}
+                                                    onClick={async () => {
+
+                                                        await previousPage()
+                                                    }}
                                             >
 
                                                 <i className="fa-solid fa-angles-left"/>
                                             </button> :
                                             <button className="btn btn-primary" style={{margin: '5px'}}
-                                                    // onClick={async () => {
-                                                    //
-                                                    //     await previousPage()
-                                                    // }}
+                                                    onClick={async () => {
+
+                                                        await previousPage()
+                                                    }}
                                             >
                                                 <i className="fa-solid fa-angles-left"/>
                                             </button>
-                                        {/*}*/}
+                                        }
 
                                         <div className="text-sm py-2 px-4" style={{
                                             background: '#0d6efd',
@@ -274,26 +273,26 @@ function DetailSupplierComponent() {
                                             margin: '5px',
                                             borderRadius: '5px'
                                         }}>
-                                            {/*{page + 1}/{invoices.totalPages}*/}
+                                            {page + 1}/{invoices.totalPages}
                                         </div>
-                                        {/*{page !== invoices.totalPages - 1 ?*/}
+                                        {page !== invoices.totalPages - 1 ?
                                             <button className="btn btn-primary" style={{margin: '5px'}}
-                                                    // onClick={async () => {
-                                                    //
-                                                    //     await nextPage();
-                                                    // }}
+                                                    onClick={async () => {
+
+                                                        await nextPage();
+                                                    }}
                                             >
                                                 <i className="fa-solid fa-angles-right"/>
                                             </button> :
                                             <button className="btn btn-primary" style={{margin: '5px'}}
-                                                    // onClick={async () => {
-                                                    //
-                                                    //     await nextPage();
-                                                    // }}
+                                                    onClick={async () => {
+
+                                                        await nextPage();
+                                                    }}
                                             >
                                                 <i className="fa-solid fa-angles-right"/>
                                             </button>
-                                        {/*}*/}
+                                        }
                                     </div>
                                 </div>
                             </div>
