@@ -33,6 +33,7 @@ function App() {
       <Route path="/home" element={<Home />}></Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/invoice" element={<InvoiceList />} />
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
@@ -93,4 +94,5 @@ function App() {
     </Routes>
   );
 }
+
 export default App;
