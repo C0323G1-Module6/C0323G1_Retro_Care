@@ -33,6 +33,7 @@ export default function ListEmployee() {
             setPageList(data.pageable.pageNumber);
             setTotalPage(data.totalPages);
         } catch (noContent) {
+            setMessage('Không có dữ liệu trên hệ thống')
             setEmployee([]);
             setPageList(0);
             setTotalPage(0);
@@ -63,7 +64,7 @@ export default function ListEmployee() {
                 showConfirmButton: false,
                 timer: 1500
             })
-            setMessage("Không tìm thông tin nhân viên trong ứng dụng.")
+            setMessage("Không tìm thấy thông tin nhân viên trên hệ thống.")
             setEmployee([]);
             setPageList(0);
             setTotalPage(0);
@@ -82,9 +83,10 @@ export default function ListEmployee() {
                     cancelButtonText: 'Huỷ',
                     reverseButtons: true
                 }
-            ).then((res) => {
+            ).then(async (res) => {
                 if (res.isConfirmed) {
-                    deleteEmployees(deleteEmployee.id).then(() => {
+                    const response = await deleteEmployees(deleteEmployee.id);
+                    if(response.status === 200){
                         getList().then(() => {
                             Swal.fire({
                                 icon: 'success',
@@ -92,9 +94,34 @@ export default function ListEmployee() {
                                 showConfirmButton: false,
                                 timer: 2000
                             })
+                        });
+                    }else {
+                        getList().then(() => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Xoá thất bại.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            })
+                        });
+                    }
+                }else {
+                    getList().then(() => {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Đã huỷ xoá thành công.',
+                            showConfirmButton: false,
+                            timer: 2000
                         })
                     });
                 }
+            })
+        }else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Vui lòng chọn nhân viên trước khi thực hiện thao tác.',
+                showConfirmButton: false,
+                timer: 2000
             })
         }
     }
@@ -257,11 +284,17 @@ export default function ListEmployee() {
                             <FaPlus className="mx-1"/> Thêm mới
                         </button>
                     </Link>
-                    <Link to={"/dashboard/employee/update/"+ deleteEmployee.id}>
+                    {deleteEmployee !== '' ?
+                        <Link to={"/dashboard/employee/update/"+ deleteEmployee.id}>
+                            <button className="btn btn-light btn-outline-primary m-1">
+                                <FiEdit className="mx-1"/> Sửa
+                            </button>
+                        </Link> :
                         <button className="btn btn-light btn-outline-primary m-1">
                             <FiEdit className="mx-1"/> Sửa
                         </button>
-                    </Link>
+                    }
+
 
                     <button className="btn btn-light btn-outline-primary m-1" onClick={() => {
                         checkDelete().then();
