@@ -2,8 +2,9 @@ import {Field, Form, Formik, ErrorMessage} from "formik";
 import {useEffect, useState} from "react";
 import * as Yup from "yup";
 import "./CustomerCreate.css";
-import {useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {addCustomer, getCustomerCode} from "../../services/customer/CustomerService";
+import Swal from "sweetalert2";
 
 const CustomerCreate = () => {
     const navigate = useNavigate();
@@ -18,13 +19,22 @@ const CustomerCreate = () => {
         setCustomerCode(result.code);
         console.log(result.code);
     }
-    const handleSubmit = async (values, setErrors) => {
+    const handleSubmit = async (value, setErrors) => {
         try {
-            const result = await addCustomer(values);
-            // navigate("/");
+            const result = await addCustomer(value);
+            Swal.fire(
+                'Thêm mới thành công !',
+                'khách hàng'+value.name +'đã được thêm mới!',
+                'success'
+            );
+            navigate("/dashboard/customer");
         } catch (err) {
             console.log(err);
             if (err.response.data) {
+                setErrors(err.response.data);
+            }
+            if (err.response.status === 406) {
+                console.log(err);
                 setErrors(err.response.data);
             }
         }
@@ -34,7 +44,7 @@ const CustomerCreate = () => {
     }
     return (
         <>
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center w-100">
                 <Formik initialValues={{
                     code: customerCode,
                     name: "",
@@ -60,7 +70,7 @@ const CustomerCreate = () => {
                                 <div className="col-8">
                                     <Field className="form-control mt-2" disabled name="code"/>
                                     <div className="p-2 mb-2">
-                                        <ErrorMessage className="p-3 mb-2 text-danger" name="code" component="span"/>
+                                        <ErrorMessage className=" text-danger" name="code" component="span"/>
                                     </div>
                                 </div>
 
@@ -70,7 +80,7 @@ const CustomerCreate = () => {
                                 <div className="col-8">
                                     <Field className="form-control mt-2 border border-dark" name="name" type="text"/>
                                     <div className="p-2 mb-2">
-                                    <ErrorMessage className="p-3 mb-2 text-danger" name="name" component="span"/></div>
+                                    <ErrorMessage className=" text-danger" name="name" component="span"/></div>
                                 </div>
 
                                 <div className="col-4 p-2">
@@ -79,7 +89,7 @@ const CustomerCreate = () => {
                                 <div className="col-8">
                                     <Field className="form-control mt-2 border border-dark" name="phoneNumber" type="text"/>
                                     <div className="p-2 mb-2">
-                                    <ErrorMessage className="p-3 mb-2 text-danger" name="phoneNumber" component="span"/></div>
+                                    <ErrorMessage className=" text-danger" name="phoneNumber" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
                                     <label>Ngày sinh </label>
@@ -100,7 +110,7 @@ const CustomerCreate = () => {
                                         name="email"
                                     />
                                     <div className="p-2 mb-2">
-                                    <ErrorMessage className="p-3 mb-2 text-danger" name="email" component="span"/></div>
+                                    <ErrorMessage className=" text-danger" name="email" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
                                     <label>Địa chỉ <span>*</span></label>
@@ -112,7 +122,7 @@ const CustomerCreate = () => {
                                         name="address"
                                     />
                                     <div className="p-2 mb-2">
-                                    <ErrorMessage className="p-3 mb-2 text-danger" name="address" component="span"/></div>
+                                    <ErrorMessage className=" text-danger" name="address" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
                                     <label>Ghi chú <span>*</span></label>
@@ -133,10 +143,10 @@ const CustomerCreate = () => {
                                     </div>
                                 </div>
                                 <div className="col-8 mt-3">
-                                    <a
+                                    <Link
+                                        to="/dashboard/customer"
                                         className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
-                                    > Trở về</a
-                                    >
+                                    > Trở về</Link >
                                     <button
                                         className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
                                    type="submit" >Thêm Mới

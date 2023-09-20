@@ -737,7 +737,7 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ff8243;
+  background: grey;
   border-radius: 10px;
 }
 
