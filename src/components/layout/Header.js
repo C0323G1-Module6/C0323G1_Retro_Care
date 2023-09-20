@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 
 const Header = () => {
+  const params = useParams();
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   useEffect(() => {
     getUsername();
@@ -30,6 +32,15 @@ const Header = () => {
     });
     navigate("/home");
   };
+
+  const handleInputChange = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const handleSearch = () => {
+    alert(keyword);
+  };
+
   return (
     <header className="site-header">
       <div className="container">
@@ -58,16 +69,15 @@ const Header = () => {
                 </ul>
               </nav>
               <div className="header-right col-lg-6 d-flex align-items-center">
-                <form
-                  action="/prototype/search/HuyL_searchContent.html"
-                  className="header-search-form for-des"
-                >
+                <form className="header-search-form for-des">
                   <input
                     type="search"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
+                    value={keyword}
+                    onChange={(event) => handleInputChange(event)}
                   />
-                  <button type="submit">
+                  <button type="submit" onClick={(e) => handleSearch(e)}>
                     <CiSearch />
                   </button>
                 </form>
