@@ -11,12 +11,10 @@ import { useState, useEffect } from "react";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import { getReport } from "../../services/report/ReportService";
 import ExcelJS from 'exceljs';
-
 const GeneralReport = () => {
   const [reportName, setReportName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
   
   const [revenue, setRevenue] = useState([]);
   const [profit, setProfit] = useState([]);
@@ -25,11 +23,9 @@ const GeneralReport = () => {
   const [expireMedicine, setExpireMedicine] = useState([]);
   const [medicineNeedMore, setMedicineNeedMore] = useState([]);
   const [saleDiary, setSaleDiary] = useState([]);
-
   useEffect(() => {
     loadDataReport(startDate,endDate,reportName);
   }, [startDate, endDate, reportName]);
-
   const loadDataReport = async (startDate,endDate,reportName) => {
     const result = [];
     switch (reportName) {
@@ -65,7 +61,6 @@ const GeneralReport = () => {
         break;
     }
   };
-
   const exportExcel = (dataArray, sheetName, fileName) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
@@ -104,7 +99,6 @@ const GeneralReport = () => {
       }
     }
   };
-
   return (
     <>
       <Formik
@@ -290,5 +284,4 @@ const GeneralReport = () => {
     </>
   );
 };
-
 export default GeneralReport;

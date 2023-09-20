@@ -28,6 +28,7 @@
     "reactjs-social-login": "^2.6.3",
     "redux-persist": "^6.0.0",
     "redux-saga": "^1.2.3",
+    "rsuite": "^5.40.0",
     "sweetalert2": "^11.7.28",
     "swiper": "^10.2.0",
     "uuid": "^9.0.0",

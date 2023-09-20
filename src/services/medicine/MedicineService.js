@@ -22,25 +22,14 @@ export async function getAllKindOfMedicine() {
   return res.data;
 }
 
-export const findAll = async () => {
+export const findAll = async (page) => {
   try {
     const result = await axios.get(
-      `http://localhost:8080/api/medicine/get-medicine`
+      `http://localhost:8080/api/medicine/get-medicine?page=${page}&size=${5}`
     );
-    return result.data;
+    return result;
   } catch (error) {
     return error;
-  }
-};
-
-export const getListMedicine = async (page, size) => {
-  try {
-    const result = await axios.get(
-      `http://localhost:8080/api/medicine/get-medicine?page=${page}&size=${size}`
-    );
-    return result.data;
-  } catch (error) {
-    console.log(error);
   }
 };
 
@@ -59,7 +48,6 @@ export const searchMedicine = async (searchInMedicine, search, page, limit) => {
     case "searchByNameKindOfMedicine":
       url += `&searchInMedicine=${searchInMedicine}`;
   }
-
   try {
     const result = await axios.get(
       `${url}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}`
@@ -75,7 +63,7 @@ export const deleteMedicine = async (id) => {
     const result = await axios.delete(
       `http://localhost:8080/api/medicine/${id}`
     );
-    return result.data;
+    return result;
   } catch (error) {
     console.log(error);
   }
