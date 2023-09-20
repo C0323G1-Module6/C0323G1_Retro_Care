@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
-import swal from "sweetalert2";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 function MedicineList() {
+    const params = useParams();
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [page, setPage] = useState(0);
@@ -15,6 +16,35 @@ function MedicineList() {
         name: ""
     });
 
+    const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
+    const [searchInput, setSearchInput] = useState("");
+    const [limit, setLimit] = useState(5)
+
+
+    const handleDelete = async () => {
+        swal.fire({
+            title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+            text: selectMedicine.name,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085D6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Đồng ý!",
+        })
+            .then(async (willDelete) => {
+                if (willDelete.isConfirmed) {
+                    await medicineService.deleteMedicine(selectMedicine.id);
+                    swal.fire("Xoá sản phẩm thành công!", "", "success");
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Rất tiếc...',
+                        text: 'Xóa thất bại!'
+                    })
+                }
+                await getListMedicine(page)
+            });
+    };
 
     const getListMedicine = async (page) => {
         const result = await medicineService.findAll(page);
@@ -22,6 +52,11 @@ function MedicineList() {
         setTotalPage(result?.data.totalPages);
     }
 
+    const getListSearchMedicine = async () => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
+        setMedicineList(result?.content);
+        setTotalPage(result?.totalPages);
+    }
 
     const previousPage = () => {
         if (page > 0) {
@@ -44,34 +79,30 @@ function MedicineList() {
         }
     }
 
-    const handleDelete = async () => {
-        swal.fire({
-            title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
-            text: selectMedicine.name,
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085D6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Đồng ý!",
-        })
-            .then(async (willDelete) => {
-                if (willDelete.isConfirmed) {
-                     medicineService.deleteMedicine(selectMedicine.id);
-                     swal.fire("Xoá sản phẩm thành công!", "", "success");
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Rất tiếc...',
-                        text: 'Xóa thất bại!'
-                    })
-                }
-                await getListMedicine(page)
-            });
-    };
+    const handleSearch = async () => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, 5);
+            setMedicineList(result?.content)
+        setPage(0);
+        console.log(result)
+    }
+
+    const handleSearchOption = (e) => {
+        setSearchInMedicine(e.target.value);
+    }
+
+    const handleInput = (e) => {
+        const {value} = e.target;
+        setSearchInput(value);
+        console.log(value)
+    }
 
     useEffect(() => {
         getListMedicine(page);
     }, [page])
+
+    useEffect(() => {
+        getListSearchMedicine()
+    }, [searchInMedicine, searchInput, page, limit])
 
     if (!medicineList) {
         return null;
@@ -87,6 +118,7 @@ function MedicineList() {
 
                         <label>Lọc theo: </label>
                         <select onClick={() => handleShowCondition()}
+                                onChange={(e) => handleSearchOption(e)}
                                 style={{width: '150px', borderRadius: '5px', color: 'blue'}}
                                 id="select" className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
@@ -109,9 +141,11 @@ function MedicineList() {
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
-                               placeholder="Tìm kiếm thuốc..."/>
+                               placeholder="Tìm kiếm thuốc..."
+                               onChange={(e) => handleInput(e)}/>
                         <button className="btn btn-outline-primary"
-                                style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}>
+                                style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}
+                                onClick={() => handleSearch()} value="searchInMedicine">
                             <i className="fa-solid fa-magnifying-glass"></i>
                             Tìm kiếm
                         </button>
