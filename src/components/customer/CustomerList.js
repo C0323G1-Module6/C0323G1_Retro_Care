@@ -101,7 +101,17 @@ function CustomerList() {
     setGroupValue(event.target.value);
     setName(searchValue)
   }
-
+  const handleOptionSearchChange = (e) => {
+    const { value } = e.target;
+    setOptionSearch(+value);
+    setPage(0);
+    setName("");
+    setAddress("");
+    setPhoneNumber("");
+    setCode("");
+    setGroupValue("");
+    setSortItem("");
+  }
   const handleDelete = async () => {
     if (selectedCustomer.id == null) {
       Swal.fire({
@@ -158,19 +168,6 @@ function CustomerList() {
   useEffect(() => {
     loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
   }, [page, name, code, address, phoneNumber, groupValue, sortItem, visible]);
-
-  const handleOptionSearchChange = (e) => {
-    const { value } = e.target;
-    setOptionSearch(+value);
-    setPage(0);
-    setName("");
-    setAddress("");
-    setPhoneNumber("");
-    setCode("");
-    setGroupValue("");
-    setSortItem("");
-    }
-
 
   if (!customers) {
     return <div></div>;
@@ -273,28 +270,28 @@ function CustomerList() {
               <tr key={index} id={index} onClick={() => {
                 setSeletedCustomer({ id: customer?.id, name: customer?.name });
               }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: 'red' } : {}}>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {index + 1}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.code}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.name}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200  text-sm">
                   {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.address}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.phoneNumber}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.customerType}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.note}
                 </td>
               </tr>
