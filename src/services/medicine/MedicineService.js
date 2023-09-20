@@ -1,5 +1,27 @@
 import axios from "axios";
 
+
+export const getAllUnit = async () => {
+  const result=await axios.get("http://localhost:8080/api/unit");
+    return result.data;
+}
+
+export const addMedicine = async (medicine) => {
+  await axios.post("http://localhost:8080/api/medicine",medicine);
+}
+
+export const editMedicine = async (id,medicine) => {
+  await axios.patch(`http://localhost:8080/api/medicine/${id}`,medicine);
+}
+
+export const getMedicineById = async (id) => {
+  await axios.get(`http://localhost:8080/api/medicine/${id}`);
+}
+
+export async function getAllKindOfMedicine() {
+  const res = await axios.get(`http://localhost:8080/api/kindOfMedicine`);
+  return res.data;
+
 export const findAll = async () => {
     try {
         const result = await axios.get(`http://localhost:8080/api/medicine/get-medicine`);
@@ -43,17 +65,6 @@ export const searchMedicine = async (searchInMedicine, search, page, limit) => {
     }
 }
 
-
-
-export const findById = async (id) => {
-    try {
-        const result = await axios.get(`http://localhost:8080/api/medicine/${id}`)
-        return result.data;
-    }catch (error){
-        console.log(error);
-    }
-}
-
 export const deleteMedicine = async (id) => {
     try {
         const result = await axios.delete(`http://localhost:8080/api/medicine/${id}`)
@@ -61,4 +72,5 @@ export const deleteMedicine = async (id) => {
     } catch (error){
         console.log(error);
     }
+
 }
