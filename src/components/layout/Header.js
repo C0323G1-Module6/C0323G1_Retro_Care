@@ -9,7 +9,7 @@ const Header = () => {
     <header className="site-header">
       <div className="container">
         <div className="row">
-          <div className="col-lg-2">
+          <div className="col-lg-2 d-flex align-items-center">
             <div className="header-logo">
               <Link to={"/home"}>
                 <img src={logo} width={160} height={40} alt="Logo" />
@@ -32,14 +32,14 @@ const Header = () => {
                   </li>
                 </ul>
               </nav>
-              <div className="header-right col-lg-6">
+              <div className="header-right col-lg-6 d-flex align-items-center">
                 <form
                   action="/prototype/search/HuyL_searchContent.html"
                   className="header-search-form for-des"
                 >
                   <input
                     type="search"
-                    className="form-input"
+                    className="form-input m-0"
                     placeholder="Tìm kiếm..."
                   />
                   <button type="submit">
