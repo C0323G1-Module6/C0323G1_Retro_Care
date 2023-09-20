@@ -1,11 +1,38 @@
 import {Field, Form, Formik} from "formik";
 import * as Yup from "yup"
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {getAllUnit, addMedicine, getAllKindOfMedicine} from "../../services/medicine/MedicineService";
+import "./MedicineCreate.css";
+import {useNavigate} from "react-router-dom";
 
 export default function MedicineCreate() {
-    const [units,setUnits]=useState([]);
-    const getListUnits = () => {
-      
+    const [units, setUnits] = useState([]);
+    const [kindOfMedicines, setKindOfMedicines] = useState([]);
+    const navigate = useNavigate();
+    const getListUnits = async () => {
+        const result = await getAllUnit();
+        setUnits(result);
+    }
+    const getListKindOfMedicines = async () => {
+        const result = await getAllKindOfMedicine();
+        setKindOfMedicines(result);
+    }
+    useEffect(() => {
+        getListUnits();
+    }, [])
+    useEffect(() => {
+        getListKindOfMedicines();
+    }, [])
+    const add = async (medicine) => {console.log(medicine)
+        const medicine1 = {
+            ...medicine,
+            kindOfMedicineDto: JSON.parse(medicine.kindOfMedicineDto),
+        }
+
+        await addMedicine(medicine1);
+        await navigate("/api/medicine");
+        await alert("Thêm mới thành công");
+
     }
     return (
         <>
@@ -21,19 +48,20 @@ export default function MedicineCreate() {
                     activeElement: "",
                     origin: "",
                     retailProfits: "",
-                    kindOfMedicine: "",
+                    kindOfMedicineDto: "",
                     unitDetailDto: {
                         conversionRate: "",
                         conversionUnit: "",
-                        medicine: "",
                         unit: ""
                     },
-                    imageMedicine: {
-                        imagePath: ""
+                    imageMedicineDto: {
+                        imagePath: "",
                     },
                 }
                 }
                 onSubmit={(values) => {
+                    console.log(values)
+                    add(values)
                 }
                 }>
                 <div className="container-fluid d-flex justify-content-center p-5">
@@ -42,9 +70,7 @@ export default function MedicineCreate() {
                         <Form>
                             <div className="row">
                                 <div className="col-md-6">
-                                    <label className="col-md-4"
-                                    >Mã thuốc<span style={{color: "red"}}> *</span></label
-                                    >
+                                    <label className="col-md-4">Mã thuốc<span style={{color: "red"}}> *</span></label>
                                     <Field
                                         className="col-md-2"
                                         type="text"
@@ -80,32 +106,39 @@ export default function MedicineCreate() {
                                     <label className="col-md-4"
                                     >Nhóm thuốc<span style={{color: "red"}}> *</span></label
                                     >
-                                    <select className="col-md-2" name="kindOfMedicine">
-                                        <option value="">Bổ</option>
-                                    </select>
+                                    <Field as="select" className="col-md-2" name="kindOfMedicineDto">
+                                        <option value="" disabled>Chọn nhóm thuốc</option>
+                                        {
+                                            kindOfMedicines.map((kindOfMedicine) => (
+                                                <option key={kindOfMedicine.id}
+                                                        value={JSON.stringify(kindOfMedicine)}>{kindOfMedicine.name}</option>
+                                            ))
+                                        }
+                                    </Field>
                                 </div>
                             </div>
                             <hr/>
                             <div className="row">
                                 <div className="col-md-6">
-                                    <label className="col-md-4"
-                                    >Đơn vị<span style={{color: "red"}}> *</span></label
-                                    >
-                                    <Field as="select" className="col-md-2" name="unit">
-                                        <option value="">Hộp</option>
-                                        <option value="">Thùng</option>
-                                        <option value="">Vỉ</option>
-                                        <option value="">Bịch</option>
+                                    <label className="col-md-4">Đơn vị<span style={{color: "red"}}> *</span></label>
+                                    <Field as="select" className="col-md-2" name="unitDetailDto.unit">
+                                        <option value="" disabled>Chọn đơn vị</option>
+                                        {units.map((unit) => (
+                                            <option key={unit.id} value={unit.id}>{unit.name}</option>
+                                        ))}
                                     </Field>
                                 </div>
                                 <div className="col-md-6">
                                     <label className="col-md-4"
                                     >ĐVT quy đổi<span style={{color: "red"}}> *</span></label
                                     >
-                                    <Field as="select" className="col-md-2" name="conversionUnit">
-                                        <option value="">Gói</option>
-                                        <option value="">Viên</option>
-                                        <option value="">Lọ</option>
+                                    <Field as="select" className="col-md-2" name="unitDetailDto.conversionUnit">
+                                        <option value="" disabled>Chọn ĐVT quy đổi</option>
+                                        {
+                                            units.map((unit) => (
+                                                <option key={unit.id} value={unit.name}>{unit.name}</option>
+                                            ))
+                                        }
                                     </Field>
                                 </div>
                             </div>
@@ -140,7 +173,7 @@ export default function MedicineCreate() {
                                     <Field
                                         className="col-md-2"
                                         type="text"
-                                        name="conversionRate"
+                                        name="unitDetailDto.conversionRate"
                                         placeholder="10.000"
                                     />
                                 </div>
@@ -160,12 +193,12 @@ export default function MedicineCreate() {
                                     >Xuất xứ<span style={{color: "red"}}> *</span></label
                                     >
                                     <Field as="select" className="col-md-2" name="origin">
-                                        <option value="">Chọn quốc gia</option>
-                                        <option value="">Việt Nam</option>
-                                        <option value="">United States</option>
-                                        <option value="">Canada</option>
-                                        <option value="">United Kingdom</option>
-                                        <option value="">Australia</option>
+                                        <option value="" disabled>Chọn quốc gia</option>
+                                        <option value="Việt Nam">Việt Nam</option>
+                                        <option value="United States">United States</option>
+                                        <option value="Canada">Canada</option>
+                                        <option value="United Kingdom">United Kingdom</option>
+                                        <option value="Australia">Australia</option>
                                     </Field>
                                 </div>
                             </div>
@@ -173,7 +206,7 @@ export default function MedicineCreate() {
                                 <div className="d-flex justify-content-start">
                                     <label className="col-md-2" style={{height: "60%"}} htmlFor="inputGroupFile01">Chọn
                                         ảnh</label>
-                                    <Field type="file" name="imageMedicine"
+                                    <Field type="file" name="imageMedicineDto.imagePath"
                                            className="form-control form-control-sm w-75" id="inputGroupFile01"/>
                                 </div>
                             </div>
@@ -187,15 +220,13 @@ export default function MedicineCreate() {
                                     <p>(<span style={{color: "red"}}>*</span>) Thông tin bắt buộc nhập</p>
                                 </div>
                                 <div className="d-flex justify-content-end">
-                                    <a href="/prototype/product/DaoPTA_ProductList.html">
-                                        <button
-                                            type="button"
-                                            className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
-                                        >
-                                            <i className="fa-solid fa-plus"></i>
-                                            Thêm mới
-                                        </button>
-                                    </a>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
+                                    >
+                                        <i className="fa-solid fa-plus"></i>
+                                        Thêm mới
+                                    </button>
                                     <a href="/prototype/product/DaoPTA_ProductList.html">
                                         <button
                                             type="button"

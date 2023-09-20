@@ -16,3 +16,8 @@ export const editMedicine = async (id,medicine) => {
 export const getMedicineById = async (id) => {
   await axios.get(`http://localhost:8080/api/medicine/${id}`);
 }
+
+export async function getAllKindOfMedicine() {
+  const res = await axios.get(`http://localhost:8080/api/kindOfMedicine`);
+  return res.data;
+}
