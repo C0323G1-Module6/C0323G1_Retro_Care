@@ -22,13 +22,22 @@ import InvoiceList from "./components/invoice/InvoiceList";
 import Retail from "./components/retail/Retail";
 import RetailListPrescriptionList from "./components/retail/RetailListPrescriptionList";
 import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
-
+import GeneralReport from "./components/report/GeneralReport";
+import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
+import MedicineCreate from "./components/medicine/MedicineCreate";
+import MedicineEdit from "./components/medicine/MedicineEdit";
+// import Details from "./components/order/Details";
+import SearchPage from "./components/search/SearchPage";
+// import Cart from "./components/order/Cart";
 function App() {
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      {/* <Route path="/detail/:id" element={<Details />} /> */}
+      <Route path="/search" element={<SearchPage />} />
+      {/* <Route path="/cart/:id" element={<Cart />} /> */}
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
@@ -74,6 +83,16 @@ function App() {
         <Route
           path="/dashboard/retail/prescription-information/:id"
           element={<RetailPrescriptionInformation />}
+        />
+        <Route path="/dashboard/report" element={<GeneralReport />} />
+        <Route
+          path="/dashboard/report/chart"
+          element={<RevenueAndProfitChart />}
+        />
+        <Route path="/dashboard/medicine/create" element={<MedicineCreate />} />
+        <Route
+          path="/dashboard/medicine/update/:id"
+          element={<MedicineEdit />}
         />
       </Route>
     </Routes>

@@ -23,7 +23,7 @@ export const addJwtTokenToLocalStorage = (jwtToken) => {
 export const infoAppUserByJwtToken = () => {
     const jwtToken = localStorage.getItem("JWT");
     if (jwtToken) {
-        const result = jwt_decode(jwtToken);
+        const result = jwt_decode(jwtToken); 
         return result;
     }
 }
