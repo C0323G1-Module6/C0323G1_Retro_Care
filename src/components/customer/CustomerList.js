@@ -161,8 +161,12 @@ function CustomerList() {
 
   const handleOptionSearchChange = (e) => {
     const { value } = e.target;
-    setOptionSearch(+value)
-  }
+    setOptionSearch(+value);
+    setName("");
+    setAddress("");
+    setPhoneNumber("");
+    setCode("");
+    }
 
 
   if (!customers) {
