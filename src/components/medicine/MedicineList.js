@@ -1,20 +1,27 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {findAll, getListMedicine} from "../../services/medicine/MedicineService";
+import {deleteMedicine, findAll, getListMedicine} from "../../services/medicine/MedicineService";
+import swal from "sweetalert2";
 
 function MedicineList() {
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
-    const [searchItem,setSearchItem] = useState()
+    // const [searchItem,setSearchItem] = useState("");
+    // const [searchLimit,setSearchLimit] = useState("");
+    // const [searchInput,setSearchInput] = useState("")
 
-    // const pageSize = 5;
-    //
+    const pageSize = 5;
+
     // const searchName =
     //
     // let resultSearch = document.getElementById("search").value;
-
+// const loadListSearch =()=>{
+//     const resultItem = document.getElementById("searchInMedicine").value;
+//     const resultInput = document.getElementById("searchInput").value;
+//     const resultLimit = document.getElementById("searchLimit").value;
+// }
 
     const getListMedicine = async () => {
         const result = await findAll();
@@ -34,9 +41,27 @@ function MedicineList() {
         }
     }
 
-    const handleSelect = (value) => {
-        setSearchItem(value);
-    }
+    // const handleSelect = (value) => {
+    //     setSearchItem(value);
+    // }
+
+    const handleDelete = async (id) => {
+        swal.fire({
+                title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+                text: "medicineName",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085D6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Đồng ý!",
+    })
+    .then(async (willDelete) => {
+            if (willDelete.isConfirmed) {
+                await deleteMedicine(id);
+                swal.fire("Xoá sản phẩm thành công!","", "success");
+            }
+        });
+    };
 
     useEffect(() => {
         getListMedicine();
@@ -206,6 +231,9 @@ function MedicineList() {
                         </a>
                     </div>
                 </div>
+
+
+
             </div>
         </>
     )
