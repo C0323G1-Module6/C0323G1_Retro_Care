@@ -6,7 +6,7 @@ export const addCustomer = async (customer) => {
   await axios.post(`http://localhost:8080/customers/api/create`, customer);
 }
 export const updateCustomer = async (customer) => {
-  await axios.put(`http://localhost:8080/customers/api/update`, customer);
+  await axios.patch(`http://localhost:8080/customers/api/update/${customer.id}`, customer);
 }
 export const getCustomerCode = async () => {
   const result = await axios.get(`http://localhost:8080/customers/api/dto/create`);
