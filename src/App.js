@@ -10,6 +10,8 @@ import CustomerList from "./components/customer/CustomerList";
 import ListEmployee from "./components/employee/ListEmployee";
 import MedicineList from "./components/medicine/MedicineList";
 import PrescriptionCreate from "./components/prescription/PrescriptionCreate";
+import CustomerCreate from "./components/customer/CustomerCreate";
+import CustomerUpdate from "./components/customer/CustomerUpdate";
 
 function App() {
   return (
@@ -29,6 +31,11 @@ function App() {
           element={<KindOfMedicineList />}
         />
         <Route path="/dashboard/customer" element={<CustomerList />} />
+        <Route path="/dashboard/customer/create" element={<CustomerCreate />} />
+        <Route
+          path="/dashboard/customer/update/:id"
+          element={<CustomerUpdate />}
+        />
         <Route path="/dashboard/employee" element={<ListEmployee />} />
       </Route>
     </Routes>
