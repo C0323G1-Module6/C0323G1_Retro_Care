@@ -162,10 +162,13 @@ function CustomerList() {
   const handleOptionSearchChange = (e) => {
     const { value } = e.target;
     setOptionSearch(+value);
+    setPage(0);
     setName("");
     setAddress("");
     setPhoneNumber("");
     setCode("");
+    setGroupValue("");
+    setSortItem("");
     }
 
 
