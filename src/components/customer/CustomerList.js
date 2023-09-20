@@ -135,7 +135,17 @@ function CustomerList() {
       await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
     });
   };
-
+  const handleEditEvent = () => {
+    if (selectedCustomer.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn khách hàng trước khi thực hiện thao tác này!',
+      })
+    } else {
+      navigate(`/dashboard/customer/update/${selectedCustomer.id}`)
+    }
+  }
   useEffect(() => {
     loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
   }, [page, name, code, address, phoneNumber, groupValue, sortItem, visible]);
@@ -315,7 +325,7 @@ function CustomerList() {
         </Link>
         <button
           className="btn btn-outline-primary"
-          onClick={()=>{navigate(`/dashboard/customer/update/${selectedCustomer.id}`)}}
+          onClick={handleEditEvent}
         >
           <FiEdit className="mx-1" />
           Sửa
