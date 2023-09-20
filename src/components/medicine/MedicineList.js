@@ -5,15 +5,37 @@ import {findAll, getListMedicine} from "../../services/medicine/MedicineService"
 function MedicineList() {
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
-    // const [currentPage, setCurrentPage] = useState(0);
-    // const [totalPage, setTotalPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPage, setTotalPage] = useState(0);
+    const [searchItem,setSearchItem] = useState()
 
     // const pageSize = 5;
+    //
+    // const searchName =
+    //
+    // let resultSearch = document.getElementById("search").value;
+
 
     const getListMedicine = async () => {
         const result = await findAll();
-        // setTotalPage(result.totalPages);
+        setTotalPage(result.totalPages);
         setMedicineList(result.content);
+    }
+
+    const previousPage = () => {
+        if (currentPage > 0) {
+            setCurrentPage((pre) => pre - 1)
+        }
+    }
+
+    const nextPage = () => {
+        if (currentPage < totalPage) {
+            setCurrentPage((pre) => pre + 1)
+        }
+    }
+
+    const handleSelect = (value) => {
+        setSearchItem(value);
     }
 
     useEffect(() => {
@@ -36,9 +58,9 @@ function MedicineList() {
                         <select style={{width: '150px', borderRadius: '5px', color: 'blue'}}
                                 className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
-                            <option value="searchByNameKindOf">Nhóm thuốc</option>
-                            <option value="searchByName">Tên thuốc</option>
-                            <option value="searchByActiveElement">Hoạt chất</option>
+                            <option value="searchByNameKindOfMedicine" >Nhóm thuốc</option>
+                            <option value="searchByName" >Tên thuốc</option>
+                            <option value="searchByActiveElement" >Hoạt chất</option>
                             <option value="4">Giá bán lẻ</option>
                         </select>
 
@@ -99,16 +121,10 @@ function MedicineList() {
                                         Giá nhập
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá sĩ
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         Giá lẻ
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         % CK
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % LN XC
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         %LN XL
@@ -121,16 +137,19 @@ function MedicineList() {
                                 <tbody>
                                 {
                                     medicineList.map((value, key) => (
-                                        <tr key={key}>
+                                        <tr key={key + 1}>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.id}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.code}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.kindOfMedicine.name}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.kindOfMedicineName}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.name}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.activeElement}</td>
-                                            {/*<td className="px-3 py-3 border-b border-gray-200 text-sm">${value.unit.name}</td>*/}
-                                            {/*<td className="px-3 py-3 border-b border-gray-200 text-sm">${value.unitDetail.converSionUnit}</td>*/}
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.unitName}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.conversionUnit}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.quantity}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.price}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.price - ( value.price / (100 + (value.vat + value.retailProfits)) * 100)}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.discount}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.retailProfits}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.vat}</td>
                                         </tr>
                                     ))}
