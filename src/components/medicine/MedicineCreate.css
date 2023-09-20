@@ -1,0 +1,39 @@
+.form-input label {
+    font-weight: bold;
+}
+.row {
+    margin-bottom: 5px;
+}
+
+.form-input {
+    border: 1px solid black;
+    width: 80%;
+    padding: 30px;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+    margin-bottom: 20px;
+}
+
+.row input,
+.row select {
+    margin-bottom: 10px;
+}
+
+.row input {
+    height: 75%;
+}
+
+.row input,
+.row select {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    width: 50%;
+    padding: 5px;
+    right: 5px;
+}
+
+.row textarea {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    width: 74%;
+}

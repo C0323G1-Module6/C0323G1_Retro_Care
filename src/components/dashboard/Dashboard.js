@@ -39,7 +39,7 @@ const Dashboard = () => {
     { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
     { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
     { name: "Nhà cung cấp", link: "/dashboard/supplier", icon: BiGrid },
-    { name: "Nhập kho", link: "/dashboard/warehouse", icon: BiSolidTruck },
+    { name: "Nhập kho", link: "/dashboard/invoice", icon: BiSolidTruck },
   ];
 
   return (
