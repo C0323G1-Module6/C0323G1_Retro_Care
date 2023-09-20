@@ -80,7 +80,7 @@ function CustomerList() {
     }
   }
 
-  const handleSearchEvent = () => { 
+  const handleSearchEvent = () => {
     switch (optionSearch) {
       case 1:
         setName(searchValue);
@@ -145,6 +145,7 @@ function CustomerList() {
               icon: "success",
               timer: 1000,
             });
+            setSeletedCustomer({ id: null, name: "" })
           } else {
             Swal.fire({
               icon: 'error',
@@ -158,6 +159,7 @@ function CustomerList() {
             icon: "warning",
             timer: 1000,
           });
+          setSeletedCustomer({ id: null, name: "" })
         }
         await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
       });
