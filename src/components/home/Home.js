@@ -3,7 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./Home.css";
-import logo from "../../img/logo.jpg";
 import arrow from "../../img/arrow.png";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -14,91 +13,13 @@ import {
   Autoplay,
   EffectCoverflow,
 } from "swiper/modules";
-import { CiSearch } from "react-icons/ci";
-import { FiShoppingCart } from "react-icons/fi";
-import { BsMeta, BsTwitter, BsYoutube, BsInstagram } from "react-icons/bs";
-
-export function AddScript(url) {
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
+import Footer from "../layout/Footer";
+import Header from "../layout/Header";
 
 const Home = () => {
   return (
     <div>
-      <header className="site-header">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-2">
-              <div className="header-logo">
-                <a href="/HuyL_home.html">
-                  <img src={logo} width={160} height={40} alt="Logo" />
-                </a>
-              </div>
-            </div>
-            <div className="col-lg-10">
-              <div className="main-navigation d-flex justify-content-between">
-                <button className="menu-toggle">
-                  <span></span>
-                  <span></span>
-                </button>
-                <nav className="header-menu col-lg-6">
-                  <ul className="menu food-nav-menu">
-                    <li>
-                      <a href="/HuyL_home.html">Trang chủ</a>
-                    </li>
-                    <li>
-                      <a href="#menu">Danh mục</a>
-                    </li>
-                  </ul>
-                </nav>
-                <div className="header-right col-lg-6">
-                  <form
-                    action="/prototype/search/HuyL_searchContent.html"
-                    className="header-search-form for-des"
-                  >
-                    <input
-                      type="search"
-                      className="form-input"
-                      placeholder="Tìm kiếm..."
-                    />
-                    <button type="submit">
-                      <CiSearch />
-                    </button>
-                  </form>
-                  <a
-                    href="/prototype/cart/HanhNLM_cart.html"
-                    className="header-btn header-cart"
-                  >
-                    <FiShoppingCart />
-                    <span className="cart-number">3</span>
-                  </a>
-                  <a
-                    href="prototype/account/NhatNHH_login.html"
-                    className="user"
-                  >
-                    <img
-                      src="https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-                      alt="user-img"
-                      className="user-img"
-                    />
-                    <span className="user-info">Đăng nhập</span>
-
-                    <div className="user-dropdown-list">
-                      <div className="user-dropdown-item">
-                        <i className="bx bx-log-out-circle"></i>
-                        <div className="dropdown-text">Đăng xuất</div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Header />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
@@ -788,114 +709,7 @@ const Home = () => {
           </div>
         </section>
       </div>
-
-      <footer className="site-footer" id="contact">
-        <div className="top-footer pt-5">
-          <div className="sec-wp">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4">
-                  <div className="footer-info">
-                    <div className="footer-logo">
-                      <a href="index.html">
-                        <img src="logo.jpg" alt="" />
-                      </a>
-                    </div>
-                    <p>Liên hệ với chúng tôi</p>
-                    <div className="social-icon">
-                      <ul>
-                        <li>
-                          <a href="#">
-                            <BsMeta />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsInstagram />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsTwitter />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsYoutube />
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-8">
-                  <div className="footer-flex-box">
-                    <div className="footer-menu">
-                      <h3 className="h3-title">Danh mục</h3>
-                      <ul className="column-2">
-                        <li>
-                          <a href="#home">Dược phẩm</a>
-                        </li>
-                        <li>
-                          <a href="#about">Thực phẩm chức năng</a>
-                        </li>
-                        <li>
-                          <a href="#menu">Chăm sóc sức khoẻ</a>
-                        </li>
-                        <li>
-                          <a href="#gallery">Chăm sóc da</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="footer-menu food-nav-menu">
-                      <h3 className="h3-title">Liên kết</h3>
-                      <ul className="column-2">
-                        <li>
-                          <a href="#about">Trang chủ</a>
-                        </li>
-                        <li>
-                          <a href="#blog">Blog</a>
-                        </li>
-                        <li>
-                          <a href="#contact">Contact</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="footer-menu">
-                      <h3 className="h3-title">Về chúng tôi</h3>
-                      <ul>
-                        <li>
-                          <a href="#">Chính sách</a>
-                        </li>
-                        <li>
-                          <a href="#">Chăm sóc khách hàng</a>
-                        </li>
-                        <li>
-                          <a href="#">Quy định giao hàng</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bottom-footer">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 text-center">
-                <div className="copyright-text">
-                  <p>
-                    Copyright &copy; 2023
-                    <span className="name"> C0323G1 </span>CodeGym Đà Nẵng.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };

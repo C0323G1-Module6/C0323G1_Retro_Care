@@ -1,41 +1,62 @@
 import {Field, Form, Formik, ErrorMessage} from "formik";
 import {useEffect, useState} from "react";
 import * as Yup from "yup";
-import {useNavigate} from "react-router-dom";
+import "./CustomerCreate.css";
+import { Link, useNavigate } from "react-router-dom";
 import {addCustomer, getCustomerCode} from "../../services/customer/CustomerService";
+import Swal from "sweetalert2";
 
 const CustomerCreate = () => {
     const navigate = useNavigate();
-    const [customerCode, setCustomerCode] = useState();
-    const getCodeCustomer = async () => {
+    const [customerCode, setCustomerCode] = useState("");
+    useEffect(
+        () => {
+            getCode()
+        }, []
+    )
+    const getCode = async () => {
         const result = await getCustomerCode();
+        setCustomerCode(result.code);
+        console.log(result.code);
     }
-    const handleSubmit = async (values,setErrors) => {
+    const handleSubmit = async (value, setErrors) => {
         try {
-            const result = await addCustomer(values);
-            navigate("/");
+            const result = await addCustomer(value);
+            Swal.fire(
+                'Thêm mới thành công !',
+                'khách hàng'+value.name +'đã được thêm mới!',
+                'success'
+            );
+            navigate("/dashboard/customer");
         } catch (err) {
             console.log(err);
             if (err.response.data) {
                 setErrors(err.response.data);
             }
+            if (err.response.status === 406) {
+                console.log(err);
+                setErrors(err.response.data);
+            }
         }
+    }
+    if (customerCode == "") {
+        return null;
     }
     return (
         <>
-            <Formik initialValues={{
-                code : "",
-                name : "",
-                phoneNumber : "",
-                birthDay : "",
-                email : "",
-                address : "",
-                note : ""
+            <div className="d-flex justify-content-center w-100">
+                <Formik initialValues={{
+                    code: customerCode,
+                    name: "",
+                    phoneNumber: "",
+                    birthday: "",
+                    email: "",
+                    address: "",
+                    note: ""
+                }}
+                        onSubmit={(values, {setErrors}) => handleSubmit(values, setErrors)}
 
-            }}
-            onSubmit={(values,{setErrors})=> handleSubmit(values,setErrors)}
-            >
-                <div className="d-flex justify-content-center">
+                >
                     <Form>
                         <fieldset className="form-input shadow">
                             <legend className="float-none w-auto px-3">
@@ -44,80 +65,77 @@ const CustomerCreate = () => {
                             <div className="row p-2">
 
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Mã khách hàng <span>*</span>{" "}
-                                    </label>
+                                    <label>Mã khách hàng <span>*</span> </label>
                                 </div>
                                 <div className="col-8">
-                                    <Field
-                                        className="form-control mt-2"
-                                        disabled=""
-                                        defaultValue="KH001"
-                                    />
-                                    <small className="p-3 mb-2 text-danger"> </small>
+                                    <Field className="form-control mt-2" disabled name="code"/>
+                                    <div className="p-2 mb-2">
+                                        <ErrorMessage className=" text-danger" name="code" component="span"/>
+                                    </div>
                                 </div>
+
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Tên khách hàng <span>*</span>{" "}
-                                    </label>
+                                    <label>Tên khách hàng <span>*</span> </label>
                                 </div>
                                 <div className="col-8">
-                                    <Field className="form-control mt-2 border border-dark" type="text"/>
-                                    <ErrorMessage name="name" style={{ color: "red", marginLeft: "27%", paddingBottom: 10 }} />
+                                    <Field className="form-control mt-2 border border-dark" name="name" type="text"/>
+                                    <div className="p-2 mb-2">
+                                    <ErrorMessage className=" text-danger" name="name" component="span"/></div>
                                 </div>
+
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Số điện thoại <span>*</span>
-                                    </label>
+                                    <label>Số điện thoại <span>*</span></label>
                                 </div>
                                 <div className="col-8">
-                                    <Field className="form-control mt-2 border border-dark" type="text"/>
-                                    <small className="p-3 mb-2 text-danger">Error</small>
+                                    <Field className="form-control mt-2 border border-dark" name="phoneNumber" type="text"/>
+                                    <div className="p-2 mb-2">
+                                    <ErrorMessage className=" text-danger" name="phoneNumber" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
                                     <label>Ngày sinh </label>
                                 </div>
                                 <div className="col-8">
-                                    <Field className="form-control mt-2 border border-dark" type="date"/>
-                                    <small className="p-3 mb-2 text-danger">Error</small>
+                                    <Field className="form-control mt-2 border border-dark" name="birthday" type="date"/>
+                                    <div className="p-2 mb-2">
+                                        <ErrorMessage className=" text-danger" name="birthday" component="span"/>
+                                    </div>
                                 </div>
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Địa chỉ email <span>*</span>
-                                    </label>
+                                    <label>Địa chỉ email <span>*</span></label>
                                 </div>
                                 <div className="col-8">
                                     <Field
                                         className="form-control mt-2 border border-dark"
                                         type="email"
+                                        name="email"
                                     />
-                                    <small className="p-3 mb-2 text-danger">Error</small>
+                                    <div className="p-2 mb-2">
+                                    <ErrorMessage className=" text-danger" name="email" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Địa chỉ <span>*</span>
-                                    </label>
+                                    <label>Địa chỉ <span>*</span></label>
                                 </div>
                                 <div className="col-8">
                                     <Field
                                         className="form-control mt-2 border border-dark"
                                         as="textarea"
-                                        defaultValue={""}
+                                        name="address"
                                     />
-                                    <small className="p-3 mb-2 text-danger">Error</small>
+                                    <div className="p-2 mb-2">
+                                    <ErrorMessage className=" text-danger" name="address" component="span"/></div>
                                 </div>
                                 <div className="col-4 p-2">
-                                    <label>
-                                        Ghi chú <span>*</span>
-                                    </label>
+                                    <label>Ghi chú <span>*</span></label>
                                 </div>
                                 <div className="col-8">
                                     <Field
                                         className="form-control mt-2 border border-dark"
                                         as="textarea"
-                                        defaultValue={""}
+                                        name="note"
                                     />
-                                    <small className="p-3 mb-2 text-danger">Error</small>
+                                    <div className="p-2 mb-2">
+                                        <ErrorMessage className=" text-danger" name="note" component="span"/>
+                                    </div>
                                 </div>
                                 <div className="col-4 p-2 mt-3">
                                     <div className="float-start">
@@ -125,23 +143,24 @@ const CustomerCreate = () => {
                                     </div>
                                 </div>
                                 <div className="col-8 mt-3">
-                                    <a
-                                        href="/retro_care/prototype/customer/QuyenHT_CustomerList.html"
+                                    <Link
+                                        to="/dashboard/customer"
                                         className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
-                                    >
-                                        <i className="fa-solid fa-rotate-left"/> Trở về
-                                    </a>
-                                    <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
-                                        <i className="fa-solid fa-plus"/> Thêm Mới
+                                    > Trở về</Link >
+                                    <button
+                                        className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
+                                   type="submit" >Thêm Mới
                                     </button>
                                 </div>
                             </div>
                         </fieldset>
-                        <div className="form-btn"/>
+                        <div className="form-btn"></div>
                     </Form>
-                </div>
+                </Formik>
 
-            </Formik>
+            </div>
+
         </>
     )
 }
+export default CustomerCreate;

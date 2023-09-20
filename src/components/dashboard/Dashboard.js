@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import "./Dashboard.css";
 import logo from "../../img/logo.jpg";
-import { BiMenu, BiSolidReport, BiSolidTruck, BiLogOut } from "react-icons/bi";
+import {
+  BiMenu,
+  BiSolidReport,
+  BiSolidTruck,
+  BiLogOut,
+  BiGrid,
+} from "react-icons/bi";
 import { AiOutlineAreaChart } from "react-icons/ai";
-import { GiMedicines, GiHumanTarget } from "react-icons/gi";
+import { GiMedicines, GiHumanTarget, GiMedicinePills } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
+import { TbReportMedical } from "react-icons/tb";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -18,6 +25,21 @@ const Dashboard = () => {
   const menus = [
     { name: "Báo cáo", link: "/dashboard/report", icon: AiOutlineAreaChart },
     { name: "Khách hàng", link: "/dashboard/customer", icon: GiHumanTarget },
+    { name: "Thuốc", link: "/dashboard/medicine", icon: GiMedicines },
+    {
+      name: "Nhóm thuốc",
+      link: "/dashboard/kind-of-medicine",
+      icon: GiMedicinePills,
+    },
+    {
+      name: "Toa thuốc",
+      link: "/dashboard/prescription",
+      icon: TbReportMedical,
+    },
+    { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
+    { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
+    { name: "Nhà cung cấp", link: "/dashboard/supplier", icon: BiGrid },
+    { name: "Nhập kho", link: "/dashboard/warehouse", icon: BiSolidTruck },
   ];
 
   return (
@@ -25,7 +47,9 @@ const Dashboard = () => {
       <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
         <div className="logo-details">
           <div className="logo_name">
-            <img src={logo} width={160} height={30} alt="Logo" />
+            <Link to={"/home"}>
+              <img src={logo} width={160} height={30} alt="Logo" />
+            </Link>
           </div>
           <BiMenu
             color="white"
@@ -46,52 +70,11 @@ const Dashboard = () => {
               <span className="tooltip">{menu?.name}</span>
             </li>
           ))}
-          <li>
-            <a href="#">
-              <AiOutlineAreaChart className="icon" />
-              <span class="links_name">Báo cáo</span>
-            </a>
-            <span class="tooltip">Báo cáo</span>
-          </li>
-          <li>
-            <a href="#">
-              <GiMedicines className="icon" />
-              <span class="links_name">Thuốc</span>
-            </a>
-            <span class="tooltip">Thuốc</span>
-          </li>
-          <li>
-            <a href="#">
-              <IoIosPeople className="icon" />
-              <span class="links_name">Nhân viên</span>
-            </a>
-            <span class="tooltip">Nhân viên</span>
-          </li>
-          <li>
-            <a href="#">
-              <GiHumanTarget className="icon" />
-              <span class="links_name">Khách hàng</span>
-            </a>
-            <span class="tooltip">Khách hàng</span>
-          </li>
-          <li>
-            <a href="#">
-              <BiSolidReport className="icon" />
-              <span class="links_name">Bán lẻ</span>
-            </a>
-            <span class="tooltip">Bán lẻ</span>
-          </li>
-          <li>
-            <a href="#">
-              <BiSolidTruck className="icon" />
-              <span class="links_name">Nhập kho</span>
-            </a>
-            <span class="tooltip">Nhập kho</span>
-          </li>
-
           <li class="profile">
             <div class="profile-details">Username</div>
-            <BiLogOut color="white" id="log_out" />
+            <Link id="log_out" to={"/home"}>
+              <BiLogOut color="white" size={30} />
+            </Link>
           </li>
         </ul>
       </div>
