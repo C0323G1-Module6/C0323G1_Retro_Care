@@ -22,7 +22,6 @@ import InvoiceList from "./components/invoice/InvoiceList";
 import Retail from "./components/retail/Retail";
 import RetailListPrescriptionList from "./components/retail/RetailListPrescriptionList";
 import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
-
 function App() {
   return (
     <Routes>
@@ -79,5 +78,4 @@ function App() {
     </Routes>
   );
 }
-
 export default App;
