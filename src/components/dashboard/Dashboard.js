@@ -11,6 +11,7 @@ import {
 import { AiOutlineAreaChart } from "react-icons/ai";
 import { GiMedicines, GiHumanTarget, GiMedicinePills } from "react-icons/gi";
 import { IoIosPeople } from "react-icons/io";
+import { TbReportMedical } from "react-icons/tb";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 
@@ -29,6 +30,11 @@ const Dashboard = () => {
       name: "Nhóm thuốc",
       link: "/dashboard/kind-of-medicine",
       icon: GiMedicinePills,
+    },
+    {
+      name: "Toa thuốc",
+      link: "/dashboard/prescription",
+      icon: TbReportMedical,
     },
     { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
     { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
@@ -52,7 +58,7 @@ const Dashboard = () => {
             onClick={toggleSidebar}
           ></BiMenu>
         </div>
-        <ul class="nav-list">
+        <ul className="nav-list">
           {menus?.map((menu, i) => (
             <li key={i}>
               <Link className="link" to={menu?.link}>
@@ -64,15 +70,15 @@ const Dashboard = () => {
               <span className="tooltip">{menu?.name}</span>
             </li>
           ))}
-          <li class="profile">
-            <div class="profile-details">Username</div>
+          <li className="profile">
+            <div className="profile-details">Username</div>
             <Link id="log_out" to={"/home"}>
               <BiLogOut color="white" size={30} />
             </Link>
           </li>
         </ul>
       </div>
-      <section class="home-section overflow-hidden pt-5">
+      <section className="home-section overflow-hidden pt-5">
         <Outlet />
       </section>
     </>
