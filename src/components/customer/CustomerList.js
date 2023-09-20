@@ -8,12 +8,15 @@ import {
   AiOutlineDoubleRight,
 } from "react-icons/ai";
 import * as customerService from '../../services/customer/CustomerService';
+import Swal from 'sweetalert2';
+import {format , parseISO } from "date-fns";
 
 function CustomerList() {
   const navigate = useNavigate();
 
   const [customers, setCustomers] = useState([]);
-  const [searchItem, setSearchItem] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+  const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -21,14 +24,27 @@ function CustomerList() {
   const [sortItem, setSortItem] = useState("");
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
+  const [selectedCustomer, setSeletedCustomer] = useState({
+    id: null,
+    name: ""
+  });
 
   const [optionSearch, setOptionSearch] = useState();
 
-  const loadCustomerList = async (page, searchItem, code, address, phoneNumber, groupValue, sortItem) => {
-    const result = await customerService.getAllCustomers(page, searchItem, code, address, phoneNumber, groupValue, sortItem);
-    console.log(result);
-    setCustomers(result.data.content);
-    setTotalPage(result.data.totalPages);
+  const loadCustomerList = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
+    const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem);
+    if (result?.status == 200) {
+      setCustomers(result?.data.content);
+      setTotalPage(result?.data.totalPages);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Không tin bạn nhập không tồn tại!',
+      })
+      setSearchValue("");
+    }
+
   }
 
   const previousPage = () => {
@@ -42,33 +58,69 @@ function CustomerList() {
       setPage((pre) => pre + 1)
     }
   }
-
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      handleSearchEvent();
+    }
+  }
   const handleSearchEvent = () => {
-    let searchValue = document.getElementById('search').value;
+    setSearchValue(document.getElementById('search').value);
     switch (optionSearch) {
-      case 1:
-        setSearchItem(searchValue);
+      case '1':
+        setName(searchValue);
         break;
-      case 2:
+      case '2':
         // Xử lý lọc theo nhóm
         break;
-      case 3:
+      case '3':
         setAddress(searchValue);
         break;
-      case 4:
+      case '4':
         setPhoneNumber(searchValue);
         break;
       default:
         setCode(searchValue);
         break;
-
     }
-
   }
 
+  const handleSortEvent = (event) => {
+    setSortItem(event.target.value);
+  }
+
+  const handleDelete = async () => {
+    Swal.fire({
+      title: "Xóa khách hàng",
+      text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: "Đúng vậy",
+      icon: "question",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        console.log(selectedCustomer);
+        const response = await customerService.deleteCustomer(selectedCustomer.id);
+        if (response?.status === 200) {
+          Swal.fire({
+            text: "Xóa thành công! ",
+            icon: "success",
+            timer: 1500,
+          });
+        }
+      } else {
+        Swal.fire({
+          text: "Không ",
+          icon: "warning",
+          timer: 1500,
+        });
+      }
+      await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+    });
+  };
+
   useEffect(() => {
-    loadCustomerList(page, searchItem, code, address, phoneNumber, groupValue, sortItem);
-  }, [page, searchItem, code, address, phoneNumber, groupValue, sortItem]);
+    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+  }, [page, name, code, address, phoneNumber, groupValue, sortItem]);
 
   if (!customers) {
     return <div></div>;
@@ -85,13 +137,13 @@ function CustomerList() {
         <div className="col-7 col-search">
           <label className="m-1">Lọc theo: </label>
           <div className="btn-group">
-              <select name='optionSearch' value={optionSearch} onChange={(e)=>setOptionSearch(e.target.value)} className="form-select m-1 ">
-                <option selected> Mã khách hàng</option>
-                <option value={1}>Tên khách hàng</option>
-                <option value={2}>Nhóm khách hàng</option>
-                <option value={3}>Địa chỉ</option>
-                <option value={4}>Số điện thoại</option>
-              </select>
+            <select name='optionSearch' defaultValue={0} onChange={(e) => setOptionSearch(e.target.value)} className="form-select m-1 ">
+              <option value={0}> Mã khách hàng</option>
+              <option value={1}>Tên khách hàng</option>
+              <option value={2}>Nhóm khách hàng</option>
+              <option value={3}>Địa chỉ</option>
+              <option value={4}>Số điện thoại</option>
+            </select>
           </div>
           <input
             style={{
@@ -103,9 +155,9 @@ function CustomerList() {
             placeholder="Tìm kiếm khách hàng"
             className="bg-white align-middle appearance-none"
             aria-describedby="button-addon"
-            id="search"
+            id="search" onKeyDown={handleKeyDown}
           />
-          <button onClick={() => handleSearchEvent()}
+          <button onClick={()=>handleSearchEvent()}
             className="btn btn-outline-primary"
             style={{ marginRight: "auto", width: "auto", marginLeft: 5 }}
             id="button-addon">
@@ -116,8 +168,8 @@ function CustomerList() {
         <div className="col-5 d-flex align-items-center justify-content-end">
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-          <select as = 'select' name='sortIterm' className="form-select m-1 ">
-              <option selected value={"group"}>Nhóm khách hàng</option>
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 ">
+              <option value={"group"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
             </select>
@@ -133,7 +185,6 @@ function CustomerList() {
           <thead>
             <tr
               style={{ background: "#0d6efd", color: "#ffffff" }}
-              contentEditable="true"
             >
               <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 STT
@@ -163,7 +214,9 @@ function CustomerList() {
           </thead>
           <tbody className="bg-light">
             {customers.map((customer, index) => (
-              <tr key={customer?.index}>
+              <tr key={index} onClick={() => {
+                setSeletedCustomer({ id: customer?.id, name: customer?.name });
+              }}>
                 <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                   {index + 1}
                 </td>
@@ -174,7 +227,7 @@ function CustomerList() {
                   {customer?.name}
                 </td>
                 <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                  {customer?.birthDay}
+                {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
                 </td>
                 <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                   {customer?.address}
@@ -226,23 +279,20 @@ function CustomerList() {
       <div className="d-flex align-items-center justify-content-end gap-3">
         <a
           className="btn btn-outline-primary"
-          href="ThanhKN_CreatePrescription.html"
+          href="#"
         >
           <FaPlus className="mx-1" />
           Thêm mới
         </a>
         <a
           className="btn btn-outline-primary"
-          href="ThanhKN_EditPrescription.html"
+          href="#"
         >
           <FiEdit className="mx-1" />
           Sửa
         </a>
-        <button
-          type="button"
+        <button onClick={handleDelete}
           className="btn btn-outline-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
         >
           <FaRegTrashAlt className="mx-1" />
           Xoá

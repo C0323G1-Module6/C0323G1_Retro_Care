@@ -33,9 +33,9 @@ export const getCodeCustomer = async () => {
 
 // QuyenHT
 
-export const getAllCustomers = async (page, searchItem, code, address, phoneNumber, groupValue, sortItem) => {
+export const getAllCustomers = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
   try {
-    const result = await axios.get(`http://localhost:8080/customers/api/list?page=${page}&searchInput=${searchItem}&code=${code}&address=${address}&phoneNumber=${phoneNumber}&groupValue=${groupValue}&sortItem=${sortItem}`);
+    const result = await axios.get(`http://localhost:8080/customers/api/list?page=${page}&name=${name}&code=${code}&address=${address}&phoneNumber=${phoneNumber}&groupValue=${groupValue}&sortItem=${sortItem}`);
     return result;
   } catch (e) {
     console.log(e);
