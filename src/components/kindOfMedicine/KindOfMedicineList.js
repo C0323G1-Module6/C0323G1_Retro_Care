@@ -6,41 +6,96 @@ import {
     AiOutlineDoubleLeft,
     AiOutlineDoubleRight,
 } from "react-icons/ai";
-import { getList, pagination } from '../../services/kindOfMedicine/KindOfMedicineService';
+import { deleteKindOfMedicine, getList, pagination } from '../../services/kindOfMedicine/KindOfMedicineService';
+import { Form, Formik } from 'formik';
+import Swal from 'sweetalert2';
 
 function KindOfMedicineList(props) {
     const [kindOfMedicines, setKindOfMedicine] = useState([]);
     const [searchCodes, setSearchCode] = useState("");
     const [searchNames, setSearchName] = useState("");
     const [page, setPage] = useState(0);
+    const [totalPage, setTotalPage] = useState();
+    const [choseRow, setChoseRow] = useState([]);
+    const [dataId, setDataid] = useState({
+        id: null,
+        name: ""
+    })
 
+    const choseDelete = (kindOfMedicine) => {
 
+        setDataid({ id: kindOfMedicine.id, name: kindOfMedicine.name })
+        const checkExists = choseRow.some(choice => choice === kindOfMedicine.id);
+        if (checkExists) {
+            const choseRowNew = choseRow.filter(choice => choice !== kindOfMedicine.id)
+            setChoseRow(choseRowNew);
+        } else {
+            setChoseRow([kindOfMedicine.id])
+        }
+
+        // console.log(kindOfMedicine);
+    }
+    // delete
+
+    const handleDelete = async () => {
+        // const id = choseRow[0];
+        // console.log(id);
+        console.log(dataId)
+        Swal.fire({
+            title: "Delete Confirmation",
+            text: "Do you want to delete: " + dataId.name,
+            showCancelButton: true,
+            showConfirmButton: true,
+            confirmButtonText: "Yes, delete it",
+            icon: "question",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                const response = await deleteKindOfMedicine(dataId.id);
+                const data = await pagination(page, searchCodes, searchNames);
+                setKindOfMedicine(data.content);
+                if (response?.status === 200) {
+                    Swal.fire({
+                        text: "Delete successfully ",
+                        icon: "success",
+                        timer: 1500,
+                    });
+                }
+                await showList();
+            } else {
+                Swal.fire({
+                    text: "You choose cancel ",
+                    icon: "warning",
+                    timer: 1500,
+                });
+            }
+        });
+    };
+    // delete
 
     const showList = async () => {
-        
         const data = await pagination(page, searchCodes, searchNames);
-       
+        console.log(data.totalPages);
+        setTotalPage(data.totalPages)
         setKindOfMedicine(data.content);
     }
+
 
     const handleButtonSearch = () => {
         setSearchCode(document.getElementById('medicineCode').value)
         setSearchName(document.getElementById('medicineName').value)
-      
     }
+
 
     const handlePrevPage = () => {
         const previousPages = page - 1;
         if (page > 0) {
-            setPage (previousPages)
+            setPage(previousPages)
         }
     }
+
+
     const handleNextPage = async () => {
-        const data = await getList();
-        console.log(data.length);
-        
-        if (page < Math.ceil((data.length -2)/ 5)) {
-            console.log(page);
+        if (page < totalPage - 1) {
             const nextPage = page + 1;
             setPage(nextPage);
         }
@@ -50,6 +105,7 @@ function KindOfMedicineList(props) {
     useEffect(() => {
         showList()
     }, [page, searchCodes, searchNames])
+
     return (
         <div>
             <div className="container">
@@ -94,8 +150,16 @@ function KindOfMedicineList(props) {
                             </thead>
                             <tbody>
                                 {kindOfMedicines ? (kindOfMedicines.map((kindOfMedicine, index) => (
-                                    <tr key={kindOfMedicine.id}>
-                                        <td>{ kindOfMedicine.id}</td>
+                                    <tr
+                                        key={kindOfMedicine.id}
+                                        onClick={() => {
+                                            setDataid({ id: kindOfMedicine.id, name: kindOfMedicine.name })
+                                            choseDelete(kindOfMedicine)
+                                        }
+                                        }
+                                        style={choseRow.some(choice => choice === kindOfMedicine.id) ? { backgroundColor: 'red' } : {}}
+                                    >
+                                        <td>{kindOfMedicine.id}</td>
                                         <td>{kindOfMedicine.code}</td>
                                         <td>{kindOfMedicine.name}</td>
                                     </tr>
@@ -122,7 +186,7 @@ function KindOfMedicineList(props) {
                                         borderRadius: 5
                                     }}
                                 >
-                                    1/5
+                                    {page + 1}/{totalPage}
                                 </div>
                                 <button className="btn btn-primary" style={{ margin: 5 }} onClick={handleNextPage}>
                                     <AiOutlineDoubleRight />
@@ -140,39 +204,44 @@ function KindOfMedicineList(props) {
                         </div>
                     </div>
                     {/* fieldset */}
-                    <div className="row justify-content-center m-3 h-10">
-                        <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
-                            {/* mã thuốc */}
-                            <div className=" m-5">
-                                <label id="pharmacyCode" htmlFor="" className="form-label">
-                                    Mã nhóm thuốc
-                                </label>
-                                <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="form-control"
-                                    placeholder=""
-                                    aria-describedby="helpId"
-                                />
-                            </div>
-                            {/* nhóm thuốc */}
-                            <div className=" m-5">
-                                <label id="pharmacyName" htmlFor="" className="form-label">
-                                    Tên nhóm thuốc
-                                </label>
-                                <input
-                                    type="text"
-                                    name=""
-                                    id=""
-                                    className="form-control"
-                                    placeholder=""
-                                    aria-describedby="helpId"
-                                />
-                            </div>
-                            <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
-                        </fieldset>
-                    </div>
+                    <Formik>
+                        <div className="row justify-content-center m-3 h-10">
+                            <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
+                                <Form>
+                                {/* mã thuốc */}
+                                <div className=" m-5">
+                                    <label id="pharmacyCode" htmlFor="" className="form-label">
+                                        Mã nhóm thuốc
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name=""
+                                        id=""
+                                        className="form-control"
+                                        placeholder=""
+                                        aria-describedby="helpId"
+                                    />
+                                </div>
+                                {/* nhóm thuốc */}
+                                <div className=" m-5">
+                                    <label id="pharmacyName" htmlFor="" className="form-label">
+                                        Tên nhóm thuốc
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name=""
+                                        id=""
+                                        className="form-control"
+                                        placeholder=""
+                                        aria-describedby="helpId"
+                                    />
+                                </div>
+                                 </Form>
+                                <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
+                            </fieldset>
+                        </div>
+                    </Formik>
+
                     {/* action */}
                     <div className="d-flex align-items-center justify-content-end gap-3">
                         {/* add */}
@@ -185,12 +254,13 @@ function KindOfMedicineList(props) {
                             <FiEdit className="mx-1" />
                             Sửa
                         </button>
+                        {/* delete */}
                         <button
                             type="button"
                             className="btn btn-outline-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal"
-                            onclick="clear()"
+                            // data-bs-toggle="modal"
+                            // data-bs-target="#exampleModal"
+                            onClick={() => handleDelete()}
                         >
                             <i className="fa-solid fa-trash" />
                             Xoá
