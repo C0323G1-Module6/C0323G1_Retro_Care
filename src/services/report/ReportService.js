@@ -1,38 +1,26 @@
 import axios from "axios";
 
-export const getReport = async (reportName, validateDto) => {
-  try {
+export const getReport = async (startDate,endDate,reportName) => {
     const result = await axios.get(
-      "http://localhost:8080/api/report/general?reportName=" + reportName,
-      validateDto
+      `http://localhost:8080/api/report/general/?startDate=${startDate}&endDate=${endDate}&reportName=${reportName}`
     );
     console.log(result);
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
+    return result.data;
 };
 
-export const getRevenue = async (validateDto) => {
-  try {
+export const getRevenue = async (startDate,endDate) => {
+
     const result = await axios.get(
-      "http://localhost:8080/api/report/chart/revenue",
-      validateDto
+      `http://localhost:8080/api/report/chart/revenue/?startDate=${startDate}&endDate=${endDate}`
     );
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
+    return result.data;
 };
 
-export const getProfit = async (validateDto) => {
-  try {
+export const getProfit = async (startDate,endDate) => {
+
     const result = await axios.get(
-      "http://localhost:8080/api/report/chart/profit",
-      validateDto
+      `http://localhost:8080/api/report/chart/profit/?startDate=${startDate}&endDate=${endDate}`
     );
-    return result;
-  } catch (e) {
-    console.log(e);
-  }
+    console.log(result.data);
+    return result.data;
 };
