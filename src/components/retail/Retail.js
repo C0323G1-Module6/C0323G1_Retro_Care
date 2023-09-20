@@ -7,7 +7,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { format } from 'date-fns';
-import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart } from "../../services/retail/RetailService";
+import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell } from "../../services/retail/RetailService";
 
 export default function Retail() {
     const [inputMedicine, setInputMedicine] = useState("");
@@ -20,9 +20,9 @@ export default function Retail() {
     const [idCartDetail, setIdCartDetail] = useState(0);
     const [code, setCode] = useState("");
     const [date, setDate] = useState("");
-    const app_user_id = 1;
+    const app_user_id = 2;
     const navigate = useNavigate();
-    
+
 
     useEffect(() => {
         getCart();
@@ -136,8 +136,19 @@ export default function Retail() {
         }
     };
 
-
-
+    const pay = async () => {
+        if (customer.app_user_id === 0) {
+            alert("chua chon khach")
+            return;
+        }
+        if (listCart.length === 0) {
+            alert("chua co gi")
+            return;
+        }
+        const res = await payWhenSell(customer.app_user_id, app_user_id,code,note);
+        await getCart();
+        setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString());
+    }
 
 
     return (
@@ -261,7 +272,7 @@ export default function Retail() {
                         <b>{sum} Đồng</b>
                     </div>
                     <div className="col-5">
-                        <button className="btn btn-outline-primary">Thanh toán</button>
+                        <button className="btn btn-outline-primary" onClick={() => pay()}>Thanh toán</button>
                         <a
                             type="button"
                             onClick={() => openSwal()}
