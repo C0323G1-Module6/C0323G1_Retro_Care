@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export async function getListSupplier(page) {
-    const resolve = await axios.get(`http://localhost:8080/supplier?page=${page}`)
+export async function getListSupplier(page,code,name,phoneNumber,address,sortBy) {
+    const resolve = await axios.get(`http://localhost:8080/supplier?page=${page}&&code=${code}&&name=${name}&&phoneNumber=${phoneNumber}&&address=${address}&&sortBy=${sortBy}`)
     return resolve.data;
 }
 
@@ -18,8 +18,8 @@ export async function createSupplier(supplier) {
     const resolve = await axios.post(`http://localhost:8080/supplier/create-supplier`, supplier)
     return resolve.data;
 }
-export async function updateSupplierById(id) {
-    const resolve = await axios.patch(`http://localhost:8080/supplier/update-supplier/${id}`)
+export async function updateSupplierById(id,supplier) {
+    const resolve = await axios.patch(`http://localhost:8080/supplier/update-supplier/${id}`,supplier)
     return resolve.data;
 }
 export async function deleteSupplierById(id) {
