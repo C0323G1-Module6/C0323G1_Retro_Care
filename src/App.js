@@ -13,6 +13,7 @@ import PrescriptionCreate from "./components/prescription/PrescriptionCreate";
 import CustomerCreate from "./components/customer/CustomerCreate";
 import CustomerUpdate from "./components/customer/CustomerUpdate";
 import CreateEmployee from "./components/employee/CreateEmployee";
+import UpdationEmployee from "./components/employee/UpdationEmployee";
 
 function App() {
   return (
@@ -39,6 +40,10 @@ function App() {
         />
         <Route path="/dashboard/employee" element={<ListEmployee />} />
         <Route path="/dashboard/employee/create" element={<CreateEmployee />} />
+        <Route
+          path="/dashboard/employee/update/:id"
+          element={<UpdationEmployee />}
+        />
       </Route>
     </Routes>
   );
