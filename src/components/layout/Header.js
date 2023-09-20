@@ -1,20 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
+import Swal from "sweetalert2";
 
 const Header = () => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
-  const [userName, setUsername] = useState(userService.infoAppUserByJwtToken);
+  const [userName, setUsername] = useState("");
+
+  useEffect(() => {
+    getUsername();
+  }, []);
+
+  const getUsername = async () => {
+    const response = await userService.infoAppUserByJwtToken();
+    setUsername(response);
+  };
 
   const handleLogOut = () => {
     localStorage.removeItem("JWT");
     setJwtToken(undefined);
     setUsername(undefined);
-    alert("Bạn đã đăng xuất thành công");
+    Swal.fire({
+      title: "Đăng xuất thành công",
+      icon: "success",
+    });
     navigate("/home");
   };
   return (
@@ -76,26 +89,29 @@ const Header = () => {
                       <span className="user-info">Đăng nhập</span>
                     </Link>
                   ) : (
-                    <span className="user-info">{userName}</span>
+                    <span className="user-info">{userName.sub}</span>
                   )}
 
                   <div className="user-dropdown-list">
-                    <Link
-                      to={"/dashboard/prescription"}
-                      className="user-dropdown-item"
-                    >
-                      <i className="bx bx-log-out-circle"></i>
-                      <div className="dropdown-text">Chức năng</div>
-                    </Link>
                     {JwtToken ? (
-                      <div className="user-dropdown-item">
-                        <div
-                          className="dropdown-text"
-                          onClick={() => handleLogOut()}
+                      <>
+                        <Link
+                          to={"/dashboard/prescription"}
+                          className="user-dropdown-item"
                         >
-                          Đăng xuất
+                          <i className="bx bx-log-out-circle"></i>
+                          <div className="dropdown-text">Chức năng</div>
+                        </Link>
+                        <div className="user-dropdown-item">
+                          <i className="bx bx-log-out-circle"></i>
+                          <div
+                            className="dropdown-text"
+                            onClick={() => handleLogOut()}
+                          >
+                            Đăng xuất
+                          </div>
                         </div>
-                      </div>
+                      </>
                     ) : null}
                   </div>
                 </a>
