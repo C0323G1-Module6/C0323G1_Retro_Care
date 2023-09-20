@@ -8,8 +8,6 @@ import {
 
 import Swal from "sweetalert2";
 import {Link} from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.css';
-import 'bootstrap/dist/js/bootstrap.js';
 import { BiSearch } from 'react-icons/bi';
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
@@ -305,10 +303,18 @@ function InvoiceList() {
                                         <td className="  py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.documentNumber}</p>
                                         </td>
-                                        <td className=" py-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">
-                                                {i.creationDay}</p>
-                                        </td>
+                                        <td className="py-3 border-b border-gray-200 text-sm">
+                                        <p className="text-gray-900 whitespace-no-wrap">
+                                            {new Date(i.creationDay).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: '2-digit',
+                                                formatMatcher: 'basic',
+                                                separator: '-',
+                                            })}
+                                        </p>
+                                    </td>
+
                                         <td className=" py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">
                                                 {i.creationTime}</p>
