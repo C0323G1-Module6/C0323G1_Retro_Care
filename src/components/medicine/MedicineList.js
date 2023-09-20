@@ -4,7 +4,7 @@ import {findAll, getListMedicine} from "../../services/medicine/MedicineService"
 
 function MedicineList() {
     const navigate = useNavigate()
-    const [medicineList, setMedicineList] = useState()
+    const [medicineList, setMedicineList] = useState([])
     // const [currentPage, setCurrentPage] = useState(0);
     // const [totalPage, setTotalPage] = useState(0);
 
@@ -122,16 +122,16 @@ function MedicineList() {
                                 {
                                     medicineList.map((value, key) => (
                                         <tr key={key}>
-                                            <td>{value.id}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm"><p>{value.code}</p></td>
-                                            <td>{value.kindOfMedicine.name}</td>
-                                            <td>{value.name}</td>
-                                            <td>{value.activeElement}</td>
-                                            {/*<td>${value.unit.name}</td>*/}
-                                            {/*<td>${value.unitDetail.converSionUnit}</td>*/}
-                                            <td>{value.quantity}</td>
-                                            <td>{value.price}</td>
-                                            <td>{value.vat}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.id}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.code}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.kindOfMedicine.name}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.name}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.activeElement}</td>
+                                            {/*<td className="px-3 py-3 border-b border-gray-200 text-sm">${value.unit.name}</td>*/}
+                                            {/*<td className="px-3 py-3 border-b border-gray-200 text-sm">${value.unitDetail.converSionUnit}</td>*/}
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.quantity}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.price}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.vat}</td>
                                         </tr>
                                     ))}
 
