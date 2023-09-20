@@ -107,6 +107,7 @@ a {
   white-space: nowrap;
   pointer-events: none;
   transition: 0s;
+  color: black;
 }
 .sidebar li:hover .tooltip {
   opacity: 1;
