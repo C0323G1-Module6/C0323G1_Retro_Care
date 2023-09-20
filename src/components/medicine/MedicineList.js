@@ -2,32 +2,20 @@ import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {deleteMedicine, findAll, getListMedicine} from "../../services/medicine/MedicineService";
 import swal from "sweetalert2";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 
 function MedicineList() {
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
-    // const [searchItem,setSearchItem] = useState("");
-    // const [searchLimit,setSearchLimit] = useState("");
-    // const [searchInput,setSearchInput] = useState("")
-
-    const pageSize = 5;
-
-    // const searchName =
-    //
-    // let resultSearch = document.getElementById("search").value;
-// const loadListSearch =()=>{
-//     const resultItem = document.getElementById("searchInMedicine").value;
-//     const resultInput = document.getElementById("searchInput").value;
-//     const resultLimit = document.getElementById("searchLimit").value;
-// }
 
     const getListMedicine = async () => {
         const result = await findAll();
         setTotalPage(result.totalPages);
         setMedicineList(result.content);
     }
+
 
     const previousPage = () => {
         if (currentPage > 0) {
@@ -36,19 +24,15 @@ function MedicineList() {
     }
 
     const nextPage = () => {
-        if (currentPage < totalPage) {
+        if (currentPage + 1 < totalPage) {
             setCurrentPage((pre) => pre + 1)
         }
     }
 
-    // const handleSelect = (value) => {
-    //     setSearchItem(value);
-    // }
-
     const handleDelete = async (id) => {
         swal.fire({
                 title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
-                text: "medicineName",
+                text: medicineList.name,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085D6",
@@ -58,7 +42,7 @@ function MedicineList() {
     .then(async (willDelete) => {
             if (willDelete.isConfirmed) {
                 await deleteMedicine(id);
-                swal.fire("Xoá sản phẩm thành công!","", "success");
+                await swal.fire("Xoá sản phẩm thành công!", "", "success");
             }
         });
     };
@@ -162,7 +146,7 @@ function MedicineList() {
                                 <tbody>
                                 {
                                     medicineList.map((value, key) => (
-                                        <tr key={key + 1}>
+                                        <tr key={key}>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.id}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.code}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.kindOfMedicineName}</td>
@@ -178,28 +162,36 @@ function MedicineList() {
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{value.vat}</td>
                                         </tr>
                                     ))}
-
                                 </tbody>
                             </table>
                         </div>
-                        <div
-                            className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
+                        <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div className="justify-content-center d-flex">
-                                <button className="btn btn-primary" style={{margin: '5px'}}>
-                                    <i className="fa-solid fa-angles-left"></i>
+                                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => previousPage()} href="#">
+                                    <AiOutlineDoubleLeft />
                                 </button>
-                                <div className="text-sm py-2 px-4" style={{
-                                    background: '#0d6efd',
-                                    color: '#ffffff',
-                                    margin: '5px',
-                                    borderRadius: '5px'
-                                }}>
-                                    1/5
+                                <div
+                                    className="text-sm py-2 px-4"
+                                    style={{
+                                        background: "#0d6efd",
+                                        color: "#ffffff",
+                                        margin: 5,
+                                        borderRadius: 5,
+                                    }}>
+                                    <span>{currentPage+1}/{totalPage}</span>
                                 </div>
-                                <button className="btn btn-primary" style={{margin: '5px'}}>
-                                    <i className="fa-solid fa-angles-right"></i>
+                                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => nextPage()} href="#">
+                                    <AiOutlineDoubleRight />
                                 </button>
-
+                                <div
+                                    className="rounded-lg"
+                                    style={{
+                                        background: "#0d6efd",
+                                        color: "black",
+                                        margin: 5,
+                                        borderRadius: 5,
+                                    }}>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -219,9 +211,8 @@ function MedicineList() {
                         </a>
                         <button
                             type="button"
-                            className="btn btn-outline-primary"
-                            data-bs-toggle="modal"
-                            data-bs-target="#exampleModal">
+                            onClick={() => handleDelete()}
+                            className="btn btn-outline-primary">
                             <i className="fa-solid fa-trash"></i>
                             Xoá
                         </button>
