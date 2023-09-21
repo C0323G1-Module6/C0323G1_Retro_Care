@@ -127,7 +127,7 @@ export default function ListEmployee() {
     }
     return (
         <>
-            <div className="container ">
+            <div className="container">
                 <div>
                     <h1 className="title-employee">Quản lý nhân viên</h1>
                 </div>
@@ -170,10 +170,8 @@ export default function ListEmployee() {
                                 </Form>
                             </Formik>
                         </div>
-
                     </div>
                 </div>
-
                 <div className="mx-auto">
                     <div className="pt-2">
                         <div>
@@ -261,17 +259,14 @@ export default function ListEmployee() {
                                          color: "#ffffff",
                                          margin: "5px",
                                          borderRadius: "5px"
-                                     }}>
-                                    {pageList + 1}/{totalPage}
+                                     }}>{pageList + 1}/{totalPage}
                                 </div>
                                 <button className={`btn btn-primary ${pageList === totalPage - 1 ? 'disabled' : ''}`}
-                                        style={{margin: "5px"}}
-                                        onClick={() => {
+                                        style={{margin: "5px"}} onClick={() => {
                                             if (pageList < totalPage) {
                                                 setPageList((prev) => prev + 1)
                                             }
-                                        }}
-                                >
+                                        }}>
                                     <AiOutlineDoubleRight className="mx-1"/>
                                 </button>
                             </div>
@@ -292,10 +287,7 @@ export default function ListEmployee() {
                         </Link> :
                         <button className="btn btn-light btn-outline-primary m-1">
                             <FiEdit className="mx-1"/> Sửa
-                        </button>
-                    }
-
-
+                        </button>}
                     <button className="btn btn-light btn-outline-primary m-1" onClick={() => {
                         checkDelete().then();
                     }}>
