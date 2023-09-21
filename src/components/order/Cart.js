@@ -236,14 +236,14 @@ export default function Cart() {
     <>
       <Header />
       <div
-        className="container-fluid my-5 p-1 position-relative"
+        className="container-fluid my-y p-1 position-relative"
         style={{ top: "5rem", height: "100vh" }}
       >
         <h1 className="text-center mt-2 mb-5 mx-auto">Giỏ Hàng</h1>
         {carts.length > 0 ? (
-          <div className="container w-100p">
+          <div className="container-fluid w-100">
             <div className="row">
-              <div className="col-sm-12 col-md-12 col-lg-8 col-xl-8 p-0">
+              <div className=" col col-sm-12 col-md-12 col-lg-8 col-xl-8 p-0">
                 <div className=" d-flex flex-column justify-content-center align-items-center">
                   <table className="table table-hover">
                     <thead className="text-secondary">
@@ -260,7 +260,7 @@ export default function Cart() {
                           return (
                             <tr key={`el_${el.cartId}`}>
                               <td>
-                                <td className="d-flex align-items-center h-100">
+                                <div className="d-flex flex-column flex-md-row align-items-center justify-content-start ">
                                   <span>
                                     <button
                                       className="bg-transparent border-0 fs-4 mx-3"
@@ -291,7 +291,7 @@ export default function Cart() {
                                   >
                                     <div>{el.medicineName}</div>
                                   </div>
-                                </td>
+                                </div>
                                 {quantities[el.medicineId] >= 0 && (
                                   <small className="text-center text-danger align-middle">
                                     Số lượng còn lại ở kho:{" "}
@@ -316,7 +316,7 @@ export default function Cart() {
                                     }
                                     type="button"
                                     defaultValue="-"
-                                    className="  d-flex flex-column justify-content-center align-items-end btn-in-cart"
+                                    className="  d-flex justify-content-center align-items-end btn-in-cart"
                                     data-field="quantity"
                                   />
                                   <input
@@ -330,13 +330,13 @@ export default function Cart() {
                                     defaultValue={el.quantityInCart}
                                     style={{ width: "50px", height: "35px" }}
                                     name="quantity"
-                                    className="input-quantity text-center form-input px-2"
+                                    className="input-quantity text-center form-input px-2 mx-0"
                                   />
                                   <input
                                     onClick={() => handlePlus(el.medicineId)}
                                     type="button"
                                     defaultValue="+"
-                                    className=" d-flex flex-column justify-content-center btn-in-cart"
+                                    className=" d-flex justify-content-center btn-in-cart"
                                     data-field="quantity"
                                   />
                                 </div>
@@ -351,7 +351,7 @@ export default function Cart() {
                     </tbody>
                   </table>
                   <div
-                    className=" w-75 mb-5"
+                    className=" mb-5"
                     style={{ display: showCf ? "block" : "none" }}
                     id="confirm-order"
                   >
@@ -413,27 +413,29 @@ export default function Cart() {
                         }
                       }}
                     >
-                      <Form className=" d-flex flex-column justify-content-center">
-                        <div className=" mb-1">
-                          <label htmlFor="name" className=" w-50">
-                            Tên khách hàng{" "}
-                            <span className=" text-danger">*</span>
-                          </label>
-                          <Field
-                            type="text"
-                            id="name"
-                            name="name"
-                            className=" form-control"
-                          ></Field>
-                          <ErrorMessage
-                            name="name"
-                            component="p"
-                            className="text-danger"
-                          ></ErrorMessage>
+                      <Form>
+                        <div className=" d-flex flex-column justify-content-center align-items-center">
+                          <div className=" mb-1 w-100">
+                            <label htmlFor="name">
+                              Tên khách hàng{" "}
+                              <span className=" text-danger">*</span>
+                            </label>
+                            <Field
+                              type="text"
+                              id="name"
+                              name="name"
+                              className=" form-control w-100"
+                            ></Field>
+                            <ErrorMessage
+                              name="name"
+                              component="p"
+                              className="text-danger"
+                            ></ErrorMessage>
+                          </div>
                         </div>
 
-                        <div className=" mb-1">
-                          <label htmlFor="phoneNumber" className=" w-50">
+                        <div className=" mb-1 w-100">
+                          <label htmlFor="phoneNumber">
                             Số điện thoại{" "}
                             <span className=" text-danger">*</span>
                           </label>
@@ -442,7 +444,7 @@ export default function Cart() {
                             type="text"
                             id="phoneNumber"
                             name="phoneNumber"
-                            className=" form-control"
+                            className=" form-control w-100"
                           ></Field>
                           <ErrorMessage
                             name="phoneNumber"
@@ -450,8 +452,8 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className=" mb-1">
-                          <label htmlFor="email" className="w-50">
+                        <div className=" mb-1 w-100">
+                          <label htmlFor="email">
                             Email<span className=" text-danger">*</span>
                           </label>
                           <Field
@@ -459,7 +461,7 @@ export default function Cart() {
                             type="text"
                             id="email"
                             name="email"
-                            className=" form-control"
+                            className=" form-control w-100"
                           ></Field>
                           <ErrorMessage
                             name="email"
@@ -467,15 +469,15 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className="  mb-2">
-                          <label htmlFor="address" className="w-50">
+                        <div className="  mb-1 w-100">
+                          <label htmlFor="address">
                             Địa chỉ<span className=" text-danger">*</span>
                           </label>
                           <Field
                             type="text"
                             id="address"
                             name="address"
-                            className=" form-control"
+                            className=" form-control w-100"
                           ></Field>
                           <ErrorMessage
                             name="address"
@@ -483,15 +485,13 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className="mb-1">
-                          <label htmlFor="note" className=" w-50">
-                            Ghi chú:
-                          </label>
+                        <div className="mb-1 w-100">
+                          <label htmlFor="note">Ghi chú:</label>
                           <Field
                             as="textarea"
                             id="note"
                             name="note"
-                            className=" form-control"
+                            className=" form-control w-100"
                           ></Field>
                           <ErrorMessage
                             name="note"
