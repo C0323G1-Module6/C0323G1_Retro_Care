@@ -26,9 +26,11 @@ import GeneralReport from "./components/report/GeneralReport";
 import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
 import MedicineCreate from "./components/medicine/MedicineCreate";
 import MedicineEdit from "./components/medicine/MedicineEdit";
-// import Details from "./components/order/Details";
 import SearchPage from "./components/search/SearchPage";
-// import Cart from "./components/order/Cart";
+import Cart from "./components/order/Cart";
+import Details from "./components/order/Details";
+import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <Routes>
@@ -36,14 +38,16 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/invoice" element={<InvoiceList />} />
-      {/* <Route path="/detail/:id" element={<Details />} /> */}
       <Route path="/search" element={<SearchPage />} />
-      {/* <Route path="/cart/:id" element={<Cart />} /> */}
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
           path="/dashboard/prescription/create"
           element={<PrescriptionCreate />}
+        />
+        <Route
+          path="/dashboard/prescription/edit/:id"
+          element={<PrescriptionEdit />}
         />
         <Route path="/dashboard/medicine" element={<MedicineList />} />
         <Route
@@ -96,6 +100,8 @@ function App() {
           element={<MedicineEdit />}
         />
       </Route>
+      <Route path="/cart" element={<Cart />}></Route>
+      <Route path="/details/:id" element={<Details />}></Route>
     </Routes>
   );
 }

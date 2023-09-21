@@ -125,6 +125,11 @@ const RevenueAndProfitChart = () => {
                         id="startDate"
                         name="startDate"
                       />
+                      <ErrorMessage
+                        className="text-danger"
+                        name="startDate"
+                        component="small"
+                      />
                       <label htmlFor="endDate">Đến ngày</label>
                       <Field
                         className="form-control "
@@ -132,6 +137,11 @@ const RevenueAndProfitChart = () => {
                         placeholder="Chọn ngày kết thúc"
                         id="endDate"
                         name="endDate"
+                      />
+                      <ErrorMessage
+                        className="text-danger"
+                        name="endDate"
+                        component="small"
                       />
                       <div className="d-flex justify-content-center">
                         <button
@@ -193,7 +203,7 @@ const RevenueAndProfitChart = () => {
                     </legend>
                     {drawChart(revenues, profits)}
                     <Link
-                      to={"/dashboard/generalReport"}
+                      to={"/dashboard/report"}
                       className="btn btn-outline-primary float-end mx-3 mt-4"
                     >
                       <AiOutlineRollback className="mx-1" />
