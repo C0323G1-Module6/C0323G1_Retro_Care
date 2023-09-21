@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {getInvoiceList, searchInvoice} from "../../services/invoice/InvoiceService";
+import {getInvoiceList, searchInvoice, deleteInvoice} from "../../services/invoice/InvoiceService";
 import '../../components/invoice/HuyDH_Invoice.css'
+import Swal from "sweetalert2";
+import {Link} from "react-router-dom";
 
 /**
  * Create by: HuyHD
@@ -12,23 +14,136 @@ import '../../components/invoice/HuyDH_Invoice.css'
 
 function InvoiceList() {
     const [invoiceList, setInvoiceList] = useState([])
+
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [searchPage, setSearchPage] = useState(0);
+
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [startTime, setStartTime] = useState(null);
+    const [endTime, setEndTime] = useState(null);
+    const [sortColumn, setSortColumn] = useState(null);
+    const [displayedList, setDisplayedList] = useState([]);
+    const [isSearching, setIsSearching] = useState(false);
+
+    const [idClick, setIdClick] = useState({});
+
+
     const getListInvoice = async (page) => {
-        const data = await getInvoiceList(page)
-        console.log(data)
-        setInvoiceList(data.content);
-        setTotalPages(data.totalPages);
+
+        if (isSearching) {
+            const datasearch = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, page, 5);
+            setInvoiceList(datasearch.content);
+            setTotalPages(datasearch.totalPages);
+        } else {
+            const data = await searchInvoice(null, null, null, null, null, page, 5);
+            setInvoiceList(data.content);
+            setTotalPages(data.totalPages);
+            setDisplayedList(data.content);
+        }
+    };
+
+
+    const handleClickRow = (id) => {
+        if (idClick === id) {
+            setIdClick("");
+        } else {
+            setIdClick(id);
+        }
+    };
+
+    console.log(idClick);
+    const handleDeleteEmployee = async (id, code) => {
+
+        if (idClick.id == null || idClick.id == undefined) {
+            getListInvoice(0, 5).then(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Bạn chưa chọn hóa đơn!',
+                    showConfirmButton: false,
+                    timer: 2000,
+                })
+            })
+        } else {
+            Swal.fire({
+                    title: 'Bạn muốn xoá hóa đơn <br><span style="color: #dfa512">' + code + '</span> không?',
+                    html: '<p style = " color: red">Bạn sẽ không thể hoàn tác hành động này!</p>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận ',
+                    cancelButtonText: 'Huỷ',
+                    reverseButtons: true,
+                    customClass: {
+                        confirmButton: 'custom-confirm-button-employee',
+                    }
+                }
+            ).then((res) => {
+                if (res.isConfirmed) {
+                    deleteInvoice(id).then(() => {
+                        getListInvoice(currentPage, 5).then(() => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Xoá Thành công!',
+                                showConfirmButton: false,
+                                timer: 2000,
+
+                            })
+                        })
+                    });
+                } else if (res.dismiss === Swal.DismissReason.cancel) {
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Đã xảy ra lỗi! Xoá không thành công!',
+                        showConfirmButton: false,
+                        timer: 2000,
+                    })
+
+                }
+            })
+        }
     }
-    console.log(invoiceList)
+
+    const handleFilter = async () => {
+        setCurrentPage(0);
+        const data = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, 0, 5);
+
+        if (data.content == undefined || data.content.length === 0) {
+            setInvoiceList([]);
+            setDisplayedList([]);
+            setIsSearching(true);
+
+
+            await Swal.fire({
+                icon: 'error',
+                text: 'Không tìm thấy hoá đơn với thông tin này!',
+                showConfirmButton: false,
+                timer: 2000,
+            });
+
+            return;
+        }
+
+        console.log(data);
+        setIsSearching(true);
+        setInvoiceList(data.content);
+        setDisplayedList(data.content);
+        setTotalPages(data.totalPages);
+        setSearchPage(searchPage);
+    };
+
+
     useEffect(() => {
-        getListInvoice(0)
-    }, [])
+        getListInvoice(currentPage);
+    }, [currentPage]);
 
     const handlePageChange = async (page) => {
         setCurrentPage(page);
-        await getListInvoice(page);
-    }
+        setSearchPage(page);
+    };
+
 
     return (
         <div>
@@ -53,36 +168,46 @@ function InvoiceList() {
                 <div className="row">
                     {/*                <div class="row text-center" style="border: 2px solid #5f8ef3; border-radius: 10px; padding: 10px">*/}
                     <div className="col">
-                        <label>Từ ngày:</label>
-                        <input type="date" id="start-date" className="filter-input_huyhd"/>
+                        <label style={{marginLeft: '1.5px'}}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
+                        <input style={{width: '9rem', marginLeft: '1.5px'}} type="date" id="start-date"
+                               className="filter-input_huyhd"
+                               onChange={(e) => setStartDate(e.target.value)}/>
                     </div>
                     <div className="col">
-                        <label>Đến ngày:</label>
-                        <input type="date" id="end-date" className="filter-input_huyhd"/>
+                        <label style={{marginLeft: '3px'}}>Đến ngày:</label>
+                        <input style={{width: '9rem', marginLeft: '3px'}} type="date" id="end-date"
+                               className="filter-input_huyhd"
+                               onChange={(e) => setEndDate(e.target.value)}/>
                     </div>
                     <div className="col">
-                        <label>Từ giờ:&nbsp;&nbsp;&nbsp;</label>
-                        <input type="time" id="start-time" className="filter-input_huyhd"/>
+                        <label>Từ giờ:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input style={{width: '9rem'}} type="time" id="end-time" className="filter-input_huyhd" step="1"
+                               min="00:00:00" max="23:59:59"
+                               onChange={(e) => setStartTime(e.target.value)}/>
                     </div>
                     <div className="col">
-                        <label>Đến giờ:</label>
-                        <input type="time" id="end-time" className="filter-input_huyhd"/>
+                        <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                        <input style={{width: '9rem', marginLeft: '2px'}} type="time" id="end-time"
+                               className="filter-input_huyhd" step="1"
+                               min="00:00:00" max="23:59:59"
+                               onChange={(e) => setEndTime(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Sắp xếp theo: </label>
-                        <select style={{height: '35px', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}>
-                            <option value="Mã hoá đơn">Mã hóa đơn</option>
-                            <option value="Tên khách hàng">Số CT</option>
-                            <option value="Ngày lập">Ngày lập</option>
-                            <option value="Giờ lập">Giờ lập</option>
-                            <option value="Tổng tiền">Tổng tiền</option>
-                            <option value="Người lập">Nợ hóa đơn</option>
-                            <option value="Người lập">Nhà cung cấp</option>
+                        <select style={{height: '35px', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}
+                                onChange={(e) => setSortColumn(e.target.value)}>
+                            <option value="1">Mã hóa đơn</option>
+                            <option value="2">Số CT</option>
+                            <option value="3">Ngày lập</option>
+                            <option value="4">Giờ lập</option>
+                            <option value="5">Tổng tiền</option>
+                            <option value="6">Nợ hóa đơn</option>
+                            <option value="7">Nhà cung cấp</option>
                         </select>
                     </div>
                     <div className="col"
                          style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                        <button className="btn btn-outline-primary "><span><i
+                        <button className="btn btn-outline-primary " onClick={handleFilter}>><span><i
                             className="fa-solid fa-magnifying-glass"/></span>
                             Lọc kết quả
                         </button>
@@ -91,102 +216,106 @@ function InvoiceList() {
                 {/*                </div>*/}
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="inline-block min-w-full shadow rounded-lg overflow-hidden ">
-                        <table className="min-w-full leading-normal table table-hover mb-0">
-                            <thead>
-                            <tr className="table_header_employee">
-                                <th className="col-1 py-2  border-b-2  text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    STT
-                                </th>
-                                <th className="col-1   border-b-2  text-left text-xs    tracking-wider "
-                                    style={{fontSize: '1rem'}}>
-                                    Mã HĐ
-                                </th>
-                                <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Số CT
-                                </th>
-                                <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Ngày Lập
-                                </th>
-                                <th className="col-1   border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Giờ Lập
-                                </th>
-                                <th className="col-1  px-0 border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Tổng Tiền
-                                </th>
-                                <th className="col-1  px-2 border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Nợ HĐ
-                                </th>
-                                <th className="col-3   border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Nhà Cung Cấp
-                                </th>
-                                <th className="col-3  border-b-2   text-left text-xs    tracking-wider"
-                                    style={{fontSize: '1rem'}}>
-                                    Địa Chỉ
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {invoiceList.map((i, index) => (
-                                <tr key={i.id}>
-                                    <td className="col  py-3 px-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
-                                    </td>
-                                    <td className="col  py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.code}</p>
-                                    </td>
-                                    <td className="col  py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.documentNumber}</p>
-                                    </td>
-                                    <td className="col py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">
-                                            {i.creationDay}</p>
-                                    </td>
-                                    <td className="col py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">
-                                            {i.creationTime}</p>
-                                    </td>
-                                    <td className="col py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.total}</p>
-                                    </td>
-                                    <td className="col px-2 py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.billOwed}</p>
-                                    </td>
-                                    <td className="col py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.name}</p>
-                                    </td>
-                                    <td className="col py-3 border-b border-gray-200 bg-white text-sm">
-                                        <p className="text-gray-900 whitespace-no-wrap">{i.address}</p>
-                                    </td>
+                        <div style={{flex: "1", minHeight: "27.2rem"}}>
+                            <table className="min-w-full leading-normal table table-hover mb-0">
+                                <thead>
+                                <tr className="table_header_employee">
+                                    <th className="col-0.5 py-2  border-b-2  text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        STT
+                                    </th>
+                                    <th className="col-1   border-b-2  text-left text-xs    tracking-wider "
+                                        style={{fontSize: '1rem'}}>
+                                        Mã HĐ
+                                    </th>
+                                    <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Số CT
+                                    </th>
+                                    <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Ngày Lập
+                                    </th>
+                                    <th className="col-1   border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Giờ Lập
+                                    </th>
+                                    <th className="col-1  px-0 border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Tổng Tiền
+                                    </th>
+                                    <th className="col-1  px-2 border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Nợ HĐ
+                                    </th>
+                                    <th className="col-3   border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Nhà Cung Cấp
+                                    </th>
+                                    <th className="col-3  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem'}}>
+                                        Địa Chỉ
+                                    </th>
                                 </tr>
-                            ))}
+                                </thead>
+                                <tbody>
+                                {invoiceList.map((i, index) => (
+                                    <tr key={i.id} onClick={() => handleClickRow(i)}
+                                        className={idClick && idClick.id === i.id ? "selected_invoice" : ""}>
+                                        <td className="col-0.5  py-3 px-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
+                                        </td>
+                                        <td className="col-1  py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.code}</p>
+                                        </td>
+                                        <td className="col-1  py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.documentNumber}</p>
+                                        </td>
+                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                {i.creationDay}</p>
+                                        </td>
+                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                {i.creationTime}</p>
+                                        </td>
+                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.total}</p>
+                                        </td>
+                                        <td className="col-1 px-2 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.billOwed}</p>
+                                        </td>
+                                        <td className="col-3 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.name}</p>
+                                        </td>
+                                        <td className="col-3 py-3 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{i.address}</p>
+                                        </td>
+                                    </tr>
+                                ))}
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                         <div
                             className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
                             <div className=" justify-content-center d-flex ">
-                                {currentPage !== 0 && ( <button
-                                    className={`btn btn-primary`}
-                                    style={{ margin: '5px' }}
+                                <button
+                                    className={`btn btn-primary ${currentPage === 0 ? 'disabled' : ''}`}
+                                    style={{margin: '5px'}}
                                     disabled={currentPage === 0}
                                     title="Trang trước"
                                     onClick={() => handlePageChange(currentPage - 1)}
                                 >
                                     <i className="fa-solid fa-angles-left"></i>
-                                </button>)}
-
+                                </button>
 
                                 <button
                                     key={currentPage}
                                     className="text-sm py-2 px-4"
                                     style={{
+                                        width: '5rem',
+                                        height: '2.5rem',
                                         background: '#0d6efd',
                                         color: '#ffffff',
                                         margin: '5px',
@@ -198,18 +327,16 @@ function InvoiceList() {
                                     {currentPage + 1} / {totalPages}
                                 </button>
 
+                                <button
+                                    className={`btn btn-primary ${currentPage === totalPages - 1 ? 'disabled' : ''}`}
+                                    style={{margin: '5px'}}
+                                    title="Trang sau"
+                                    disabled={currentPage === totalPages - 1}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                >
+                                    <i className="fa-solid fa-angles-right"></i>
+                                </button>
 
-                                {currentPage !== totalPages - 1 && (
-                                    <button
-                                        className='btn btn-primary'
-                                        style={{margin: '5px'}}
-                                        title="Trang sau"
-                                        disabled={currentPage === totalPages - 1}
-                                        onClick={() => handlePageChange(currentPage + 1)}
-                                    >
-                                        <i className="fa-solid fa-angles-right"></i>
-                                    </button>
-                                )}
                                 {/*{totalPages > 1 &&(*/}
                                 {/*    <div className="style_button_page_next_employee   font-semibold py-2 px-2 rounded" title="Trang bạn muốn đến">*/}
                                 {/*        <input*/}
@@ -231,17 +358,22 @@ function InvoiceList() {
                 </div>
                 <div className=" " style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
                     <div className=" ">
-                        <a className="btn btn-outline-primary"
-                           href="/prototype/warehouse/CuongHLT_CreateInvoice.html" title="Thêm">
-                            <i className="fa-solid fa-plus"/> Thêm mới</a>
-                        {/*            <a class="btn btn-outline-primary" href="#" title="Chi tiết">*/}
-                        {/*                <i class="fa-solid fa-circle-info"></i> Chi tiết*/}
-                        {/*            </a>*/}
-                        <a className="btn btn-outline-primary" href="/prototype/warehouse/CuongHLT_EditInvoice.html"
-                           title="Sửa"><i className="fa-solid fa-pen-to-square"/> Sửa
+                        <Link to={`/invoice/create`}><a className="btn btn-outline-primary"
+                                                        href="/prototype/warehouse/CuongHLT_CreateInvoice.html"
+                                                        title="Thêm">
+                            <i className="fa-solid fa-plus"/> Thêm mới</a></Link>
+                        <a class="btn btn-outline-primary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal1" title="Chi tiết">
+                            <i class="fa-solid fa-circle-info"></i> Chi tiết
                         </a>
-                        <a href="#" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" title="Xóa"
-                           className="btn btn-outline-primary">
+                        <Link to={`/invoice/update/${idClick?.id}`}><a className="btn btn-outline-primary"
+                                                                       title="Sửa"><i
+                            className="fa-solid fa-pen-to-square"/> Sửa
+                        </a></Link>
+                        <a
+                            title="Xóa"
+                            className="btn btn-outline-primary" onClick={() => {
+                            handleDeleteEmployee(`${idClick?.id}`, `${idClick?.code}`);
+                        }}>
                             <i className="fa-solid fa-trash"/> Xóa
                         </a>
                         <a className="btn btn-outline-primary" href="/HuyL_home.html" title="Trở về">
@@ -285,7 +417,7 @@ function InvoiceList() {
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header table_header_employee">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">CHI TIẾT NHÂN VIÊN</h1>
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">CHI TIẾT HÓA ĐƠN</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
                         </div>
                         <div className="modal-body">
@@ -299,10 +431,10 @@ function InvoiceList() {
                                     <table>
                                         <tbody>
                                         <tr>
-                                            <td><p><b>Nhân viên:</b></p></td>
+                                            <td><p><b>Tên thuốc:</b></p></td>
                                             <td><p
                                                 style={{color: '#dfa512', paddingLeft: '10px', fontSize: '20px'}}>Lê
-                                                Thị Hồng Vân</p>
+                                                aaaaaaaaaaaa</p>
                                             </td>
                                         </tr>
                                         <tr>
