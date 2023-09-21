@@ -49,7 +49,7 @@ const Home = () => {
   };
   return (
     <div>
-      <Header />
+      <Header onInputChange={null} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
@@ -157,47 +157,69 @@ const Home = () => {
                 modules={[Navigation, Pagination]}
                 className="mySwiper"
               >
-                {medicineList?.map((el, index) => (
-                  <SwiperSlide key={index}>
-                    <div className="product-card">
-                      <div className="product-image">
-                        {/* <span className="discount-tag">30% off</span> */}
-                        <Link to={`/details/${el.medicineId}`}>
-                          <img
-                            src={el.medicineImage}
-                            className="product-thumb"
-                            alt=""
-                          />
-                        </Link>
-                        <button
-                          className="card-btn"
-                          onClick={() => addToCart(el.medicineId)}
-                        >
-                          Mua
-                        </button>
-                      </div>
-                      <div className="product-info">
-                        <p className="product-short-description">
-                          {el.medicineName}
-                        </p>
-                        <div className="d-flex justify-content-between">
-                          <span className="price">
-                            {" "}
-                            {parseFloat(el.medicinePrice).toLocaleString(
-                              "en-US",
-                              {
+                {medicineList?.map((el, index) => {
+                  const randomIndex = Math.floor(Math.random() * 3);
+                  const discountOptions = [5, 10, 15];
+                  const discountPercentage = discountOptions[randomIndex];
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">Hộp</span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
-                              }
-                            )}{" "}
-                            VNĐ
-                          </span>
-                          <span className="product-unit">Hộp</span>
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
+                    </SwiperSlide>
+                  );
+                })}
+                ;
               </Swiper>
             </div>
           </div>
@@ -232,46 +254,69 @@ const Home = () => {
                 modules={[Navigation, Pagination]}
                 className="mySwiper"
               >
-                {favoriteList?.map((el, index) => (
-                  <SwiperSlide key={index}>
-                    <div className="product-card">
-                      <div className="product-image">
-                        {/* <span className="discount-tag">30% off</span> */}
-                        <Link to={`/details/${el.medicineId}`}>
-                          <img
-                            src={el.medicineImage}
-                            className="product-thumb"
-                            alt=""
-                          />
-                        </Link>
-                        <button
-                          className="card-btn"
-                          onClick={() => addToCart(el.medicineId)}
-                        >
-                          Mua
-                        </button>
-                      </div>
-                      <div className="product-info">
-                        <p className="product-short-description">
-                          {el.medicineName}
-                        </p>
-                        <div className="d-flex justify-content-between">
-                          <span className="price">
-                            {parseFloat(el.medicinePrice).toLocaleString(
-                              "en-US",
-                              {
+                {favoriteList?.map((el, index) => {
+                  const randomIndex = Math.floor(Math.random() * 3);
+                  const discountOptions = [5, 10, 15];
+                  const discountPercentage = discountOptions[randomIndex];
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">Hộp</span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
                                 minimumFractionDigits: 0,
                                 maximumFractionDigits: 0,
-                              }
-                            )}{" "}
-                            VNĐ
-                          </span>
-                          <span className="product-unit">Hộp</span>
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </SwiperSlide>
-                ))}
+                    </SwiperSlide>
+                  );
+                })}
+                ;
               </Swiper>
             </div>
           </div>
