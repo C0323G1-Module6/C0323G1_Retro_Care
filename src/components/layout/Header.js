@@ -12,7 +12,7 @@ const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
-  const [keyword, setKeyword] = useState("");
+  const [keyword, setKeyword] = useState(" ");
 
   // replace 2 with userId
   const dispatch = useDispatch();
@@ -45,14 +45,14 @@ const Header = ({ inputSearch, onInputChange }) => {
     setKeyword(event.target.value);
   };
 
-  const searchMedinces = (keyword) => {
+  const searchMedicines = (keyword) => {
     navigate(`/home/search/${keyword}`);
   };
 
   const handleSearch = (event) => {
     event.preventDefault();
     alert(keyword);
-    searchMedinces(keyword);
+    searchMedicines(keyword);
   };
 
   return (
