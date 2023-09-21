@@ -208,20 +208,20 @@ export default function Cart() {
     const inputPoint = document.querySelector(".input-point");
     console.log(parseInt(inputPoint.value));
 
-    if (parseInt(inputPoint.value) <= point) {
-      if (parseInt(inputPoint.value) <= totalPrice) {
-        setDiscount(parseInt(inputPoint.value));
+    if (parseInt(inputPoint.value) < 0) {
+      swal.fire("Điểm tích luỹ không thể là số âm!", "", "warning");
+    } else {
+      if (parseInt(inputPoint.value) <= point) {
+        if (parseInt(inputPoint.value) <= totalPrice) {
+          setDiscount(parseInt(inputPoint.value));
+        } else {
+      setDiscount(0);
+      swal.fire("Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!","","warning");
+        }
       } else {
         setDiscount(0);
-        swal.fire(
-          "Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!",
-          "",
-          "warning"
-        );
+        swal.fire("Vượt quá số điểm hiện có!", "", "warning");
       }
-    } else {
-      setDiscount(0);
-      swal.fire("Vượt quá số điểm hiện có!", "", "warning");
     }
   };
 
@@ -236,7 +236,7 @@ export default function Cart() {
     <>
       <Header />
       <div
-        className="container-fluid my-y p-1 position-relative"
+        className="container-fluid p-1 position-relative"
         style={{ top: "5rem", height: "100vh" }}
       >
         <h1 className="text-center mt-2 mb-5 mx-auto">Giỏ Hàng</h1>
@@ -351,7 +351,7 @@ export default function Cart() {
                     </tbody>
                   </table>
                   <div
-                    className=" mb-5"
+                    className=" mb-3"
                     style={{ display: showCf ? "block" : "none" }}
                     id="confirm-order"
                   >
@@ -511,8 +511,7 @@ export default function Cart() {
                     </Formik>
                   </div>
                   <div id="paypal-button-container" className="w-50"></div>
-
-                  <Link to="/home" className="btn btn-outline-primary">
+                  <Link to="/home" className="btn btn-outline-primary mb-5">
                     ← Tiếp tục xem sản phẩm
                   </Link>
                 </div>
@@ -520,7 +519,9 @@ export default function Cart() {
               <div className="col-sm-12 col-md-12 col-lg-4 col-xl-4 container position-relative">
                 <div className="shadow rounded p-3 mb-5 position-sticky top-0 mt-3">
                   <div>
-                    <div className="text-secondary fs-5">TỔNG SỐ LƯỢNG</div>
+                    <div className="text-secondary fs-5 fw-bold">
+                      TỔNG SỐ LƯỢNG
+                    </div>
                     <hr className="text-secondary h-2" />
                     <div className="">
                       <div className="border-bottom mb-2 pb-2">
@@ -579,7 +580,7 @@ export default function Cart() {
                         type="number"
                         min={0}
                         defaultValue={0}
-                        className="input-quantity form-control input-point"
+                        className="input-quantity form-control w-100 input-point"
                       />
                       <button
                         className="w-100 btn btn-outline-success mt-3"
