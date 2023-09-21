@@ -58,7 +58,7 @@ const CustomerUpdate = () => {
           validationSchema={Yup.object({
             name: Yup.string()
               .max(50)
-              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm"),
+              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm").required("Tên khách hàng đang trống vui lòng bổ sung"),
             birthday: Yup.string().required(
               "Vui lòng nhập ngày sinh khách hàng"
             ),

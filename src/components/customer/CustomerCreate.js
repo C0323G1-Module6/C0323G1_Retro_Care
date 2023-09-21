@@ -36,10 +36,10 @@ const CustomerCreate = () => {
       if (err.response.data) {
         setErrors(err.response.data);
       }
-      if (err.response.status === 406) {
-        console.log(err);
-        setErrors(err.response.data);
-      }
+      // if (err.response.status === 406) {
+      //   console.log(err);
+      //   setErrors(err.response.data);
+      // }
     }
   };
   if (customerCode == "") {
@@ -61,7 +61,7 @@ const CustomerCreate = () => {
           validationSchema={Yup.object({
             name: Yup.string()
               .max(50)
-              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm"),
+              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm").required("Vui lòng không bỏ trống tên"),
             birthday: Yup.string().required(
               "Vui lòng nhập ngày sinh khách hàng"
             ),
@@ -70,8 +70,8 @@ const CustomerCreate = () => {
               .max(100, "Độ dài vượt quá ký tự cho phép"),
             phoneNumber: Yup.string()
               .required("Vui lòng nhập số điện thoại cho khách hàng")
-              .max(12, "Độ dài vượt quá ký tự cho phép")
-              .min(7, "Số điện thoại quá ngắn"),
+              .max(11, "Độ dài vượt quá ký tự cho phép")
+              .min(10, "Số điện thoại quá ngắn"),
             email: Yup.string()
               .required("Vui lòng nhập địa chỉ email cho khách hàng")
               .matches(
@@ -94,7 +94,7 @@ const CustomerCreate = () => {
                   </label>
                 </div>
                 <div className="col-8">
-                  <Field className="form-control mt-2" disabled name="code" />
+                  <Field className="form-control mt-2" disabled name="code"  />
                   <div style={{ height: "0.6rem", marginBottom: "0.6rem" }}>
                     <ErrorMessage
                       className="text-danger"
