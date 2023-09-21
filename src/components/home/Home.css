@@ -1151,7 +1151,7 @@ p {
   flex: 0 0 auto;
   width: 250px;
   height: 450px;
-  margin-right: 40px;
+  /* margin-right: 40px; */
 }
 
 .product-image {

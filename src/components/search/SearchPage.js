@@ -3,26 +3,65 @@ import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import * as homeService from "../../services/home/HomeService";
+import * as utils from "../../services/utils/utils";
 
 export const SearchPage = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [medicineList, setMedicineList] = useState([]);
   const [keyword, setKeyword] = useState(params.keyword);
+  const [type, setType] = useState("");
+  const [sortBy, setSortBy] = useState("medicinePrice");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
+  const [totalElements, setTotalElements] = useState(0);
+  const [displayKeyword, setDisplayKeyword] = useState(params.keyword);
 
   useEffect(() => {
+    setCurrentPage(1);
     getMedicineList();
   }, [params.keyword]);
 
+  useEffect(() => {
+    getMedicineList();
+  }, [currentPage]);
+
   const getMedicineList = async () => {
-    const response = await homeService.findMedicineForHomepage(keyword, "");
+    const response = await homeService.searchMedicines(
+      currentPage - 1,
+      pageSize,
+      keyword,
+      type,
+      sortBy,
+      sortDirection
+    );
     console.log(response);
-    setMedicineList(response);
+    setMedicineList(response.data.content);
+    setTotalElements(response.data.totalElements);
+    setDisplayKeyword(keyword);
   };
 
   const handleInputChange = async (event) => {
     setKeyword(event.target.value);
   };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleSortByChange = (event) => {
+    setSortBy(event.target.value);
+  };
+
+  const handleSortDirectionChange = (event) => {
+    setSortDirection(event.target.value);
+  };
+  const handleSortBtn = () => {
+    getMedicineList();
+  };
+
+  const totalPages = Math.ceil(totalElements / pageSize);
 
   return (
     <>
@@ -35,21 +74,48 @@ export const SearchPage = () => {
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-5">Kết quả</p>
+                <p className="sec-sub-title">Kết quả</p>
+              </div>
+              <div
+                className="ms-5 fs-6 mb-1"
+                style={{ color: "rgb(27, 65, 168)" }}
+              >
+                Tìm thấy {totalElements} kết quả với từ khoá "{displayKeyword}"
               </div>
             </div>
           </div>
+          <div className="d-flex ms-5 mb-5 gap-3 fs-6 align-items-center">
+            <span>Sắp xếp theo: </span>
+            <select value={sortBy} onChange={handleSortByChange}>
+              <option value="medicinePrice">Giá</option>
+              <option value="medicineName">Tên thuốc</option>
+            </select>
+
+            <span>Cách sắp xếp: </span>
+            <select value={sortDirection} onChange={handleSortDirectionChange}>
+              <option value="asc">Tăng dần</option>
+              <option value="desc">Giảm dần</option>
+            </select>
+            <button
+              className="rounded btn btn-light border-dark"
+              style={{ padding: "0px 10px 0px 10px" }}
+              onClick={handleSortBtn}
+            >
+              Sắp xếp
+            </button>
+          </div>
           <div className="row">
             {medicineList?.map((el, index) => {
-              const randomIndex = Math.floor(Math.random() * 3);
-              const discountOptions = [5, 10, 15];
-              const discountPercentage = discountOptions[randomIndex];
+              const discountPercentage = utils.getDiscount(el.medicinePrice);
               const actualPrice =
                 Math.ceil(
                   el.medicinePrice / ((100 - discountPercentage) / 100) / 1000
                 ) * 1000;
               return (
-                <div className="col-lg-3" key={index}>
+                <div
+                  className="col-lg-3 d-flex justify-content-center mb-3"
+                  key={index}
+                >
                   <div className="product-card">
                     <div className="product-image">
                       <span className="discount-tag">
@@ -102,6 +168,52 @@ export const SearchPage = () => {
                 </div>
               );
             })}
+          </div>
+          <div className="row justify-content-center mt-5">
+            <nav
+              aria-label="Pagination"
+              style={{
+                width: "20%",
+              }}
+            >
+              <ul className="pagination">
+                <li className={`page-item ${currentPage === 1 && "disabled"}`}>
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                  >
+                    &laquo;
+                  </button>
+                </li>
+                {[...Array(totalPages).keys()].map((page) => (
+                  <li
+                    key={page}
+                    className={`page-item ${
+                      currentPage === page + 1 && "active"
+                    }`}
+                  >
+                    <button
+                      className="page-link"
+                      onClick={() => handlePageChange(page + 1)}
+                    >
+                      {page + 1}
+                    </button>
+                  </li>
+                ))}
+                <li
+                  className={`page-item ${
+                    currentPage === totalPages && "disabled"
+                  }`}
+                >
+                  <button
+                    className="page-link"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                  >
+                    &raquo;
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
       </section>
