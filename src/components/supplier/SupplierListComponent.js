@@ -158,7 +158,6 @@ function SupplierListComponent() {
         }
     };
 
-
     return (
         <>
             <div id="ThanhVH">

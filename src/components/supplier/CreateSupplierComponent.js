@@ -48,7 +48,6 @@ function CreateSupplierComponent() {
               .min(10, "Số điện thoại vui lòng nhập 10 chữ số")
               .max(10, "Số điện thoại vui lòng nhập 10 chữ số")
               .matches(/^0[0-9]{9}$/, "Vui lòng nhập theo định dạng 0xxxxxxxxx với x là ký tự số")
-
           })}
           onSubmit={async (supplier) => {
             const newSupplier = {
