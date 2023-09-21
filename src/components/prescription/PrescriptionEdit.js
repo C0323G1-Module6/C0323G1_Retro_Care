@@ -2,55 +2,73 @@ import { Field, FieldArray, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { findAll } from "../../services/medicine/MedicineService";
-import { createPrescription } from "../../services/prescription/prescription";
-import {useNavigate} from "react-router-dom";
+import { editPrescription, getPrescriptionById } from "../../services/prescription/prescription";
+import {useNavigate, useParams} from "react-router-dom";
+import { getListIndication } from "../../services/prescription/indication";
 
-function PrescriptionCreate() {
+function PrescriptionEdit() {
     const [patients, setPatients] = useState([]);
     const [chooseMedicines, setChooseMedicines] = useState([]);
+    const [prescription, setPrescription] = useState();
+    const [indications, setIndications] = useState([]);
     const navigate = useNavigate();
+    const param = useParams();
+    console.log(param);
 
     const findAllPatient = async () => {
         const res = await getAllPatient();
         setPatients(res)
     };
 
+    const findPrescriptionById = async () => {
+        const res = getPrescriptionById(param.id);
+        console.log(res);
+        setPrescription(res);
+    }
+
     const findAllMedicine = async () => {
         const res = await findAll();
         setChooseMedicines(res.content);
     }
 
-    const createNewPrescription = async (value) => {
-        await createPrescription(value);
+    const findAllIndication = async () => {
+        const res = await getListIndication(param.id);
+        setIndications(res);
+    }
+
+    const editNewPrescription = async (value) => {
+        await editPrescription(value);
         navigate("/dashboard/prescription")
     }
 
     useEffect(() => {
         findAllPatient();
         findAllMedicine();
-    }, [])
+        findPrescriptionById();
+        findAllIndication();
+    }, [param.id])
 
     return (
         <>
             <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                 <Formik
                     initialValues={{
-                        code: "",
-                        name: "",
-                        symptoms: "",
-                        patient: 1,
-                        duration: "",
-                        note: "",
+                        code: prescription.code,
+                        name: prescription.name,
+                        symptoms: prescription.symptoms,
+                        patient: prescription.patient.id,
+                        duration: prescription.duration,
+                        note: prescription.note,
                         indicationDto: [{
-                            medicine: "",
-                            dosage: "",
-                            frequency: "",
+                            medicine: indications.medicine.id,
+                            dosage: indications.dosage,
+                            frequency: indications.frequency,
                         }]
                     }}
 
                     onSubmit={(values) => {
                         console.log(values);
-                        createNewPrescription(values);
+                        editNewPrescription(values);
 
                     }}
                 >
@@ -180,4 +198,4 @@ function PrescriptionCreate() {
         </>
     )
 }
-export default PrescriptionCreate;
+export default PrescriptionEdit;
