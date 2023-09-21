@@ -47,9 +47,10 @@ const Home = () => {
     dispatch(getAllCarts(1));
     toast.success("Thêm sản phẩm thành công");
   };
+  const doNothing = () => {};
   return (
     <div>
-      <Header onInputChange={null} />
+      <Header onInputChange={doNothing} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">

@@ -18,15 +18,15 @@ import {format, parseISO} from "date-fns";
 
 export default function ListEmployee() {
     const [showContent, setShowContent] = useState(false);
-    const [nameEmployee,setNameEmployee] = useState('');
+    const [nameEmployee, setNameEmployee] = useState("");
     const [employees, setEmployee] = useState([]);
     const [pageList, setPageList] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const limit = 5;
-    const [sort, setSort] = useState('code_employee');
-    const [searchEmployee, setSearchEmployee] = useState('');
-    const [deleteEmployee, setDeleteEmployee] = useState('');
-    const [message, setMessage] = useState('');
+    const [sort, setSort] = useState("code_employee");
+    const [searchEmployee, setSearchEmployee] = useState("");
+    const [deleteEmployee, setDeleteEmployee] = useState("");
+    const [message, setMessage] = useState("");
     const quantity = 10;
     const handleMouseEnter = (nameEmployee) => {
         setShowContent(true);
@@ -49,7 +49,10 @@ export default function ListEmployee() {
             setPageList(0);
             setTotalPage(0);
         }
-    }
+    };
+    useEffect(() => {
+        document.title = 'Retro Care - Danh sách nhân viên'
+    },[])
     useEffect(() => {
         getList().then();
     }, [pageList, sort]);
@@ -84,57 +87,62 @@ export default function ListEmployee() {
     }
 
     const checkDelete = async () => {
-        if (deleteEmployee !== '') {
+        if (deleteEmployee !== "") {
             Swal.fire({
-                title: 'Bạn muốn xoá nhân viên có tên: ' + deleteEmployee.nameEmployee + ' với mã nhân viên: ' + deleteEmployee.codeEmployee + ' ?',
+                title:
+                    "Bạn muốn xoá nhân viên có tên: " +
+                    deleteEmployee.nameEmployee +
+                    " với mã nhân viên: " +
+                    deleteEmployee.codeEmployee +
+                    " ?",
                 html: '<p style="color: red;">Bạn sẽ không thể khôi phục nhân viên này.</p>',
-                icon: 'warning',
+                icon: "warning",
                 showCancelButton: true,
-                confirmButtonText: 'Xác nhận ',
-                cancelButtonText: 'Huỷ',
-                reverseButtons: true
+                confirmButtonText: "Xác nhận ",
+                cancelButtonText: "Huỷ",
+                reverseButtons: true,
             }).then(async (res) => {
                 if (res.isConfirmed) {
                     const response = await deleteEmployees(deleteEmployee.id);
                     if (response.status === 200) {
                         getList().then(() => {
                             Swal.fire({
-                                icon: 'success',
-                                title: 'Xoá Thành công.',
+                                icon: "success",
+                                title: "Xoá Thành công.",
                                 showConfirmButton: false,
-                                timer: 2000
-                            })
+                                timer: 2000,
+                            });
                         });
                     } else {
                         getList().then(() => {
                             Swal.fire({
-                                icon: 'error',
-                                title: 'Xoá thất bại.',
+                                icon: "error",
+                                title: "Xoá thất bại.",
                                 showConfirmButton: false,
-                                timer: 2000
-                            })
+                                timer: 2000,
+                            });
                         });
                     }
                 } else {
                     getList().then(() => {
                         Swal.fire({
-                            icon: 'success',
-                            title: 'Đã huỷ xoá thành công.',
+                            icon: "success",
+                            title: "Đã huỷ xoá thành công.",
                             showConfirmButton: false,
-                            timer: 1500
-                        })
+                            timer: 1500,
+                        });
                     });
                 }
-            })
+            });
         } else {
             Swal.fire({
-                icon: 'warning',
-                title: 'Vui lòng chọn nhân viên trước khi thực hiện thao tác này.',
+                icon: "warning",
+                title: "Vui lòng chọn nhân viên trước khi thực hiện thao tác này.",
                 showConfirmButton: false,
-                timer: 1500
+                timer: 1500,
             }).then();
         }
-    }
+    };
     return (
         <>
             <div className="container">
@@ -144,15 +152,17 @@ export default function ListEmployee() {
                 <div className="mt-3 mb-2">
                     <div className="justify-content-between d-flex filter-employee">
                         <div>
-                            <Formik initialValues={{
-                                nameEmployee: ""
-                            }}
-                                    validationSchema={Yup.object({
-                                        nameEmployee: Yup.string().max(100)
-                                    })}
-                                    onSubmit={(values) => {
-                                        checkSearch(values.nameEmployee).then();
-                                    }}>
+                            <Formik
+                                initialValues={{
+                                    nameEmployee: "",
+                                }}
+                                validationSchema={Yup.object({
+                                    nameEmployee: Yup.string().max(100),
+                                })}
+                                onSubmit={(values) => {
+                                    checkSearch(values.nameEmployee).then();
+                                }}
+                            >
                                 <Form>
                                     <span>Lọc theo:</span>
                                     <Field
@@ -162,18 +172,25 @@ export default function ListEmployee() {
                                         name="nameEmployee"
                                         placeholder="Nhập tên nhân viên..."
                                     />
-                                    <button className="btn btn-light btn-outline-primary button-search" type="submit">
+                                    <button
+                                        className="btn btn-light btn-outline-primary button-search"
+                                        type="submit"
+                                    >
                                         Tìm kiếm
                                     </button>
                                 </Form>
                             </Formik>
                         </div>
                         <div className="ms-4">
-                            <Formik initialValues={{sort: ''}}>
+                            <Formik initialValues={{sort: ""}}>
                                 <Form>
                                     <span>Sắp xếp: </span>
-                                    <Field as="select" value={sort} className="input-search"
-                                           onChange={(event) => setSort(event.target.value)}>
+                                    <Field
+                                        as="select"
+                                        value={sort}
+                                        className="input-search"
+                                        onChange={(event) => setSort(event.target.value)}
+                                    >
                                         <option value="code_employee">Mã nhân viên</option>
                                         <option value="name_employee">Tên nhân viên</option>
                                     </Field>
@@ -189,27 +206,16 @@ export default function ListEmployee() {
                                 <table className="table table-hover thanh-son-table">
                                     <thead>
                                     <tr className="th-list">
-                                        <th className="px-3 py-2 bg-primary text-sm">STT
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Mã nhân viên
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Tên nhân viên
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Ngày sinh
-                                        </th>
-
-                                        <th className="px-3 py-2 bg-primary ">Căn cước công dân
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Số điện thoại
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Ngày vào làm
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Tài khoản
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Địa chỉ
-                                        </th>
-                                        <th className="px-3 py-2 bg-primary ">Ghi chú
-                                        </th>
+                                        <th className="px-3 py-2 bg-primary text-sm">STT</th>
+                                        <th className="px-3 py-2 bg-primary ">Mã nhân viên</th>
+                                        <th className="px-3 py-2 bg-primary ">Tên nhân viên</th>
+                                        <th className="px-3 py-2 bg-primary ">Ngày sinh</th>
+                                        <th className="px-3 py-2 bg-primary ">Căn cước công dân</th>
+                                        <th className="px-3 py-2 bg-primary ">Số điện thoại</th>
+                                        <th className="px-3 py-2 bg-primary ">Ngày vào làm</th>
+                                        <th className="px-3 py-2 bg-primary ">Tài khoản</th>
+                                        <th className="px-3 py-2 bg-primary ">Địa chỉ</th>
+                                        <th className="px-3 py-2 bg-primary ">Ghi chú</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -219,7 +225,7 @@ export default function ListEmployee() {
                                         </tr>)
                                     }
 
-                                    {employees !== [] && (employees.map((employee, index) => (
+                                    { employees.map((employee, index) => (
                                         <tr className={`tr-employee ${deleteEmployee && deleteEmployee.id === employee.id ? 'check-delete-employee' : ''}`}
                                             key={index}
                                             onClick={() => {
@@ -235,16 +241,17 @@ export default function ListEmployee() {
                                             <td className={`px-3 py-2 `}>{index + 1}</td>
                                             <td className={`px-3 py-2 `}>{employee.codeEmployee}</td>
                                             <td className="  py-2 code-employee "
-                                                onMouseEnter={()=>handleMouseEnter(employee.nameEmployee)}
+                                                onMouseEnter={() => handleMouseEnter(employee.nameEmployee)}
                                                 onMouseLeave={handleMouseLeave}
                                             ><img src={employee.image}
-                                                                              alt={employee.nameEmployee}
-                                                                              height="44.5" width="40"
-                                                                              style={{
-                                                                                  borderRadius: "100px",
-                                                                                  marginRight: "3px"
-                                                                              }}/>{employee.nameEmployee.length > quantity ? `${employee.nameEmployee.slice(0,quantity)}...`: employee.nameEmployee}
-                                                {showContent && nameEmployee === employee.nameEmployee && <div>{employee.nameEmployee}</div>}
+                                                  alt={employee.nameEmployee}
+                                                  height="44.5" width="40"
+                                                  style={{
+                                                      borderRadius: "100px",
+                                                      marginRight: "3px"
+                                                  }}/>{employee.nameEmployee.length > quantity ? `${employee.nameEmployee.slice(0, quantity)}...` : employee.nameEmployee}
+                                                {showContent && nameEmployee === employee.nameEmployee &&
+                                                    <div>{employee.nameEmployee}</div>}
                                             </td>
                                             <td className={`px-3 py-3 `}>{format(parseISO(employee.birthday), 'dd/MM/yyyy')}</td>
                                             <td className={`px-3 py-3 `}>{employee.idCard}</td>
@@ -254,7 +261,7 @@ export default function ListEmployee() {
                                             <td className={`px-3 py-3 `}>{employee.address}</td>
                                             <td className={`px-3 py-3 `}>{employee.note}</td>
                                         </tr>
-                                    )))}
+                                    ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -301,11 +308,11 @@ export default function ListEmployee() {
                                 <FiEdit className="mx-1"/> Sửa
                             </button>
                         </Link> :
-                        <button className="btn btn-light btn-outline-primary m-1" onClick={()=>{
+                        <button className="btn btn-light btn-outline-primary m-1" onClick={() => {
                             Swal.fire({
-                                icon:"warning",
-                                title:"Vui lòng chọn nhân viên trước khi thực hiện thao tác này.",
-                                showConfirmButton:false,
+                                icon: "warning",
+                                title: "Vui lòng chọn nhân viên trước khi thực hiện thao tác này.",
+                                showConfirmButton: false,
                                 timer: 1500
                             }).then()
                         }}>
