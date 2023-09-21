@@ -12,7 +12,7 @@ export const SearchPage = () => {
 
   useEffect(() => {
     getMedicineList();
-  }, []);
+  }, [params.keyword]);
 
   const getMedicineList = async () => {
     const response = await homeService.findMedicineForHomepage(keyword, "");
@@ -22,7 +22,6 @@ export const SearchPage = () => {
 
   const handleInputChange = async (event) => {
     setKeyword(event.target.value);
-    await getMedicineList();
   };
 
   return (

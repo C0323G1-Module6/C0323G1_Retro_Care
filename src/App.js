@@ -40,7 +40,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/invoice" element={<InvoiceList />} />
-      <Route path="/search" element={<SearchPage />} />
+      <Route path="/home/search/:keyword" element={<SearchPage />} />
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
