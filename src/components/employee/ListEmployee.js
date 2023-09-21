@@ -17,6 +17,8 @@ import * as Yup from "yup";
 import {format, parseISO} from "date-fns";
 
 export default function ListEmployee() {
+    const [showContent, setShowContent] = useState(false);
+    const [nameEmployee,setNameEmployee] = useState('');
     const [employees, setEmployee] = useState([]);
     const [pageList, setPageList] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -25,6 +27,15 @@ export default function ListEmployee() {
     const [searchEmployee, setSearchEmployee] = useState('');
     const [deleteEmployee, setDeleteEmployee] = useState('');
     const [message, setMessage] = useState('');
+    const quantity = 10;
+    const handleMouseEnter = (nameEmployee) => {
+        setShowContent(true);
+        setNameEmployee(nameEmployee);
+    };
+
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
     const getList = async () => {
         try {
             const data = await getListEmployee(pageList, limit, sort, searchEmployee);
@@ -175,7 +186,7 @@ export default function ListEmployee() {
                     <div className="pt-2">
                         <div>
                             <div className="table-container rounded-top ">
-                                <table className="table table-hover ">
+                                <table className="table table-hover thanh-son-table">
                                     <thead>
                                     <tr className="th-list">
                                         <th className="px-3 py-2 bg-primary text-sm">STT
@@ -186,8 +197,7 @@ export default function ListEmployee() {
                                         </th>
                                         <th className="px-3 py-2 bg-primary ">Ngày sinh
                                         </th>
-                                        <th className="px-3 py-2 bg-primary ">Địa chỉ
-                                        </th>
+
                                         <th className="px-3 py-2 bg-primary ">Căn cước công dân
                                         </th>
                                         <th className="px-3 py-2 bg-primary ">Số điện thoại
@@ -195,6 +205,8 @@ export default function ListEmployee() {
                                         <th className="px-3 py-2 bg-primary ">Ngày vào làm
                                         </th>
                                         <th className="px-3 py-2 bg-primary ">Tài khoản
+                                        </th>
+                                        <th className="px-3 py-2 bg-primary ">Địa chỉ
                                         </th>
                                         <th className="px-3 py-2 bg-primary ">Ghi chú
                                         </th>
@@ -222,20 +234,24 @@ export default function ListEmployee() {
                                             }}>
                                             <td className={`px-3 py-2 `}>{index + 1}</td>
                                             <td className={`px-3 py-2 `}>{employee.codeEmployee}</td>
-                                            <td className={`px-5 py-2 `}><img src={employee.image}
+                                            <td className="  py-2 code-employee "
+                                                onMouseEnter={()=>handleMouseEnter(employee.nameEmployee)}
+                                                onMouseLeave={handleMouseLeave}
+                                            ><img src={employee.image}
                                                                               alt={employee.nameEmployee}
                                                                               height="44.5" width="40"
                                                                               style={{
                                                                                   borderRadius: "100px",
                                                                                   marginRight: "3px"
-                                                                              }}/>{employee.nameEmployee}
+                                                                              }}/>{employee.nameEmployee.length > quantity ? `${employee.nameEmployee.slice(0,quantity)}...`: employee.nameEmployee}
+                                                {showContent && nameEmployee === employee.nameEmployee && <div>{employee.nameEmployee}</div>}
                                             </td>
                                             <td className={`px-3 py-3 `}>{format(parseISO(employee.birthday), 'dd/MM/yyyy')}</td>
-                                            <td className={`px-3 py-3 `}>{employee.address}</td>
                                             <td className={`px-3 py-3 `}>{employee.idCard}</td>
                                             <td className={`px-3 py-3 `}>{employee.phoneNumber}</td>
                                             <td className={`px-3 py-3 `}>{format(parseISO(employee.startDay), 'dd/MM/yyyy')}</td>
                                             <td className={`px-3 py-3 `}>{employee.appUser.userName}</td>
+                                            <td className={`px-3 py-3 `}>{employee.address}</td>
                                             <td className={`px-3 py-3 `}>{employee.note}</td>
                                         </tr>
                                     )))}

@@ -47,6 +47,25 @@
 .check-delete-employee {
     background-color: rgba(252, 245, 76, 0.73) !important;
 }
+.table-container td{
+
+}
+.code-employee{
+    padding-right: 35px !important;
+    position: relative;
+}
+.code-employee div{
+    position: absolute;
+    background-color: rgba(201, 201, 201, 0.66);
+    color: black;
+    top: 80%;
+    left: 50%;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+::-webkit-scrollbar{
+    height: 6px;
+}
 
 
 
