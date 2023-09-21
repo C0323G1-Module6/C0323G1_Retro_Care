@@ -18,6 +18,7 @@ function MedicineList() {
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
     const [limit, setLimit] = useState(5)
+    const [conditional, setConditional] = useState("")
 
 // ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
@@ -52,7 +53,7 @@ function MedicineList() {
                             text: 'Xóa thất bại!'
                         });
                     }
-                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
+                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional);
                 });
         }
     };
@@ -76,16 +77,17 @@ function MedicineList() {
         }
     }
 // ----------------------------------------- Search ---------------------------------------
-    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit) => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
+    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
         setMedicineList(result?.content);
         setTotalPage(result?.totalPages);
+        // console.log(result?.content)
     }
 // select child
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
         const conditional = document.getElementById("conditional");
-        if (select === "4") {
+        if (select === "searchByPrice") {
             conditional.style.display = "inline";
         } else {
             conditional.style.display = "none";
@@ -95,24 +97,31 @@ function MedicineList() {
     const handleSearch = async () => {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
+        console.log(page)
+        console.log(limit)
+        console.log(searchInput)
+        console.log(conditional)
+        console.log(searchInMedicine)
+         // await getListSearchMedicine(searchInMedicine,searchInput,page,limit,conditional)
+
     }
+
 // select father
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
+    }
+
+    const handleSearchConditional = (e) => {
+        setConditional(e.target.value);
     }
 
     // useEffect(() => {
     //     getListMedicine(page);
     // }, [page])
 
-    const handleReset = () => {
-        setPage(0);
-        setSearchInMedicine("");
-        setSearchInput("");
-    }
 
     useEffect(() => {
-        getListSearchMedicine(searchInMedicine, searchInput, page, limit)
+        getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }, [searchInput, page, limit])
 
     if (!medicineList) {
@@ -136,19 +145,19 @@ function MedicineList() {
                             <option value="searchByNameKindOfMedicine">Nhóm thuốc</option>
                             <option value="searchByName">Tên thuốc</option>
                             <option value="searchByActiveElement">Hoạt chất</option>
-                            <option value="4">Giá bán lẻ</option>
+                            <option value="searchByPrice">Giá bán lẻ</option>
                         </select>
 
                         <select style={{width: '150px', borderRadius: '5px', color: 'blue', display: "none"}}
+                                onChange={(e) => handleSearchConditional(e)}
                                 id="conditional" className="appearance-none pl-8 pr-6 py-2">
-                            <option selected>Điều kiện</option>
-                            <option value="1">Bằng</option>
-                            <option value="2">Lớn hơn</option>
-                            <option value="3">Nhỏ hơn</option>
-                            <option value="4">Lớn hơn bằng</option>
-                            <option value="5">Nhỏ hơn bằng</option>
-                            <option value="6">Khác</option>
-                            <option value="7">Tất cả</option>
+                            <option value="">Tất cả</option>
+                            <option value="equal">Bằng</option>
+                            <option value="bigger">Lớn hơn</option>
+                            <option value="litter">Nhỏ hơn</option>
+                            <option value="greater">Lớn hơn bằng</option>
+                            <option value="small">Nhỏ hơn bằng</option>
+                            <option value="notEqual">Khác</option>
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
@@ -232,7 +241,7 @@ function MedicineList() {
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price - (item.price / (100 + (item.vat + item.retailProfits)) * 100)}</td>
+                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
