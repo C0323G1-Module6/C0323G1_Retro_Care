@@ -29,6 +29,7 @@ import MedicineEdit from "./components/medicine/MedicineEdit";
 import SearchPage from "./components/search/SearchPage";
 import Cart from "./components/order/Cart";
 import Details from "./components/order/Details";
+import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
@@ -43,6 +44,10 @@ function App() {
         <Route
           path="/dashboard/prescription/create"
           element={<PrescriptionCreate />}
+        />
+        <Route
+          path="/dashboard/prescription/edit/:id"
+          element={<PrescriptionEdit />}
         />
         <Route path="/dashboard/medicine" element={<MedicineList />} />
         <Route
