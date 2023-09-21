@@ -16,10 +16,17 @@ import {
 import * as homeService from "../../services/home/HomeService";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
+import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { addToCartFromHomeAndDetails } from "../../services/order/CartService";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllCarts } from "../order/redux/cartAction";
 
 const Home = () => {
   const [medicineList, setMedicineList] = useState([]);
   const [favoriteList, setFavoriteList] = useState([]);
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
 
   useEffect(() => {
     getMedicineList();
@@ -35,7 +42,11 @@ const Home = () => {
     const response = await homeService.findFavoriteMedicineForHomepage();
     setFavoriteList(response);
   };
-
+  const addToCart = async (medicineId) => {
+    const response = await addToCartFromHomeAndDetails(1, medicineId, 1);
+    dispatch(getAllCarts(1));
+    toast.success("Thêm sản phẩm thành công");
+  };
   return (
     <div>
       <Header />
@@ -151,14 +162,19 @@ const Home = () => {
                     <div className="product-card">
                       <div className="product-image">
                         {/* <span className="discount-tag">30% off</span> */}
-                        <a href="/prototype/cart/HanhNLM_product-details.html">
+                        <Link to={`/details/${el.medicineId}`}>
                           <img
                             src={el.medicineImage}
                             className="product-thumb"
                             alt=""
                           />
-                        </a>
-                        <button className="card-btn">Mua</button>
+                        </Link>
+                        <button
+                          className="card-btn"
+                          onClick={() => addToCart(el.medicineId)}
+                        >
+                          Mua
+                        </button>
                       </div>
                       <div className="product-info">
                         <p className="product-short-description">
@@ -221,14 +237,19 @@ const Home = () => {
                     <div className="product-card">
                       <div className="product-image">
                         {/* <span className="discount-tag">30% off</span> */}
-                        <a href="/prototype/cart/HanhNLM_product-details.html">
+                        <Link to={`/details/${el.medicineId}`}>
                           <img
                             src={el.medicineImage}
                             className="product-thumb"
                             alt=""
                           />
-                        </a>
-                        <button className="card-btn">Mua</button>
+                        </Link>
+                        <button
+                          className="card-btn"
+                          onClick={() => addToCart(el.medicineId)}
+                        >
+                          Mua
+                        </button>
                       </div>
                       <div className="product-info">
                         <p className="product-short-description">
@@ -435,6 +456,7 @@ const Home = () => {
         </section>
       </div>
       <Footer />
+      <ToastContainer autoClose={2000} className="toast-position" />
     </div>
   );
 };
