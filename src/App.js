@@ -11,10 +11,8 @@ import ListEmployee from "./components/employee/ListEmployee";
 import MedicineList from "./components/medicine/MedicineList";
 import PrescriptionCreate from "./components/prescription/PrescriptionCreate";
 
-
 function App() {
   return (
-    <>
       <Routes>
         <Route path="/home" element={<Home />}></Route>
         <Route path="/login" element={<Login />} />
@@ -36,11 +34,7 @@ function App() {
           <Route path="/dashboard/customer" element={<CustomerList />} />
           <Route path="/dashboard/employee" element={<ListEmployee />} />
         </Route>
-        <Route path="/cart" element={<Cart />}></Route>
-        <Route path="/details/:id" element={<Details />}></Route>
       </Routes>
-      <ToastContainer autoClose={2000} className="toast-position" />
-    </>
   );
 }
 
