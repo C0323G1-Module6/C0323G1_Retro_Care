@@ -51,7 +51,6 @@ const Header = ({ inputSearch, onInputChange }) => {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    alert(keyword);
     searchMedicines(keyword);
   };
 
