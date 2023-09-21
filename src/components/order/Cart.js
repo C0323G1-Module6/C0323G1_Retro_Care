@@ -19,6 +19,7 @@ import Header from "../layout/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "./redux/cartAction";
 import { el } from "date-fns/locale";
+import "../../css/Order.css";
 
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
