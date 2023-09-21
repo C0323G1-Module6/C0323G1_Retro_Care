@@ -2,14 +2,13 @@ import './style.css'
 import {Formik,Form,Field,ErrorMessage} from 'formik'
 import React, {useEffect, useRef, useState} from "react";
 import * as Yup from "yup";
-import {crateEmployee, createUserEmployee, getNewEmployee} from "../../services/employee/EmployeeService";
+import {crateEmployee, getNewEmployee} from "../../services/employee/EmployeeService";
 import {
     ref,
     uploadBytes,
     getDownloadURL,
-    listAll,
-    deleteObject,
 } from "firebase/storage";
+import {FidgetSpinner} from "react-loader-spinner"
 import { parse, differenceInYears } from 'date-fns';
 import {storage} from "../../firebase/firebase";
 import {v4} from "uuid";
@@ -22,32 +21,38 @@ const CreationEmployee = ()=>{
     const imgPreviewRef = useRef(null)
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
-    const saveEmployee = async(employee) => {
+    const saveEmployee = async(employee,setErrors) => {
         const fileName = `images/${imageUpload.name + v4()}`
         const imageRef = ref(storage, fileName);
         await uploadBytes(imageRef, imageUpload).then((snapshot) => {
             getDownloadURL(snapshot.ref).then(async (url) => {
                 console.log(url);
                 console.log(employee)
+                try{
                 await crateEmployee({
                     ...employee,
                     image: url
                 }).then(() => {
                     navigate("/dashboard/employee")
-                })
-            }).then(
-                () => {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Tạo mới thành công !',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        customClass: {
-                            icon: 'icon-post',
-                        }
-                    })
+                }).then(
+                    () => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Tạo mới thành công !',
+                            showConfirmButton: false,
+                            timer: 2000,
+                            customClass: {
+                                icon: 'icon-post',
+                            }
+                        })
+                    }
+                )
+                }catch (err){
+                    if(err.response.data){
+                        setErrors(err.response.data)
+                    }
                 }
-            )
+            })
         })
     };
     const handleInputChange = (event) => {
@@ -123,18 +128,37 @@ const CreationEmployee = ()=>{
                     .matches(/^\d{9}(\d{3})?$/u,"Vui lòng chỉ nhập số và độ dài là 9 hoặc 12"),
                 appUser:Yup.string().required("Vui lòng nhập tên tài khoản"),
             })}
-            onSubmit={(value,{setSubmitting}) => {
-                setSubmitting(false);
-                saveEmployee(value).then(() => {
-                setSubmitting(true);
-            });
+            onSubmit={(value,{setErrors}) => {
+                let timerInterval
+                Swal.fire({
+                    title: 'Auto close alert!',
+                    html: 'I will close in <b></b> milliseconds.',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
+                saveEmployee(value,setErrors)
             }}
         >
             <Form>
                 <div className="container">
                     <div className="row ">
                         <div className="col-4  d-flex justify-content-center align-items-center">
-                                <img ref={imgPreviewRef} width="400" height="600"
+                                <img src={employee.image} ref={imgPreviewRef} width="400" height="600"
                                      style={{borderRadius: "50px", objectFit: "cover",border:"1px solid black"}}/>
                         </div>
                         <div className="col-8  d-flex justify-content-center ">
@@ -246,7 +270,6 @@ const CreationEmployee = ()=>{
                                                id="floatingTextarea"/>
                                         <label htmlFor="floatingTextarea">Note</label>
                                     </div>
-
                                     <div style={{height: '16px'}}>
                                         <ErrorMessage name='image' style={{color: 'red', marginLeft: '20px'}} component={'small'} />
                                     </div>
@@ -254,18 +277,22 @@ const CreationEmployee = ()=>{
                                         <span>(<span style={{color: 'red'}}>*</span>) Thông tin bắt buộc</span>
                                     </div>
                                     <div className="col-8 mt-3">
-                                        <Link to={"/dashboard/employee"}>
-                                            <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
-                                                className="fa-solid fa-rotate-left"></i> Trở về
-                                            </button>
-                                        </Link>
-                                        <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
+                                            <div>
+                                            <Link to={"/dashboard/employee"}>
+                                                <button
+                                                    className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
+                                                    className="fa-solid fa-rotate-left"></i> Trở về
+                                                </button>
+                                            </Link>
+                                            <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
                                             <i className="fa-solid fa-rotate-right"></i>
                                             Làm mới
-                                        </button>
-                                        <button type={"submit"} className="btn btn-outline-primary float-end mx-1 mt-2 shadow"><i
+                                            </button>
+                                            <button type={"submit"} className="btn btn-outline-primary float-end mx-1 mt-2 shadow"><i
                                             className="fa-solid fa-plus"></i> Thêm Mới
-                                        </button>
+                                            </button>
+                                            </div>
+
                                     </div>
                                 </div>
                             </fieldset>
