@@ -34,16 +34,16 @@ function MedicineList() {
                 if (willDelete.isConfirmed) {
                     await medicineService.deleteMedicine(selectMedicine.id);
                     swal.fire("Xoá sản phẩm thành công!", "", "success");
+                    setSelectMedicine({
+                        id:null,
+                        name: ''
+                    })
                 } else {
                     swal.fire({
                         icon: 'error',
                         title: 'Rất tiếc...',
                         text: 'Xóa thất bại!'
                     });
-                    setSelectMedicine({
-                        id:null,
-                        name: ''
-                    })
                 }
                 await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
             });
@@ -207,8 +207,13 @@ function MedicineList() {
                                 {
                                     medicineList.map((item, index) => (
                                         <tr key={index} id={index} onClick={() => {
-                                            setSelectMedicine({id: item.id, name: item?.name});
-                                        }} style={(selectMedicine.id === item?.id) ? {background: 'red'} : {}}>
+                                            if (selectMedicine === null || selectMedicine.id !== item.id){
+                                                setSelectMedicine({id: item.id, name: item?.name});
+                                            }else if (selectMedicine.id === item.id){
+                                                setSelectMedicine({id: null, name: ""});
+                                            }
+
+                                        }} style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
                                             <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
