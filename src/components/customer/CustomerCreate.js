@@ -70,8 +70,8 @@ const CustomerCreate = () => {
               .max(100, "Độ dài vượt quá ký tự cho phép"),
             phoneNumber: Yup.string()
               .required("Vui lòng nhập số điện thoại cho khách hàng")
-              .max(12, "Độ dài vượt quá ký tự cho phép")
-              .min(7, "Số điện thoại quá ngắn"),
+              .max(11, "Độ dài vượt quá ký tự cho phép")
+              .min(10, "Số điện thoại quá ngắn"),
             email: Yup.string()
               .required("Vui lòng nhập địa chỉ email cho khách hàng")
               .matches(
@@ -94,7 +94,7 @@ const CustomerCreate = () => {
                   </label>
                 </div>
                 <div className="col-8">
-                  <Field className="form-control mt-2" disabled name="code" />
+                  <Field className="form-control mt-2" disabled name="code"  />
                   <div style={{ height: "0.6rem", marginBottom: "0.6rem" }}>
                     <ErrorMessage
                       className="text-danger"
