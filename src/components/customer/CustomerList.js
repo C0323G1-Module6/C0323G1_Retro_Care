@@ -281,7 +281,11 @@ function CustomerList() {
           <tbody className="bg-light">
             {customers.map((customer, index) => (
               <tr key={index} id={index} onClick={() => {
+                if (selectedCustomer.id === null || selectedCustomer.id != customer?.id ) {
                 setSeletedCustomer({ id: customer?.id, name: customer?.name });
+                } else {
+                  setSeletedCustomer({id: null, name: ""});
+                }
               }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
                 <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {index + 1}
