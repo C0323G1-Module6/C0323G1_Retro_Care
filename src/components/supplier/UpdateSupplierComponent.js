@@ -12,7 +12,6 @@ function UpdateSupplierComponent() {
   const [supplier, setSupplier] = useState({});
   const { idSupplier } = useParams();
 
-
   const getSupplier = async () => {
     const data = await getSupplierById(idSupplier);
     setSupplier(data);

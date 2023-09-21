@@ -4,12 +4,10 @@ export async function getListSupplier(page,code,name,phoneNumber,address,sortBy)
     const resolve = await axios.get(`http://localhost:8080/supplier?page=${page}&&code=${code}&&name=${name}&&phoneNumber=${phoneNumber}&&address=${address}&&sortBy=${sortBy}`)
     return resolve.data;
 }
-
 export async function getSupplierById(id) {
     const resolve = await axios.get(`http://localhost:8080/supplier/get/${id}`)
     return resolve.data;
 }
-
 export async function detailSupplierById(id) {
     const resolve = await axios.get(`http://localhost:8080/supplier/detail-supplier/${id}`)
     return resolve.data;
