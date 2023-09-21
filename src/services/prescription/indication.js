@@ -5,6 +5,11 @@ export const createIndication = async (indication) => {
 }
 
 export const getListIndication = async (id) => {
-    const res = await axios.get(`http://localhost:8080/indication/${id}`)
-    return res;
+    try {
+        const res = await axios.get(`http://localhost:8080/indicationDto/${id}`);
+        return res;
+    }
+    catch (e) {
+        console.log(e);
+    }
 }
