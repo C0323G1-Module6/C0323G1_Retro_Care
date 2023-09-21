@@ -23,7 +23,12 @@ export const addJwtTokenToLocalStorage = (jwtToken) => {
 export const infoAppUserByJwtToken = () => {
     const jwtToken = localStorage.getItem("JWT");
     if (jwtToken) {
-        const result = jwt_decode(jwtToken);
+        const result = jwt_decode(jwtToken); 
         return result;
     }
+}
+
+export const getIdByUserName = (userName) => {
+    const id = axios.get(`/get-id-app-user/${userName}`); 
+    return id;
 }

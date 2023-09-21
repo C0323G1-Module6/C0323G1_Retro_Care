@@ -2,84 +2,98 @@ import { Field, FieldArray, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
-import { createPrescription } from "../../services/prescription/prescription";
-import * as Yup from 'yup';
-import { useNavigate } from "react-router-dom";
+import { editPrescription, getPrescriptionById } from "../../services/prescription/prescription";
+import { useNavigate, useParams } from "react-router-dom";
+import { getListIndication } from "../../services/prescription/indication";
 
-function PrescriptionCreate() {
+function PrescriptionEdit() {
     const [patients, setPatients] = useState([]);
     const [chooseMedicines, setChooseMedicines] = useState([]);
+    const [prescription, setPrescription] = useState();
+    const [indications, setIndications] = useState([]);
     const navigate = useNavigate();
+    const param = useParams();
 
     const findAllPatient = async () => {
         const res = await getAllPatient();
         setPatients(res)
     };
 
+    const findPrescriptionById = async () => {
+        const res = await getPrescriptionById(param.id);
+        console.log(res.data);
+        setPrescription(res.data);
+    }
+
     const findAllMedicine = async () => {
         const res = await getMedicineList();
         setChooseMedicines(res);
     }
 
-    const createNewPrescription = async (value) => {
-        await createPrescription(value);
+    const findAllIndication = async () => {
+        const res = await getListIndication(param.id);
+        setIndications(res.data);
+    }
+    console.log(indications);
+
+    const editNewPrescription = async (value) => {
+        await editPrescription(value);
         navigate("/dashboard/prescription")
     }
 
     useEffect(() => {
         findAllPatient();
         findAllMedicine();
-    }, [])
+        findPrescriptionById();
+        findAllIndication();
+    }, [param.id])
+
+    if (prescription === undefined) {
+        return null;
+    }
 
     return (
         <>
             <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                 <Formik
                     initialValues={{
-                        code: "",
-                        name: "",
-                        symptoms: "",
-                        patient: 1,
-                        duration: "",
-                        note: "",
-                        indicationDto: [{
-                            medicine: "",
-                            dosage: "",
-                            frequency: "",
-                        }]
+                        id: prescription?.id,
+                        code: prescription?.code,
+                        name: prescription?.name,
+                        symptoms: prescription?.symptoms,
+                        patient: prescription?.patient.id,
+                        duration: prescription?.duration,
+                        note: prescription?.note,
+                        indicationDto: indications
                     }}
-
-                    validationSchema={Yup.object({
-                        code: Yup.string()
-                            .required('Không được để trống mã toa thuốc!')
-                            .max(6,"Độ dài không được quá 6 ký tự!")
-                    })}
 
                     onSubmit={(values) => {
                         console.log(values);
-                        createNewPrescription(values);
+                        editNewPrescription(values);
+
                     }}
                 >
                     {({ values }) => (
                         <fieldset className="border border-dark rounded-3 p-3 w-50" style={{ backgroundColor: '#f8f9fa' }}>
                             <legend className="float-none w-auto px-3">Thông tin toa thuốc</legend>
                             <Form>
+                                <Field type="hidden" name="id" value={prescription.id} />
                                 <div className="mb-3 row">
-                                    <label className="col-sm-3 col-form-label" id="label-input" >Mã toa thuốc</label>
+                                    <label className="col-sm-3 col-form-label" id="label-input">Mã toa thuốc</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='code' placeholder="Nhập mã toa thuốc..." />
+                                        <Field type="text" className="form-control" name='code' />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
-                                    <label className="col-sm-3 col-form-label" id="label-input" >Tên đơn thuốc</label>
+                                    <label className="col-sm-3 col-form-label" id="label-input">Tên đơn thuốc</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='name' placeholder="Nhập tên toa thuốc..." />
+                                        <Field type="text" className="form-control" name='name' />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Triệu chứng</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" placeholder="Nhập triệu chứng..." name='symptoms' />
+                                        <Field type="text" className="form-control" name='symptoms' />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
@@ -93,15 +107,15 @@ function PrescriptionCreate() {
                                             }
                                         </Field>
                                     </div>
-                                    <label className="col-sm-3 col-form-label" id="label-input" >Số ngày uống </label>
+                                    <label className="col-sm-3 col-form-label" id="label-input">Số ngày uống </label>
                                     <div className="col-sm-2">
-                                        <Field type="number" className="form-control" name='duration' placeholder="..." />
+                                        <Field type="number" className="form-control" name='duration' />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
-                                    <label className="col-sm-3 col-form-label" id="label-input" >Ghi chú</label>
+                                    <label className="col-sm-3 col-form-label" id="label-input">Ghi chú</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='note' placeholder="Nhập ghi chú..." />
+                                        <Field type="text" className="form-control" name='note' />
                                     </div>
                                 </div>
 
@@ -120,16 +134,15 @@ function PrescriptionCreate() {
                                                                     className="form-control"
                                                                     placeholder="Tìm thuốc..."
                                                                     id="search-input"
+                                                                    value={i.medicine}
                                                                     name={`indicationDto[${index}].medicine`}
                                                                     list="medicine-options"
+
                                                                 />
 
-                                                                <datalist id="medicine-options" >
+                                                                <datalist id="medicine-options">
                                                                     {chooseMedicines.map((medicine, index) => (
-                                                                        <>
-                                                                            <option value={medicine.id}>{medicine.name}</option>
-                                                                        </>
-
+                                                                        <option value={medicine.id}>{medicine.name}</option>
                                                                     ))}
                                                                 </datalist>
 
@@ -149,12 +162,12 @@ function PrescriptionCreate() {
                                                             <div className="col-sm-1">&nbsp;</div>
                                                             <label className="col-sm-2 col-form-label">Ngày uống: </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
+                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
+                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                         </div>
@@ -176,7 +189,7 @@ function PrescriptionCreate() {
                                     {/* </Formik > */}
                                     <div className="d-flex justify-content-end w-100 gap-2">
                                         <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
-                                            Thêm mới</button>
+                                            Sửa</button>
                                         <a href="/dashboard/prescription" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a>
                                     </div>
                                 </div>
@@ -188,4 +201,4 @@ function PrescriptionCreate() {
         </>
     )
 }
-export default PrescriptionCreate;
+export default PrescriptionEdit;

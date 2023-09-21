@@ -1,4 +1,4 @@
-import { useNavigate} from "react-router";
+import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
@@ -29,10 +29,9 @@ function CustomerList() {
     id: null,
     name: ""
   });
-  const [visible, setVisible] = useState(false);
-
   const [optionSearch, setOptionSearch] = useState();
 
+  // ------------------------------------------------------ Get Customers List ---------------------------------------
   const loadCustomerList = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
     const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem);
     if (result?.status === 200) {
@@ -47,7 +46,16 @@ function CustomerList() {
       setSearchValue("");
     }
   }
-
+  const handleReset = () => {
+    setPage(0);
+    setName("");
+    setAddress("");
+    setPhoneNumber("");
+    setCode("");
+    setGroupValue("");
+    setSortItem("");
+  }
+  // ----------------------------------------------------------- Pagination ---------------------------------------------
   const previousPage = () => {
     if (page > 0) {
       setPage((pre) => pre - 1)
@@ -59,26 +67,26 @@ function CustomerList() {
       setPage((pre) => pre + 1)
     }
   }
+
+  // ------------------------------------------------------  Searching function -----------------------------------------
+  const handleInputChange = (e) => {
+    const { value } = e.target
+    setSearchValue(value);
+  }
+
   const handleKeyDown = event => {
     if (event.key === 'Enter') {
       handleSearchEvent();
     }
   }
 
-  const handleInputChange = (e) => {
-    const { value } = e.target
-    setSearchValue(value);
-  }
-
   const handleSearchEvent = () => {
-    console.log(optionSearch);
     switch (optionSearch) {
       case 1:
         setName(searchValue);
         break;
       case 2:
         setName(searchValue);
-        setVisible(true);
         break;
       case 3:
         setAddress(searchValue);
@@ -90,66 +98,95 @@ function CustomerList() {
         setCode(searchValue);
         break;
     }
-    setSearchValue("");
-  }
-
-  const handleSortEvent = (event) => {
-    setSortItem(event.target.value);
+    // setSearchValue("");
   }
 
   const handleSelectChange = (event) => {
     setGroupValue(event.target.value);
-    setName(searchValue)
+    setSearchValue(document.getElementById("search").value);
+    setName(searchValue);
   }
-  const handleDelete = async () => {
-    Swal.fire({
-      title: "Xóa khách hàng",
-      text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
-      showCancelButton: true,
-      showConfirmButton: true,
-      confirmButtonText: "Đúng vậy",
-      icon: "question",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const response = await customerService.deleteCustomer(selectedCustomer.id);
-        if (response?.status === 200) {
-          Swal.fire({
-            text: "Xóa thành công! ",
-            icon: "success",
-            timer: 1500,
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Rất tiếc...',
-            text: 'Xóa thất bại!',
-          })
-        }
-      } else {
-        Swal.fire({
-          text: "Không ",
-          icon: "warning",
-          timer: 1500,
-        });
-      }
-      await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
-    });
-  };
-
-  useEffect(() => {
-    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
-  }, [page, name, code, address, phoneNumber, groupValue, sortItem, visible]);
 
   const handleOptionSearchChange = (e) => {
-    const {value} = e.target;
-    setOptionSearch(+value)
+    const { value } = e.target;
+    setOptionSearch(+value);
+    setSearchValue(document.getElementById("search").value);
+    console.log(searchValue);
+    handleReset();
   }
 
+  // ------------------------------------------------------ Sort -----------------------------------------------------
+  const handleSortEvent = (event) => {
+    setSortItem(event.target.value);
+  }
+
+  //--------------------------------------------------- Delete method -----------------------------------------------
+  const handleDelete = async () => {
+    if (selectedCustomer.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn khách hàng trước khi thực hiện thao tác này!',
+      })
+    } else {
+      Swal.fire({
+        title: "Xóa khách hàng",
+        text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        icon: "question",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await customerService.deleteCustomer(selectedCustomer.id);
+          if (response?.status === 200) {
+            Swal.fire({
+              text: "Xóa thành công! ",
+              icon: "success",
+              timer: 1000,
+            });
+            setSeletedCustomer({ id: null, name: "" })
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Rất tiếc...',
+              text: 'Xóa thất bại!',
+            })
+          }
+        } else {
+          Swal.fire({
+            text: "Hủy thao tác",
+            icon: "warning",
+            timer: 1000,
+          });
+          setSeletedCustomer({ id: null, name: "" })
+        }
+        await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+      });
+    }
+  };
+
+  // ----------------------------------------------------------- Edit navigation ------------------------------------------------
+  const handleEditEvent = () => {
+    if (selectedCustomer.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn khách hàng trước khi thực hiện thao tác này!',
+      })
+    } else {
+      navigate(`/dashboard/customer/update/${selectedCustomer.id}`)
+    }
+  }
+  // --------------------------------------------------------------Use Effect ----------------------------------------------------
+  useEffect(() => {
+    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+  }, [page, name, code, address, phoneNumber, groupValue, sortItem]);
 
   if (!customers) {
     return <div></div>;
   }
-
+  // ---------------------------------------------------------------- Return -----------------------------------------------------
   return (
     <div className="container">
       <h1 style={{ textAlign: "center", color: "#0d6efd" }} className="m-4">
@@ -174,13 +211,12 @@ function CustomerList() {
               </select>}
             </div>
           </div>
-          <input
-            style={{
-              width: 250,
-              borderRadius: 5,
-              padding: 5,
-              border: "1px black solid",
-            }}
+          <input style={{
+            width: 250,
+            borderRadius: 5,
+            padding: 5,
+            border: "1px black solid"
+          }}
             placeholder="Tìm kiếm khách hàng"
             className="bg-white align-middle appearance-none m-1"
             aria-describedby="button-addon"
@@ -195,10 +231,10 @@ function CustomerList() {
           </button>
         </div>
 
-        <div className="col-3 d-flex align-items-center justify-content-end">
+        <div className="col-3 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 ">
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 "style={{width:190}}>
               <option value={"group"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
@@ -245,30 +281,34 @@ function CustomerList() {
           <tbody className="bg-light">
             {customers.map((customer, index) => (
               <tr key={index} id={index} onClick={() => {
+                if (selectedCustomer.id === null || selectedCustomer.id != customer?.id ) {
                 setSeletedCustomer({ id: customer?.id, name: customer?.name });
-              }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: 'red' } : {}}>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                } else {
+                  setSeletedCustomer({id: null, name: ""});
+                }
+              }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {index + 1}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.code}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.name}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200  text-sm">
                   {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.address}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.phoneNumber}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.customerType}
                 </td>
-                <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {customer?.note}
                 </td>
               </tr>
@@ -288,7 +328,7 @@ function CustomerList() {
                 margin: 5,
                 borderRadius: 5,
               }}>
-              <span>{page+1}/{totalPage}</span>
+              <span>{page + 1}/{totalPage}</span>
             </div>
             <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => nextPage()} href="#">
               <AiOutlineDoubleRight />
@@ -307,7 +347,7 @@ function CustomerList() {
       </div>
 
       <div className="d-flex align-items-center justify-content-end gap-3">
-        <Link to ="/dashboard/customer/create"
+        <Link to="/dashboard/customer/create"
           className="btn btn-outline-primary"
         >
           <FaPlus className="mx-1" />
@@ -315,7 +355,7 @@ function CustomerList() {
         </Link>
         <button
           className="btn btn-outline-primary"
-          onClick={()=>{navigate(`/dashboard/customer/update/${selectedCustomer.id}`)}}
+          onClick={handleEditEvent}
         >
           <FiEdit className="mx-1" />
           Sửa

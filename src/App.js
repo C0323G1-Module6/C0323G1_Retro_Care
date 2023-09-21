@@ -19,18 +19,35 @@ import UpdateSupplierComponent from "./components/supplier/UpdateSupplierCompone
 import DetailSupplierComponent from "./components/supplier/DetailSupplierComponent";
 import SupplierListComponent from "./components/supplier/SupplierListComponent";
 import InvoiceList from "./components/invoice/InvoiceList";
-
+import Retail from "./components/retail/Retail";
+import RetailListPrescriptionList from "./components/retail/RetailListPrescriptionList";
+import RetailPrescriptionInformation from "./components/retail/RetailPrescriptionInformation";
+import GeneralReport from "./components/report/GeneralReport";
+import RevenueAndProfitChart from "./components/report/RevenueAndProfitChart";
+import MedicineCreate from "./components/medicine/MedicineCreate";
+import MedicineEdit from "./components/medicine/MedicineEdit";
+import SearchPage from "./components/search/SearchPage";
+import Cart from "./components/order/Cart";
+import Details from "./components/order/Details";
+import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/invoice" element={<InvoiceList />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="/dashboard/prescription" element={<PrescriptionList />} />
         <Route
           path="/dashboard/prescription/create"
           element={<PrescriptionCreate />}
+        />
+        <Route
+          path="/dashboard/prescription/edit/:id"
+          element={<PrescriptionEdit />}
         />
         <Route path="/dashboard/medicine" element={<MedicineList />} />
         <Route
@@ -63,7 +80,28 @@ function App() {
           element={<UpdateSupplierComponent />}
         />
         <Route path="/dashboard/invoice" element={<InvoiceList />} />
+        <Route path="/dashboard/retail" element={<Retail />} />
+        <Route
+          path="/dashboard/retail/prescription-list"
+          element={<RetailListPrescriptionList />}
+        />
+        <Route
+          path="/dashboard/retail/prescription-information/:id"
+          element={<RetailPrescriptionInformation />}
+        />
+        <Route path="/dashboard/report" element={<GeneralReport />} />
+        <Route
+          path="/dashboard/report/chart"
+          element={<RevenueAndProfitChart />}
+        />
+        <Route path="/dashboard/medicine/create" element={<MedicineCreate />} />
+        <Route
+          path="/dashboard/medicine/update/:id"
+          element={<MedicineEdit />}
+        />
       </Route>
+      <Route path="/cart" element={<Cart />}></Route>
+      <Route path="/details/:id" element={<Details />}></Route>
     </Routes>
   );
 }
