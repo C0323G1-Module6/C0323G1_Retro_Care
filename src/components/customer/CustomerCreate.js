@@ -22,6 +22,7 @@ const CustomerCreate = () => {
     setCustomerCode(result.code);
     console.log(result.code);
   };
+
   const handleSubmit = async (value, setErrors) => {
     try {
       const result = await addCustomer(value);
@@ -80,7 +81,9 @@ const CustomerCreate = () => {
               ),
             note: Yup.string().max(50, "Độ dài đang vượt quá ký tự cho phép"),
           })}
-          onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
+          onSubmit={(values, { setErrors }) =>{
+            handleSubmit(values, setErrors)}}
+
         >
           <Form>
             <fieldset className="form-input shadow">
@@ -202,7 +205,7 @@ const CustomerCreate = () => {
                 </div>
                 <div className="col-4 p-2">
                   <label>
-                    Ghi chú <span className="text-danger">*</span>
+                    Ghi chú
                   </label>
                 </div>
                 <div className="col-8">
