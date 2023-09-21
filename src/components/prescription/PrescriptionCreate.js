@@ -1,4 +1,4 @@
-import { Field, FieldArray, Form, Formik } from "formik";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
@@ -52,7 +52,29 @@ function PrescriptionCreate() {
                     validationSchema={Yup.object({
                         code: Yup.string()
                             .required('Không được để trống mã toa thuốc!')
-                            .max(6,"Độ dài không được quá 6 ký tự!")
+                            .max(6, "Độ dài không được quá 6 ký tự!")
+                            .matches(/^TH-[0-9]{3}/, "Mã không đúng định dạng!"),
+                        name: Yup.string()
+                            .max(25, "Độ dài không được quá 25 ký tự!")
+                            .required('Không được để trống tên toa thuốc!')
+                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
+                        symptoms: Yup.string()
+                            .max(50, "Độ dài không quá 50 ký tự!")
+                            .required('Không được để trống triệu chứng!')
+                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Triệu chứng không được chứa ký tự đặc biệt!"),
+                        duration: Yup.number()
+                            .required("Số ngày uống không được để trống!")
+                            .max(30, "Số ngày uống không được quá 30 ngày!")
+                            .min(1, "Số ngày uống không được nhỏ hơn 0!"),
+                        indicationDto: Yup.object().shape({
+                            dosage: Yup.number().required("Số lần uống không được để trống!")
+                                .max(30, "Số lần uống không được quá 30 ngày!")
+                                .min(1, "Số lần uống không được nhỏ hơn 0!"),
+                            frequency: Yup.number().required("Số viên uống không được để trống!")
+                                .max(30, "Số viên uống không được quá 30 ngày!")
+                                .min(1, "Số viên uống không được nhỏ hơn 0!"),
+                        })
+
                     })}
 
                     onSubmit={(values) => {
@@ -68,18 +90,22 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Mã toa thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='code' placeholder="Nhập mã toa thuốc..." />
+                                        <ErrorMessage name="code" component="div" style={{ color: 'red' }} />
                                     </div>
                                 </div>
+
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input" >Tên đơn thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='name' placeholder="Nhập tên toa thuốc..." />
+                                        <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Triệu chứng</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" placeholder="Nhập triệu chứng..." name='symptoms' />
+                                        <ErrorMessage name="symptoms" component="div" style={{ color: 'red' }} />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
@@ -95,8 +121,10 @@ function PrescriptionCreate() {
                                     </div>
                                     <label className="col-sm-3 col-form-label" id="label-input" >Số ngày uống </label>
                                     <div className="col-sm-2">
-                                        <Field type="number" className="form-control" name='duration' placeholder="..." />
+                                        <Field type="number" className="form-control" name='duration' placeholder="..."  />
+                                        <ErrorMessage name="duration" component="div" style={{ color: 'red' }} />
                                     </div>
+
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input" >Ghi chú</label>
@@ -123,7 +151,6 @@ function PrescriptionCreate() {
                                                                     name={`indicationDto[${index}].medicine`}
                                                                     list="medicine-options"
                                                                 />
-
                                                                 <datalist id="medicine-options" >
                                                                     {chooseMedicines.map((medicine, index) => (
                                                                         <>
@@ -150,14 +177,18 @@ function PrescriptionCreate() {
                                                             <label className="col-sm-2 col-form-label">Ngày uống: </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
+                                                                <ErrorMessage name={`indicationDto[${index}].frequency`} component="" style={{ color: 'red' }} />
                                                             </div>
+
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
+                                                                <ErrorMessage name={`indicationDto[${index}].dosage`} component="div" style={{ color: 'red' }} />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                         </div>
+
                                                     </div>
                                                 ))}
                                                 <div className="d-flex justify-content-left align-items-center">

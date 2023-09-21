@@ -7,7 +7,6 @@ import {
   AiOutlineDoubleRight,
 } from "react-icons/ai";
 import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
-import { getAllPatient } from "../../services/prescription/patient";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
@@ -21,8 +20,11 @@ const PrescriptionList = () => {
     id: null,
     code: ""
   })
+  const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
+  const [searchInput, setSearchInput] = useState("");
+
   const findAllPrescription = async () => {
-    const res = await getAllPrescription(page);
+    const res = await getAllPrescription(page,searchInput,searchInMedicine);
     setTotalPage(res.data.totalPages);
     setPrescriptions(res.data.content)
   }
@@ -40,7 +42,16 @@ const PrescriptionList = () => {
     }
   }
 
+  const handleSearchOption = (e) => {
+    setSearchInMedicine(e.target.value);
+  }
+  console.log(searchInMedicine);
 
+  const handleSearch = async () => {
+    setSearchInput(document.getElementById("search").value);
+    setPage(0);
+  }
+  console.log(searchInput);
 
   const deletePrescription = async () => {
     Swal.fire({
@@ -74,7 +85,7 @@ const PrescriptionList = () => {
 
   useEffect(() => {
     findAllPrescription();
-  }, [page])
+  }, [page,searchInMedicine,searchInput])
 
 
   return (
@@ -92,46 +103,36 @@ const PrescriptionList = () => {
         <div className="row row-function d-flex">
           <div className="col-9 col-search d-flex align-items-center justify-content-start gap-3">
             <label>Lọc theo</label>
+
+
             <div className="btn-group">
-              <button
-                type="button"
-                className="btn btn-outline-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="true"
-              >
-                Mã khách hàng
-              </button>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Tên toa
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Đối tượng
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Triệu chứng
-                  </a>
-                </li>
-              </ul>
+              <select 
+                onChange={(e) => handleSearchOption(e)}
+                style={{ width: '150px', borderRadius: '5px', color: 'blue' }}
+                id="select" className="appearance-none pl-8 pr-6 py-2">
+                <option selected value="searchByCode">Mã toa thuốc</option>
+                <option value="searchByName">Tên toa thuốc</option>
+                <option value="searchBySymptoms">Triệu chứng</option>
+              </select>
             </div>
-            <input
-              style={{ width: 200, borderRadius: 5 }}
-              className="appearance-none pl-8 pr-6 py-2 bg-smoke-white text-sm focus:outline-none"
-              placeholder="Tìm kiếm toa thuốc"
-            />
-            <button
-              className="btn btn-outline-primary"
-              style={{ marginRight: "auto", height: 40, marginLeft: 5 }}
-            >
-              <i className="fa-solid fa-magnifying-glass" />
+
+
+            <input style={{ width: '250px', borderRadius: '5px' }}
+              className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
+              placeholder="Tìm kiếm toa thuốc..."
+              id={'search'} />
+
+
+            <button className="btn btn-outline-primary"
+              style={{ marginRight: `auto`, width: `auto`, marginLeft: '5px' }}
+              onClick={() => handleSearch()} value="searchInMedicine">
+              <i className="fa-solid fa-magnifying-glass"></i>
               Tìm kiếm
             </button>
           </div>
+
+
+
           <div className="col-3 d-flex align-items-center justify-content-end gap-3">
             <label>Sắp xếp</label>
             <div className="btn-group">
