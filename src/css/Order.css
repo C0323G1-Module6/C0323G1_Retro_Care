@@ -1,24 +1,27 @@
-.input-group {
+.btn-input-group {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    margin-bottom: 0px;
 }
 
-.button-minus,
-.button-plus {
+
+
+.btn-minus,
+.btn-plus {
     background-color: lightblue;
     color: black;
     font-weight: bold;
-    border: 1px solid whitesmoke;
-    width: 38px;
-    padding: 5px 5px;
-    border-radius: 5px;
+    border: 1px solid whitesmoke !important;
+    width: 38px !important;
+    padding: 5px 5px !important;
+    border-radius: 5px !important;
     cursor: pointer;
 }
 
-.button-minus:hover,
-.button-plus:hover {
+.btn-minus:hover,
+.btn-plus:hover {
     background-color: orange;
 }
 
@@ -35,8 +38,8 @@
 .btn-in-cart {
     height: 10px;
     width: 15px;
-    background: none;
-    border: none;
+    background: none !important;
+    border: none !important;
     font-weight: bold;
 }
 
