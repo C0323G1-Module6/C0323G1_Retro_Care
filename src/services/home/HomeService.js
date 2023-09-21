@@ -15,3 +15,18 @@ export const findFavoriteMedicineForHomepage = async () => {
   console.log(response);
   return response.data;
 };
+
+export const searchMedicines = async (
+  page,
+  limit,
+  keyword,
+  type,
+  sortBy,
+  sortDirection
+) => {
+  const response = await axios.get(
+    `${baseURL}/list-page?page=${page}&limit=${limit}&keyword=${keyword}&type=${type}&sortBy=${sortBy}&sortDirection=${sortDirection}`
+  );
+  console.log(response);
+  return response;
+};
