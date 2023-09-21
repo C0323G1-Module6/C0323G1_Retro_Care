@@ -41,7 +41,7 @@ export const searchMedicine = async (searchInMedicine, search, page, limit) => {
     console.log(result.data)
     return result.data;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
@@ -52,7 +52,7 @@ export const deleteMedicine = async (id) => {
     );
     return result;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 

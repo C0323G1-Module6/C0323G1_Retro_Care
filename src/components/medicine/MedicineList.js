@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
-import Swal from "sweetalert2";
 import swal from "sweetalert2";
 
 function MedicineList() {
@@ -20,7 +19,7 @@ function MedicineList() {
     const [searchInput, setSearchInput] = useState("");
     const [limit, setLimit] = useState(5)
 
-
+// ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
         swal.fire({
             title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
@@ -36,28 +35,27 @@ function MedicineList() {
                     await medicineService.deleteMedicine(selectMedicine.id);
                     swal.fire("Xoá sản phẩm thành công!", "", "success");
                 } else {
-                    Swal.fire({
+                    swal.fire({
                         icon: 'error',
                         title: 'Rất tiếc...',
                         text: 'Xóa thất bại!'
+                    });
+                    setSelectMedicine({
+                        id:null,
+                        name: ''
                     })
                 }
-                await getListMedicine(page)
+                await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
             });
     };
+// ---------------------------------------- Get list ---------------------------------------------
 
-    const getListMedicine = async (page) => {
-        const result = await medicineService.findAll(page);
-        setMedicineList(result?.data.content);
-        setTotalPage(result?.data.totalPages);
-    }
-
-    const getListSearchMedicine = async () => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
-        setMedicineList(result?.content);
-        setTotalPage(result?.totalPages);
-    }
-
+    // const getListMedicine = async (page) => {
+    //     const result = await medicineService.findAll(page);
+    //     setMedicineList(result?.data.content);
+    //     setTotalPage(result?.data.totalPages);
+    //     console.log(totalPage);
+    // }
     const previousPage = () => {
         if (page > 0) {
             setPage((pre) => pre - 1)
@@ -69,6 +67,13 @@ function MedicineList() {
             setPage((pre) => pre + 1)
         }
     }
+// ----------------------------------------- Search ---------------------------------------
+    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit) => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
+            setMedicineList(result?.content);
+            setTotalPage(result?.totalPages);
+    }
+// select child
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
         const conditional = document.getElementById("conditional");
@@ -80,29 +85,27 @@ function MedicineList() {
     }
 
     const handleSearch = async () => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, 5);
-            setMedicineList(result?.content)
+        setSearchInput(document.getElementById("search").value);
         setPage(0);
-        console.log(result)
     }
-
+// select father
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
 
-    const handleInput = (e) => {
-        const {value} = e.target;
-        setSearchInput(value);
-        console.log(value)
+    // useEffect(() => {
+    //     getListMedicine(page);
+    // }, [page])
+
+    const handleReset = () => {
+        setPage(0);
+        setSearchInMedicine("");
+        setSearchInput("");
     }
 
     useEffect(() => {
-        getListMedicine(page);
-    }, [page])
-
-    useEffect(() => {
-        getListSearchMedicine()
-    }, [searchInMedicine, searchInput, page, limit])
+        getListSearchMedicine(searchInMedicine,searchInput, page, limit)
+    }, [searchInput, page, limit])
 
     if (!medicineList) {
         return null;
@@ -142,7 +145,7 @@ function MedicineList() {
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
                                placeholder="Tìm kiếm thuốc..."
-                               onChange={(e) => handleInput(e)}/>
+                               id={'search'}/>
                         <button className="btn btn-outline-primary"
                                 style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}
                                 onClick={() => handleSearch()} value="searchInMedicine">
