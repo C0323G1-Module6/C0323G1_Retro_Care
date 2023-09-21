@@ -52,7 +52,7 @@ export default function ListEmployee() {
     };
     useEffect(() => {
         document.title = 'Retro Care - Danh sách nhân viên'
-    })
+    },[])
     useEffect(() => {
         getList().then();
     }, [pageList, sort]);
