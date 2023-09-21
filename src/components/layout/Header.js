@@ -5,13 +5,21 @@ import { FiShoppingCart } from "react-icons/fi";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCarts } from "../order/redux/cartAction";
 
-const Header = () => {
-  const params = useParams();
+const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
   const [keyword, setKeyword] = useState("");
+
+  // replace 2 with userId
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
+  useEffect(() => {
+    dispatch(getAllCarts(1));
+  }, []);
 
   useEffect(() => {
     getUsername();
@@ -37,8 +45,14 @@ const Header = () => {
     setKeyword(event.target.value);
   };
 
-  const handleSearch = () => {
+  const searchMedinces = (keyword) => {
+    navigate(`/home/search/${keyword}`);
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
     alert(keyword);
+    searchMedinces(keyword);
   };
 
   return (
@@ -74,20 +88,20 @@ const Header = () => {
                     type="search"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
-                    value={keyword}
-                    onChange={(event) => handleInputChange(event)}
+                    value={inputSearch}
+                    onChange={(event) => {
+                      handleInputChange(event);
+                      onInputChange(event);
+                    }}
                   />
                   <button type="submit" onClick={(e) => handleSearch(e)}>
                     <CiSearch />
                   </button>
                 </form>
-                <a
-                  href="/prototype/cart/HanhNLM_cart.html"
-                  className="header-btn header-cart"
-                >
+                <Link to="/cart" href="" className="header-btn header-cart">
                   <FiShoppingCart />
-                  <span className="cart-number">3</span>
-                </a>
+                  <span className="cart-number">{carts.length}</span>
+                </Link>
                 <a href="#" className="user">
                   <img
                     src="https://cdn.landesa.org/wp-content/uploads/default-user-image.png"

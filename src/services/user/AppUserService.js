@@ -27,3 +27,8 @@ export const infoAppUserByJwtToken = () => {
         return result;
     }
 }
+
+export const getIdByUserName = (userName) => {
+    const id = axios.get(`/get-id-app-user/${userName}`); 
+    return id;
+}

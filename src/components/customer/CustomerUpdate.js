@@ -199,7 +199,7 @@ const CustomerUpdate = () => {
                 </div>
                 <div className="col-4 p-2">
                   <label>
-                    Ghi chú <span className="text-danger">*</span>
+                    Ghi chú
                   </label>
                 </div>
                 <div className="col-8">

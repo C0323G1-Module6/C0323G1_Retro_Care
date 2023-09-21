@@ -80,7 +80,7 @@ function CustomerList() {
     }
   }
 
-  const handleSearchEvent = () => { 
+  const handleSearchEvent = () => {
     switch (optionSearch) {
       case 1:
         setName(searchValue);
@@ -134,7 +134,7 @@ function CustomerList() {
         text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Đúng vậy",
+        confirmButtonText: "OK",
         icon: "question",
       }).then(async (result) => {
         if (result.isConfirmed) {
@@ -145,6 +145,7 @@ function CustomerList() {
               icon: "success",
               timer: 1000,
             });
+            setSeletedCustomer({ id: null, name: "" })
           } else {
             Swal.fire({
               icon: 'error',
@@ -154,10 +155,11 @@ function CustomerList() {
           }
         } else {
           Swal.fire({
-            text: "Không ",
+            text: "Hủy thao tác",
             icon: "warning",
             timer: 1000,
           });
+          setSeletedCustomer({ id: null, name: "" })
         }
         await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
       });
@@ -229,10 +231,10 @@ function CustomerList() {
           </button>
         </div>
 
-        <div className="col-3 d-flex align-items-center justify-content-end">
+        <div className="col-3 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 ">
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 "style={{width:190}}>
               <option value={"group"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
@@ -279,7 +281,11 @@ function CustomerList() {
           <tbody className="bg-light">
             {customers.map((customer, index) => (
               <tr key={index} id={index} onClick={() => {
+                if (selectedCustomer.id === null || selectedCustomer.id != customer?.id ) {
                 setSeletedCustomer({ id: customer?.id, name: customer?.name });
+                } else {
+                  setSeletedCustomer({id: null, name: ""});
+                }
               }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
                 <td className="px-3 py-3 border-b border-gray-200 text-sm">
                   {index + 1}
