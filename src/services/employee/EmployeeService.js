@@ -13,7 +13,8 @@ export async function getListEmployee(page, limit, sort, nameEmployee) {
 }
 
 export async function deleteEmployees(idEmployee) {
-    await axios.delete("/employees/delete-employee", {params: {id: idEmployee}})
+   const res = await axios.delete("/employees/delete-employee", {params: {id: idEmployee}});
+   return res;
 }
 
 export const getNewEmployee =async () =>{

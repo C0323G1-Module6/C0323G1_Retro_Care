@@ -10,12 +10,12 @@ import {
 import { useState, useEffect } from "react";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import { getReport } from "../../services/report/ReportService";
-import ExcelJS from 'exceljs';
+import ExcelJS from "exceljs";
 const GeneralReport = () => {
   const [reportName, setReportName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  
+
   const [revenue, setRevenue] = useState([]);
   const [profit, setProfit] = useState([]);
   const [bestSellerMedicine, setBestSellerMedicine] = useState([]);
@@ -23,75 +23,133 @@ const GeneralReport = () => {
   const [expireMedicine, setExpireMedicine] = useState([]);
   const [medicineNeedMore, setMedicineNeedMore] = useState([]);
   const [saleDiary, setSaleDiary] = useState([]);
+
   useEffect(() => {
-    loadDataReport(startDate,endDate,reportName);
+    loadDataReport(startDate, endDate, reportName);
   }, [startDate, endDate, reportName]);
-  const loadDataReport = async (startDate,endDate,reportName) => {
+  const loadDataReport = async (startDate, endDate, reportName) => {
     const result = [];
     switch (reportName) {
       case "revenue":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setRevenue(result);
         break;
       case "profit":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setProfit(result);
         break;
       case "debt":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setDebt(result);
         break;
       case "expireMedicine":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setExpireMedicine(result);
         break;
       case "bestSellerMedicine":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setBestSellerMedicine(result);
         break;
       case "saleDiary":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setSaleDiary(result);
         break;
       case "medicineNeedMore":
-        result = await getReport(startDate,endDate,reportName);
+        result = await getReport(startDate, endDate, reportName);
         setMedicineNeedMore(result);
         break;
       default:
         break;
     }
   };
+
   const exportExcel = (dataArray, sheetName, fileName) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
-  
+
     // Tạo header
-    const headers = Object.keys(dataArray[0]);
-    worksheet.addRow(headers);
-  
-    // Thêm dữ liệu
-    dataArray.forEach(item => {
-      const row = Object.values(item);
-      worksheet.addRow(row);
+    const headers = Object.keys(dataArray[0]).map((header) => header.toUpperCase());
+    const headersRow = worksheet.addRow(headers);
+    const borderStyle = {
+      style: 'thin',
+      color: { argb: '000000' },
+    };
+
+    headersRow.eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFFFFF00" }, // Màu nền của header
+      };
+      cell.alignment = { vertical: "middle", horizontal: "center" };
+      cell.border = {
+        top: borderStyle,
+        left: borderStyle,
+        bottom: borderStyle,
+        right: borderStyle,
+      };
+
     });
-  
+
+    headersRow.font = { bold: true, name: 'Arial', size: 12 };
+
+    let rowIndex = 1;
+    // Thêm dữ liệu
+    dataArray.forEach((item, index) => {
+      const row = Object.values(item);
+      const dataRow = worksheet.addRow(row);
+      const fillColor = index % 2 === 0 ? "FFC0C0C0" : "FFD3D3D3";
+      dataRow.eachCell((cell) => {
+        cell.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: fillColor }, // Mẫu màu nền cho dòng dữ liệu
+        };
+        cell.border = {
+          top: borderStyle,
+          left: borderStyle,
+          bottom: borderStyle,
+          right: borderStyle,
+        };
+      });
+    });
+
+    worksheet.columns.forEach((column) => {
+      column.width = 20; // Độ rộng mong muốn cho các cột
+    });
+
+    // worksheet.columns.forEach((column, index) => {
+    //   column.fill = {
+    //     type: "pattern",
+    //     pattern: "solid",
+    //     fgColor: { argb: "FFC0C0C0" }, // Màu nền của cột
+    //   };
+    // });
+
     // Xuất tệp Excel
-    workbook.xlsx.writeBuffer().then(data => {
-      const blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    workbook.xlsx.writeBuffer().then((data) => {
+      const blob = new Blob([data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
       a.download = fileName;
       a.click();
       URL.revokeObjectURL(url);
     });
-  }
+  };
+
   const handleSubmit = async (values, setErrors) => {
     console.log(values);
     try {
-      const result = await getReport(values.startDate, values.endDate, values.reportName);
-      exportExcel(result, 'report', 'report.xlsx');
-      console.log(result);
+      const result = await getReport(
+        values.startDate,
+        values.endDate,
+        values.reportName
+      );
+      exportExcel(result, "report", "report.xlsx");
+      // console.log(result);
     } catch (err) {
       console.log(err);
       if (err.response.data) {
@@ -105,7 +163,7 @@ const GeneralReport = () => {
         initialValues={{
           startDate: "",
           endDate: "",
-          reportName: "",
+          reportName: "revenue",
         }}
         onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
       >
@@ -133,6 +191,11 @@ const GeneralReport = () => {
                         name="startDate"
                         id="startDate"
                       />
+                      <ErrorMessage
+                        className="text-danger"
+                        name="startDate"
+                        component="small"
+                      />
                     </div>
                     <div className="col-2">
                       <label className="p-2">Đến ngày</label>
@@ -143,6 +206,11 @@ const GeneralReport = () => {
                         type="date"
                         name="endDate"
                         id="endDate"
+                      />
+                      <ErrorMessage
+                        className="text-danger"
+                        name="endDate"
+                        component="small"
                       />
                     </div>
                     <div className="col-2">
@@ -255,6 +323,11 @@ const GeneralReport = () => {
                           >
                             100 thuốc bán chạy nhất
                           </label>
+                          <ErrorMessage
+                            className="text-danger"
+                            name="reportName"
+                            component="small"
+                          />
                         </div>
                       </div>
                     </div>
@@ -263,12 +336,15 @@ const GeneralReport = () => {
                     className="justify-content-center mx-auto"
                     style={{ width: "95%", height: "95%" }}
                   >
-                    <button className="btn btn-outline-primary float-end mx-3">
+                    <Link
+                      to={"/dashboard/report"}
+                      className="btn btn-outline-primary float-end mx-3"
+                    >
                       <AiOutlineRollback className="mx-1" />
                       Trở về
-                    </button>
+                    </Link>
                     <Link
-                      to={"/dashboard/chartReport"}
+                      to={"/dashboard/report/chart"}
                       className="btn btn-outline-primary float-end"
                     >
                       <AiOutlineLineChart className="mx-1" />

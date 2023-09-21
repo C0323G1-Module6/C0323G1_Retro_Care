@@ -1,8 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {getInvoiceList, searchInvoice, deleteInvoice} from "../../services/invoice/InvoiceService";
-import '../../components/invoice/HuyDH_Invoice.css'
+import {
+    getInvoiceList,
+    searchInvoice,
+    deleteInvoice,
+    getInvoiceDetailByID
+} from "../../services/invoice/InvoiceService";
+
 import Swal from "sweetalert2";
 import {Link} from "react-router-dom";
+import { BiSearch } from 'react-icons/bi';
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
+import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
+import {FiEdit} from "react-icons/fi";
 
 /**
  * Create by: HuyHD
@@ -28,6 +37,7 @@ function InvoiceList() {
     const [isSearching, setIsSearching] = useState(false);
 
     const [idClick, setIdClick] = useState({});
+    const [invoiceDetail, setInvoiceDetail] = useState([]);
 
 
     const getListInvoice = async (page) => {
@@ -44,6 +54,32 @@ function InvoiceList() {
         }
     };
 
+    const getMedicineById = async (id) => {
+        if (idClick.id == null || idClick.id == undefined) {
+            getListInvoice(0, 5).then(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Bạn chưa chọn hóa đơn!',
+                    showConfirmButton: false,
+                    timer: 1,
+                })
+            })
+        } else {
+            try {
+                const data = await getInvoiceDetailByID(id);
+
+                setInvoiceDetail(data);
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    showConfirmButton: false,
+                    timer: 2000,
+                });
+            }
+        }
+}
 
     const handleClickRow = (id) => {
         if (idClick === id) {
@@ -53,7 +89,7 @@ function InvoiceList() {
         }
     };
 
-    console.log(idClick);
+
     const handleDeleteEmployee = async (id, code) => {
 
         if (idClick.id == null || idClick.id == undefined) {
@@ -105,6 +141,8 @@ function InvoiceList() {
             })
         }
     }
+    console.log(idClick)
+    console.log(invoiceDetail)
 
     const handleFilter = async () => {
         setCurrentPage(0);
@@ -147,17 +185,9 @@ function InvoiceList() {
 
     return (
         <div>
-            <meta charSet="UTF-8"/>
-            <title>Quản Lí Kho</title>
-            <link rel='stylesheet'
-                  href='https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.4.6/tailwind.min.css'/>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-                  rel="stylesheet"
-                  integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-                  crossOrigin="anonymous"/>
+            {/*<meta charSet="UTF-8"/>*/}
+            {/*<title>Quản Lí Kho</title>*/}
 
-            <link rel="stylesheet"
-                  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
 
             <div className="container mx-auto px-4 sm:px-8">
                 <div>
@@ -169,32 +199,31 @@ function InvoiceList() {
                     {/*                <div class="row text-center" style="border: 2px solid #5f8ef3; border-radius: 10px; padding: 10px">*/}
                     <div className="col">
                         <label style={{marginLeft: '1.5px'}}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem', marginLeft: '1.5px'}} type="date" id="start-date"
-                               className="filter-input_huyhd"
+                        <input style={{width: '9rem', marginLeft: '1.5px',  height:'40px'}} type="date" id="start-date"
+
                                onChange={(e) => setStartDate(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label style={{marginLeft: '3px'}}>Đến ngày:</label>
-                        <input style={{width: '9rem', marginLeft: '3px'}} type="date" id="end-date"
-                               className="filter-input_huyhd"
+                        <input style={{width: '9rem', marginLeft: '3px', height:'40px'  }} type="date" id="end-date"
                                onChange={(e) => setEndDate(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Từ giờ:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem'}} type="time" id="end-time" className="filter-input_huyhd" step="1"
+                        <input style={{width: '9rem', height:'40px'}} type="time" id="end-time" className="filter-input_huyhd" step="1"
                                min="00:00:00" max="23:59:59"
                                onChange={(e) => setStartTime(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem', marginLeft: '2px'}} type="time" id="end-time"
+                        <input style={{width: '9rem', marginLeft: '2px', height:'40px'}} type="time" id="end-time"
                                className="filter-input_huyhd" step="1"
                                min="00:00:00" max="23:59:59"
                                onChange={(e) => setEndTime(e.target.value)}/>
                     </div>
                     <div className="col">
                         <label>Sắp xếp theo: </label>
-                        <select style={{height: '35px', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}
+                        <select style={{height: '40px', width:'9rem', border: 'solid 1px #d6d8d9', borderRadius: '3px'}}
                                 onChange={(e) => setSortColumn(e.target.value)}>
                             <option value="1">Mã hóa đơn</option>
                             <option value="2">Số CT</option>
@@ -206,9 +235,11 @@ function InvoiceList() {
                         </select>
                     </div>
                     <div className="col"
-                         style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end'}}>
-                        <button className="btn btn-outline-primary " onClick={handleFilter}>><span><i
-                            className="fa-solid fa-magnifying-glass"/></span>
+                         style={{display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
+                             height: '45px', width:'9rem', marginTop:'20px' }}>
+                        <button className="btn btn-outline-primary " onClick={handleFilter}><span>
+                            <BiSearch style={{fontSize:'20px'}} />
+                        </span>
                             Lọc kết quả
                         </button>
                     </div>
@@ -217,43 +248,44 @@ function InvoiceList() {
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="inline-block min-w-full shadow rounded-lg overflow-hidden ">
                         <div style={{flex: "1", minHeight: "27.2rem"}}>
-                            <table className="min-w-full leading-normal table table-hover mb-0">
-                                <thead>
+                            <table className="min-w-full  rounded-3 leading-normal table table-hover overflow-hidden mb-0"
+                            >
+                                <thead style={{background:"#0d6efd", color:'white'}}>
                                 <tr className="table_header_employee">
-                                    <th className="col-0.5 py-2  border-b-2  text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className=" py-2  border-b-2  text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem', minWidth:'30px'}}>
                                         STT
                                     </th>
-                                    <th className="col-1   border-b-2  text-left text-xs    tracking-wider "
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="   border-b-2  text-left text-xs    tracking-wider "
+                                        style={{fontSize: '1rem', minWidth:'100px'}}>
                                         Mã HĐ
                                     </th>
-                                    <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className=" border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem', minWidth:'100px'}}>
                                         Số CT
                                     </th>
-                                    <th className="col-1  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',minWidth:'100px'}}>
                                         Ngày Lập
                                     </th>
-                                    <th className="col-1   border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',minWidth:'100px'}}>
                                         Giờ Lập
                                     </th>
-                                    <th className="col-1  px-0 border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className=" px-0 border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',minWidth:'100px'}}>
                                         Tổng Tiền
                                     </th>
-                                    <th className="col-1  px-2 border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="  px-2 border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',minWidth:'100px'}}>
                                         Nợ HĐ
                                     </th>
-                                    <th className="col-3   border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="   border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',minWidth:'200px'}}>
                                         Nhà Cung Cấp
                                     </th>
-                                    <th className="col-3  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem'}}>
+                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
+                                        style={{fontSize: '1rem',width:'300px'}}>
                                         Địa Chỉ
                                     </th>
                                 </tr>
@@ -262,33 +294,51 @@ function InvoiceList() {
                                 {invoiceList.map((i, index) => (
                                     <tr key={i.id} onClick={() => handleClickRow(i)}
                                         className={idClick && idClick.id === i.id ? "selected_invoice" : ""}>
-                                        <td className="col-0.5  py-3 px-3 border-b border-gray-200  text-sm">
+                                        <td className="  py-3 px-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
                                         </td>
-                                        <td className="col-1  py-3 border-b border-gray-200  text-sm">
+                                        <td className="  py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.code}</p>
                                         </td>
-                                        <td className="col-1  py-3 border-b border-gray-200  text-sm">
+                                        <td className="  py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.documentNumber}</p>
                                         </td>
-                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">
-                                                {i.creationDay}</p>
-                                        </td>
-                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
+                                        <td className="py-3 border-b border-gray-200 text-sm">
+                                        <p className="text-gray-900 whitespace-no-wrap">
+                                            {new Date(i.creationDay).toLocaleDateString('en-GB', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: '2-digit',
+                                                formatMatcher: 'basic',
+                                                separator: '-',
+                                            })}
+                                        </p>
+                                    </td>
+
+                                        <td className=" py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">
                                                 {i.creationTime}</p>
                                         </td>
-                                        <td className="col-1 py-3 border-b border-gray-200  text-sm">
+                                        <td className=" py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.total}</p>
                                         </td>
-                                        <td className="col-1 px-2 py-3 border-b border-gray-200  text-sm">
+                                        <td className=" px-2 py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.billOwed}</p>
                                         </td>
-                                        <td className="col-3 py-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{i.name}</p>
+
+                                        <td className=" py-3 border-b border-gray-200  text-sm" >
+                                            <p className="text-gray-900 whitespace-no-wrap"
+                                               style={{color:'blue'}}
+                                               type="button"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#exampleModal1"
+                                               title="Chi tiết"
+                                               onClick={() => {
+                                                   getMedicineById(`${idClick.id}`);
+                                               }}>{i.name}</p>
                                         </td>
-                                        <td className="col-3 py-3 border-b border-gray-200  text-sm">
+
+                                        <td className=" py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">{i.address}</p>
                                         </td>
                                     </tr>
@@ -307,14 +357,15 @@ function InvoiceList() {
                                     title="Trang trước"
                                     onClick={() => handlePageChange(currentPage - 1)}
                                 >
-                                    <i className="fa-solid fa-angles-left"></i>
+                                    <AiOutlineDoubleLeft />
                                 </button>
 
                                 <button
                                     key={currentPage}
                                     className="text-sm py-2 px-4"
                                     style={{
-                                        width: '5rem',
+                                        border:"none",
+                                        width: '6rem',
                                         height: '2.5rem',
                                         background: '#0d6efd',
                                         color: '#ffffff',
@@ -334,7 +385,7 @@ function InvoiceList() {
                                     disabled={currentPage === totalPages - 1}
                                     onClick={() => handlePageChange(currentPage + 1)}
                                 >
-                                    <i className="fa-solid fa-angles-right"></i>
+                                    <AiOutlineDoubleRight />
                                 </button>
 
                                 {/*{totalPages > 1 &&(*/}
@@ -359,25 +410,39 @@ function InvoiceList() {
                 <div className=" " style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
                     <div className=" ">
                         <Link to={`/invoice/create`}><a className="btn btn-outline-primary"
-                                                        href="/prototype/warehouse/CuongHLT_CreateInvoice.html"
-                                                        title="Thêm">
-                            <i className="fa-solid fa-plus"/> Thêm mới</a></Link>
-                        <a class="btn btn-outline-primary" href="#" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal1" title="Chi tiết">
-                            <i class="fa-solid fa-circle-info"></i> Chi tiết
-                        </a>
+                                                        href="#"
+                                                        title="Thêm"
+                        style={{marginLeft:'5px'}}>
+                            <FaPlus className="mx-1" /> Thêm mới</a></Link>
+                        {/*{ idClick && (*/}
+                        {/*    <a*/}
+                        {/*        className="btn btn-outline-primary"*/}
+                        {/*        href="#"*/}
+                        {/*        type="button"*/}
+                        {/*        data-bs-toggle="modal"*/}
+                        {/*        data-bs-target="#exampleModal1"*/}
+                        {/*        title="Chi tiết"*/}
+                        {/*        onClick={() => {*/}
+                        {/*            getMedicineById(`${idClick?.id}`);*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*        <i class="fa-solid fa-circle-info"></i> Chi tiết*/}
+                        {/*    </a>*/}
+                        {/*)}*/}
                         <Link to={`/invoice/update/${idClick?.id}`}><a className="btn btn-outline-primary"
-                                                                       title="Sửa"><i
-                            className="fa-solid fa-pen-to-square"/> Sửa
+                                                                       title="Sửa" style={{marginLeft:'5px'}}>
+                            <FiEdit className="mx-1" /> Sửa
                         </a></Link>
-                        <a
+
+                        <a style={{marginLeft:'5px'}}
                             title="Xóa"
                             className="btn btn-outline-primary" onClick={() => {
                             handleDeleteEmployee(`${idClick?.id}`, `${idClick?.code}`);
                         }}>
-                            <i className="fa-solid fa-trash"/> Xóa
+                            <FaRegTrashAlt className="mx-1" /> Xóa
                         </a>
-                        <a className="btn btn-outline-primary" href="/HuyL_home.html" title="Trở về">
-                            <i className="fa-regular fa-circle-left"/> Trở về</a>
+                        <Link to={`/home`}><a style={{marginLeft:'5px'}} className="btn btn-outline-primary" href="#" title="Trở về">
+                            <AiOutlineRollback className="mx-1" /> Trở về</a></Link>
                     </div>
                 </div>
             </div>
@@ -412,60 +477,68 @@ function InvoiceList() {
                 </div>
             </div>
             {/*modal detail*/}
-            <div className="modal fade" id="exampleModal1" tabIndex={-1} aria-labelledby="exampleModalLabel5"
-                 aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        <div className="modal-header table_header_employee">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">CHI TIẾT HÓA ĐƠN</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"/>
-                        </div>
-                        <div className="modal-body">
-                            <div className="d-flex">
-                                <div className="col-md-4" style={{marginRight: '20px', paddingTop: '10px'}}>
-                                    <img
-                                        src="https://media.istockphoto.com/id/1322346877/vector/user-avatar-profile-icon.jpg?s=170667a&w=0&k=20&c=vsp2DIGo7MXd48Wjqi8cM4BikpzeAIO4oYZfWI_q1pQ="
-                                        className="img-fluid rounded-start" alt="..."/>
-                                </div>
-                                <div className="col-md-8">
+            { idClick &&  (
+                <div className="modal fade" id="exampleModal1" tabIndex={-1} aria-labelledby="exampleModalLabel5" aria-hidden="true">
+                    <div className="modal-dialog modal-dialog-centered" style={{ width: '800px' }}>
+                        <div className="modal-content" style={{ width: '800px', marginBottom: '300px' }}>
+                            <div className="modal-header table_header_employee">
+                                <h1 className="modal-title fs-5" id="exampleModalLabel" style={{ color: 'white' }}>CHI TIẾT HÓA ĐƠN NHẬP THUỐC</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                            </div>
+                            <div className="modal-body">
+                                <div className="d-flex">
                                     <table>
+                                        <tr style={{ background: '#0d6efd', color: '#ffffff' }}>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                STT
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Mã thuốc
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Nhóm thuốc
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Tên thuốc
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Hoạt chất
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Số lượng
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                Giá nhập
+                                            </th>
+                                            <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+                                                % VAT
+                                            </th>
+                                        </tr>
                                         <tbody>
-                                        <tr>
-                                            <td><p><b>Tên thuốc:</b></p></td>
-                                            <td><p
-                                                style={{color: '#dfa512', paddingLeft: '10px', fontSize: '20px'}}>Lê
-                                                aaaaaaaaaaaa</p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><p>Giới tính: </p></td>
-                                            <td style={{paddingLeft: '10px'}}><p>Nữ</p></td>
-                                        </tr>
-                                        <tr>
-                                            <td><p>Số CCCD: </p></td>
-                                            <td style={{paddingLeft: '10px'}}><p>01234567899</p></td>
-                                        </tr>
-                                        <tr>
-                                            <td><p>Email: </p></td>
-                                            <td style={{paddingLeft: '10px'}}><p>hongvan@gmail.com</p></td>
-                                        </tr>
-                                        <tr>
-                                            <td><p>Ngày sinh: </p></td>
-                                            <td style={{paddingLeft: '10px'}}><p>01/01/1999</p></td>
-                                        </tr>
+                                        {invoiceDetail.map((ind, index) => (
+                                            <tr key={ind.id}>
+                                                <td className="py-3 px-3 border-b border-gray-200">{index + 1}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.codeMedicine}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.nameKind}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.nameMedicine}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.activeElement}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.quantity}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.price}</td>
+                                                <td className="py-3 px-3 border-b border-gray-200">{ind.vat}</td>
+                                            </tr>
+                                        ))}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <input type="hidden" name="idDetail" id="idDetail"/>
-                            <button type="button" className="btn form_exit_employee" data-bs-dismiss="modal">Thoát
-                            </button>
+                            <div className="modal-footer">
+                                <input type="hidden" name="idDetail" id="idDetail" />
+                                <button type="button" className="btn" data-bs-dismiss="modal" style={{ background: '#6e7881' }}>Thoát</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 

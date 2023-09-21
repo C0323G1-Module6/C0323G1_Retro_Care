@@ -43,6 +43,7 @@ export async function deleteCart(cartId) {
   const res = await axios.delete(
     `http://localhost:8080/api/carts/delete-cart?cartId=${cartId}`
   );
+  return res;
 }
 
 export async function getQuantityInCart(appUserId, medicineId) {

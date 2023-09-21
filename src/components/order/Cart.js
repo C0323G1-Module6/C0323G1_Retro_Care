@@ -9,17 +9,27 @@ import {
   checkAvailability,
 } from "../../services/order/CartService";
 import { createOrder } from "../../services/order/OrderService";
-import swal from "sweetalert";
+import { updateCustomer } from "../../services/order/Med";
+import swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage, Field } from "formik";
+import * as yup from "yup";
+import Footer from "../layout/Footer";
+import Header from "../layout/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCarts } from "./redux/cartAction";
+import { el } from "date-fns/locale";
+import "../../css/Order.css";
 
 export default function Cart() {
-  const [carts, setCarts] = useState([]);
   const [isUpdated, setIsUpdated] = useState(false);
   const [point, setPoint] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [quantities, setQuantities] = useState({});
   const [checkout, setCheckOut] = useState(false);
+  const [showCf, setShowCf] = useState(false);
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
 
   const navigate = useNavigate();
 
@@ -42,7 +52,7 @@ export default function Cart() {
       await addToCart(2, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
-      swal("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+      swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
     }
   }
 
@@ -51,19 +61,24 @@ export default function Cart() {
 
     try {
       if (quantity.value == 1) {
-        swal({
-          title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
-          text: medicineName,
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        }).then(async (willDelete) => {
-          if (willDelete) {
-            await deleteCart(cartId);
-            setIsUpdated((prev) => !prev);
-            swal("Xoá sản phẩm thành công!", "", "success");
-          }
-        });
+        swal
+          .fire({
+            title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+            text: medicineName,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Huỷ",
+          })
+          .then(async (willDelete) => {
+            if (willDelete.isConfirmed) {
+              await deleteCart(cartId);
+              setIsUpdated((prev) => !prev);
+              swal.fire("Xoá sản phẩm thành công!", "", "success");
+            }
+          });
       }
       if (quantity.value > 1) {
         quantity.value = parseInt(quantity.value) - 1;
@@ -77,24 +92,29 @@ export default function Cart() {
       await addToCart(2, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
-      swal("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+      swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
     }
   }
 
   const handleDelete = async (cartId, medicineName) => {
-    swal({
-      title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
-      text: medicineName,
-      icon: "warning",
-      buttons: true,
-      dangerMode: true,
-    }).then(async (willDelete) => {
-      if (willDelete) {
-        await deleteCart(cartId);
-        setIsUpdated((prev) => !prev);
-        swal("Xoá sản phẩm thành công!", "", "success");
-      }
-    });
+    swal
+      .fire({
+        title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+        text: medicineName,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Đồng ý!",
+        cancelButtonText: "Huỷ",
+      })
+      .then(async (willDelete) => {
+        if (willDelete.isConfirmed) {
+          await deleteCart(cartId);
+          setIsUpdated((prev) => !prev);
+          swal.fire("Xoá sản phẩm thành công!", "", "success");
+        }
+      });
   };
 
   const checkQuantityBeforePayment = async () => {
@@ -108,20 +128,9 @@ export default function Cart() {
   };
 
   const proceedOrder = async () => {
-    const shouldPaypalRender = await checkQuantityBeforePayment();
-    // the checkout here is to temporarily fix paypal bug somehow :)
-    if (shouldPaypalRender && !checkout) {
-      renderPaypal();
-      setCheckOut(true);
-    }
+    const shouldShowCf = await checkQuantityBeforePayment();
+    if (shouldShowCf) setShowCf(true);
   };
-
-  // const createOrder = async() => {
-  //     console.log(discount);
-  //     const plusPoint = (totalPrice - discount) / 100;
-  //     const loyaltyPoint = point + plusPoint - discount;
-  //     const res = await createOrder(2, loyaltyPoint, discount, totalPrice);
-  // }
 
   const renderPaypal = () => {
     if (window.paypal) {
@@ -166,19 +175,19 @@ export default function Cart() {
             const plusPoint = totalPrice / 100;
             const loyaltyPoint = point + plusPoint - discount;
             const res = await createOrder(2, loyaltyPoint, totalPrice);
-            swal(
+            swal.fire(
               "Thanh toán thành công!",
               "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của RetroCare!",
               "success"
             );
             setIsUpdated((prev) => !prev);
           } else {
-            throw new Error("Product quantity is not enough");
+            throw new Error("Product's quantity is not enough");
           }
         },
         onError: (err) => {
           console.log(err);
-          swal("Thanh toán không thành công!", "", "error");
+          swal.fire("Thanh toán không thành công!", "", "error");
         },
       })
       .render("#paypal-button-container");
@@ -190,10 +199,6 @@ export default function Cart() {
       currency: "VND",
     }).format(money);
 
-  const getAllCarts = async () => {
-    const data = await getCarts(2);
-    setCarts(data);
-  };
   const getLoyaltyPoint = async () => {
     const data = await getPoint(2);
     setPoint(data);
@@ -202,18 +207,26 @@ export default function Cart() {
   const checkLoyaltyPoint = async () => {
     const inputPoint = document.querySelector(".input-point");
     console.log(parseInt(inputPoint.value));
+
     if (parseInt(inputPoint.value) <= point) {
-      setDiscount(parseInt(inputPoint.value));
+      if (parseInt(inputPoint.value) <= totalPrice) {
+        setDiscount(parseInt(inputPoint.value));
+      } else {
+        setDiscount(0);
+        swal.fire(
+          "Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!",
+          "",
+          "warning"
+        );
+      }
     } else {
       setDiscount(0);
-      swal("Vượt quá số điểm hiện có!", "", "warning");
+      swal.fire("Vượt quá số điểm hiện có!", "", "warning");
     }
   };
 
-  const handleSubmit = (value) => {};
-
   useEffect(() => {
-    getAllCarts();
+    dispatch(getAllCarts(2));
   }, [isUpdated]);
   useEffect(() => {
     getLoyaltyPoint();
@@ -221,6 +234,7 @@ export default function Cart() {
 
   return (
     <>
+      <Header />
       <div
         className="container-fluid my-5 p-1 position-relative"
         style={{ top: "5rem", height: "100vh" }}
@@ -242,14 +256,14 @@ export default function Cart() {
                     </thead>
                     <tbody>
                       {carts.length > 0 &&
-                        carts.map((el, index) => {
+                        carts.map((el) => {
                           return (
-                            <tr>
+                            <tr key={`el_${el.cartId}`}>
                               <td>
                                 <td className="d-flex align-items-center h-100">
                                   <span>
                                     <button
-                                      className="bg-transparent border-0 fs-5"
+                                      className="bg-transparent border-0 fs-4 mx-3"
                                       onClick={() =>
                                         handleDelete(el.cartId, el.medicineName)
                                       }
@@ -336,36 +350,71 @@ export default function Cart() {
                         })}
                     </tbody>
                   </table>
-                  <div className=" w-50">
+                  <div
+                    className=" w-75 mb-5"
+                    style={{ display: showCf ? "block" : "none" }}
+                    id="confirm-order"
+                  >
+                    <h3 className=" text-center text-success">
+                      XÁC NHẬN THÔNG TIN GIAO HÀNG
+                      <img
+                        style={{
+                          marginLeft: "20px",
+                          height: "60px",
+                          width: "60px",
+                          opacity: "20%",
+                        }}
+                        src="https://static.vecteezy.com/system/resources/previews/002/206/240/original/fast-delivery-icon-free-vector.jpg"
+                      />
+                    </h3>
                     <Formik
                       initialValues={{
-                        name: "",
-                        phoneNumber: "",
-                        email: "",
-                        address: "",
+                        id: carts[0].customerId,
+                        name: carts[0].customerName,
+                        phoneNumber: carts[0].phoneNumber,
+                        email: carts[0].customerEmail,
+                        address: carts[0].address,
                         note: "",
                       }}
-                      // validationSchema={yup.object({
-                      //   title: yup.string().required("Please fill in title!"),
-                      //   category: yup
-                      //     .string()
-                      //     .required("Please fill in category!"),
-                      //   content: yup
-                      //     .string()
-                      //     .required("Please fill in content!"),
-                      //   author: yup.string().required("Please fill in author!"),
-                      //   author_email: yup
-                      //     .string()
-                      //     .matches(
-                      //       /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                      //       "Incorret format!"
-                      //     )
-                      //     .required("Please fill in author's email!"),
-                      // })}
-                      onSubmit={(values) => handleSubmit(values)}
+                      validationSchema={yup.object({
+                        name: yup
+                          .string()
+                          .required("Vui lòng nhập tên khách hàng!"),
+                        phoneNumber: yup
+                          .string()
+                          .matches(/^0[0-9]{9}$/, "0905222777")
+                          .required("Vui lòng nhập vào số điện thoại!"),
+                        email: yup
+                          .string()
+                          .email()
+                          .required("Vui lòng nhập vào email!"),
+                        address: yup
+                          .string()
+                          .required("Vui lòng nhập vào địa chỉ của bạn!"),
+                        note: yup.string().max(255),
+                      })}
+                      onSubmit={async (values, { setErrors }) => {
+                        try {
+                          const res = await updateCustomer(values);
+                          swal.fire(
+                            "Cập nhật thông tin thành công!",
+                            "",
+                            "success"
+                          );
+                          // the checkout here is to temporarily fix paypal bug somehow :)
+                          if (!checkout) {
+                            renderPaypal();
+                            setCheckOut(true);
+                          }
+                        } catch (error) {
+                          if (error.response && error.response.data) {
+                            setErrors(error.response.data);
+                          }
+                        }
+                      }}
                     >
                       <Form className=" d-flex flex-column justify-content-center">
-                        <div className=" d-flex mb-2">
+                        <div className=" mb-1">
                           <label htmlFor="name" className=" w-50">
                             Tên khách hàng{" "}
                             <span className=" text-danger">*</span>
@@ -378,16 +427,18 @@ export default function Cart() {
                           ></Field>
                           <ErrorMessage
                             name="name"
-                            component="span"
-                            className=" text-danger"
+                            component="p"
+                            className="text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className=" d-flex mb-2">
+
+                        <div className=" mb-1">
                           <label htmlFor="phoneNumber" className=" w-50">
                             Số điện thoại{" "}
                             <span className=" text-danger">*</span>
                           </label>
                           <Field
+                            disabled={carts[0].phoneNumber.length > 0}
                             type="text"
                             id="phoneNumber"
                             name="phoneNumber"
@@ -399,11 +450,12 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className=" d-flex mb-2">
+                        <div className=" mb-1">
                           <label htmlFor="email" className="w-50">
                             Email<span className=" text-danger">*</span>
                           </label>
                           <Field
+                            disabled={carts[0].customerEmail.length > 0}
                             type="text"
                             id="email"
                             name="email"
@@ -415,7 +467,7 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className=" d-flex mb-2">
+                        <div className="  mb-2">
                           <label htmlFor="address" className="w-50">
                             Địa chỉ<span className=" text-danger">*</span>
                           </label>
@@ -431,7 +483,7 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <div className=" d-flex mb-2">
+                        <div className="mb-1">
                           <label htmlFor="note" className=" w-50">
                             Ghi chú:
                           </label>
@@ -447,12 +499,14 @@ export default function Cart() {
                             className=" text-danger"
                           ></ErrorMessage>
                         </div>
-                        <button
-                          type="submit"
-                          className=" fw-bold btn btn-success"
-                        >
-                          CẬP NHẬT THÔNG TIN
-                        </button>
+                        <div className=" w-100 d-flex justify-content-center">
+                          <button
+                            type="submit"
+                            className=" fw-bold btn btn-success mt-3 w-50"
+                          >
+                            CẬP NHẬT VÀ THANH TOÁN
+                          </button>
+                        </div>
                       </Form>
                     </Formik>
                   </div>
@@ -501,7 +555,7 @@ export default function Cart() {
                     <button
                       className="w-100 btn btn-warning mt-3 fw-bold"
                       onClick={proceedOrder}
-                      disabled={carts.length == 0}
+                      disabled={showCf}
                     >
                       TIẾN HÀNH THANH TOÁN
                     </button>
