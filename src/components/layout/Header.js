@@ -8,8 +8,7 @@ import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "../order/redux/cartAction";
 
-const Header = () => {
-  const params = useParams();
+const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
@@ -46,8 +45,14 @@ const Header = () => {
     setKeyword(event.target.value);
   };
 
-  const handleSearch = () => {
+  const searchMedinces = (keyword) => {
+    navigate(`/home/search/${keyword}`);
+  };
+
+  const handleSearch = (event) => {
+    event.preventDefault();
     alert(keyword);
+    searchMedinces(keyword);
   };
 
   return (
@@ -83,8 +88,11 @@ const Header = () => {
                     type="search"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
-                    value={keyword}
-                    onChange={(event) => handleInputChange(event)}
+                    value={inputSearch}
+                    onChange={(event) => {
+                      handleInputChange(event);
+                      onInputChange(event);
+                    }}
                   />
                   <button type="submit" onClick={(e) => handleSearch(e)}>
                     <CiSearch />
