@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
-import swal from "sweetalert2";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
-import Swal from "sweetalert2";
+import swal from "sweetalert2";
 
 function MedicineList() {
+    const params = useParams();
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [page, setPage] = useState(0);
@@ -15,35 +15,11 @@ function MedicineList() {
         name: ""
     });
 
+    const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
+    const [searchInput, setSearchInput] = useState("");
+    const [limit, setLimit] = useState(5)
 
-    const getListMedicine = async (page) => {
-        const result = await medicineService.findAll(page);
-        setMedicineList(result?.data.content);
-        setTotalPage(result?.data.totalPages);
-    }
-
-
-    const previousPage = () => {
-        if (page > 0) {
-            setPage((pre) => pre - 1)
-        }
-    }
-
-    const nextPage = () => {
-        if (page + 1 < totalPage) {
-            setPage((pre) => pre + 1)
-        }
-    }
-    const handleShowCondition = () => {
-        let select = document.getElementById("select").value;
-        const conditional = document.getElementById("conditional");
-        if (select === "4") {
-            conditional.style.display = "inline";
-        } else {
-            conditional.style.display = "none";
-        }
-    }
-
+// ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
         swal.fire({
             title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
@@ -56,22 +32,80 @@ function MedicineList() {
         })
             .then(async (willDelete) => {
                 if (willDelete.isConfirmed) {
-                     medicineService.deleteMedicine(selectMedicine.id);
-                     swal.fire("Xoá sản phẩm thành công!", "", "success");
+                    await medicineService.deleteMedicine(selectMedicine.id);
+                    swal.fire("Xoá sản phẩm thành công!", "", "success");
                 } else {
-                    Swal.fire({
+                    swal.fire({
                         icon: 'error',
                         title: 'Rất tiếc...',
                         text: 'Xóa thất bại!'
+                    });
+                    setSelectMedicine({
+                        id:null,
+                        name: ''
                     })
                 }
-                await getListMedicine(page)
+                await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
             });
     };
+// ---------------------------------------- Get list ---------------------------------------------
+
+    // const getListMedicine = async (page) => {
+    //     const result = await medicineService.findAll(page);
+    //     setMedicineList(result?.data.content);
+    //     setTotalPage(result?.data.totalPages);
+    //     console.log(totalPage);
+    // }
+    const previousPage = () => {
+        if (page > 0) {
+            setPage((pre) => pre - 1)
+        }
+    }
+
+    const nextPage = () => {
+        if (page + 1 < totalPage) {
+            setPage((pre) => pre + 1)
+        }
+    }
+// ----------------------------------------- Search ---------------------------------------
+    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit) => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
+            setMedicineList(result?.content);
+            setTotalPage(result?.totalPages);
+    }
+// select child
+    const handleShowCondition = () => {
+        let select = document.getElementById("select").value;
+        const conditional = document.getElementById("conditional");
+        if (select === "4") {
+            conditional.style.display = "inline";
+        } else {
+            conditional.style.display = "none";
+        }
+    }
+
+    const handleSearch = async () => {
+        setSearchInput(document.getElementById("search").value);
+        setPage(0);
+    }
+// select father
+    const handleSearchOption = (e) => {
+        setSearchInMedicine(e.target.value);
+    }
+
+    // useEffect(() => {
+    //     getListMedicine(page);
+    // }, [page])
+
+    const handleReset = () => {
+        setPage(0);
+        setSearchInMedicine("");
+        setSearchInput("");
+    }
 
     useEffect(() => {
-        getListMedicine(page);
-    }, [page])
+        getListSearchMedicine(searchInMedicine,searchInput, page, limit)
+    }, [searchInput, page, limit])
 
     if (!medicineList) {
         return null;
@@ -87,6 +121,7 @@ function MedicineList() {
 
                         <label>Lọc theo: </label>
                         <select onClick={() => handleShowCondition()}
+                                onChange={(e) => handleSearchOption(e)}
                                 style={{width: '150px', borderRadius: '5px', color: 'blue'}}
                                 id="select" className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
@@ -109,9 +144,11 @@ function MedicineList() {
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
-                               placeholder="Tìm kiếm thuốc..."/>
+                               placeholder="Tìm kiếm thuốc..."
+                               id={'search'}/>
                         <button className="btn btn-outline-primary"
-                                style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}>
+                                style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}
+                                onClick={() => handleSearch()} value="searchInMedicine">
                             <i className="fa-solid fa-magnifying-glass"></i>
                             Tìm kiếm
                         </button>

@@ -34,27 +34,14 @@ export const findAll = async (page) => {
 };
 
 export const searchMedicine = async (searchInMedicine, search, page, limit) => {
-  let url = `http://localhost:8080/api/medicine/search?search=${search}`;
-  switch (searchInMedicine) {
-    case "searchByName":
-      url += `&searchInMedicine=${searchInMedicine}`;
-      break;
-    case "searchByCode":
-      url += `&searchInMedicine=${searchInMedicine}`;
-      break;
-    case "searchByActiveElement":
-      url += `&searchInMedicine=${searchInMedicine}`;
-      break;
-    case "searchByNameKindOfMedicine":
-      url += `&searchInMedicine=${searchInMedicine}`;
-  }
   try {
     const result = await axios.get(
-      `${url}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}`
+      `http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}`
     );
+    console.log(result.data)
     return result.data;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
 
@@ -65,6 +52,15 @@ export const deleteMedicine = async (id) => {
     );
     return result;
   } catch (error) {
-    console.log(error);
+    return error;
   }
 };
+
+export const getMedicineList = async () => {
+  try {
+    const result = await axios.get(`http://localhost:8080/api/medicine/get-list`)
+    return result.data;
+  }catch (error){
+    return error;
+  }
+}
