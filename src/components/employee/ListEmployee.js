@@ -14,7 +14,7 @@ import {deleteEmployees, getListEmployee} from "../../services/employee/Employee
 import Swal from "sweetalert2";
 import {Link} from "react-router-dom";
 import * as Yup from "yup";
-import {format , parseISO } from "date-fns";
+import {format, parseISO} from "date-fns";
 
 export default function ListEmployee() {
     const [employees, setEmployee] = useState([]);
@@ -40,7 +40,7 @@ export default function ListEmployee() {
         }
     }
     useEffect(() => {
-        getList();
+        getList().then();
     }, [pageList, sort]);
     const checkSearch = async (nameEmployee) => {
         setSearchEmployee(nameEmployee);
@@ -63,8 +63,8 @@ export default function ListEmployee() {
                 title: 'Không tìm thấy dữ liệu.',
                 showConfirmButton: false,
                 timer: 1500
-            })
-            setMessage("Không tìm thấy thông tin nhân viên trên hệ thống.")
+            }).then();
+            setMessage("Không tìm thấy thông tin nhân viên trên hệ thống.");
             setEmployee([]);
             setPageList(0);
             setTotalPage(0);
@@ -75,18 +75,17 @@ export default function ListEmployee() {
     const checkDelete = async () => {
         if (deleteEmployee !== '') {
             Swal.fire({
-                    title: 'Bạn muốn xoá nhân viên có tên: ' + deleteEmployee.nameEmployee + ' ?',
-                    html: '<p style="color: red;">Bạn sẽ không thể khôi phục nhân viên này.</p>',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Xác nhận ',
-                    cancelButtonText: 'Huỷ',
-                    reverseButtons: true
-                }
-            ).then(async (res) => {
+                title: 'Bạn muốn xoá nhân viên có tên: ' + deleteEmployee.nameEmployee + ' với mã nhân viên: ' + deleteEmployee.codeEmployee + ' ?',
+                html: '<p style="color: red;">Bạn sẽ không thể khôi phục nhân viên này.</p>',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận ',
+                cancelButtonText: 'Huỷ',
+                reverseButtons: true
+            }).then(async (res) => {
                 if (res.isConfirmed) {
                     const response = await deleteEmployees(deleteEmployee.id);
-                    if(response.status === 200){
+                    if (response.status === 200) {
                         getList().then(() => {
                             Swal.fire({
                                 icon: 'success',
@@ -95,7 +94,7 @@ export default function ListEmployee() {
                                 timer: 2000
                             })
                         });
-                    }else {
+                    } else {
                         getList().then(() => {
                             Swal.fire({
                                 icon: 'error',
@@ -105,24 +104,24 @@ export default function ListEmployee() {
                             })
                         });
                     }
-                }else {
+                } else {
                     getList().then(() => {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Đã huỷ xoá thành công.',
                             showConfirmButton: false,
-                            timer: 2000
+                            timer: 1500
                         })
                     });
                 }
             })
-        }else {
+        } else {
             Swal.fire({
                 icon: 'warning',
-                title: 'Vui lòng chọn nhân viên trước khi thực hiện thao tác.',
+                title: 'Vui lòng chọn nhân viên trước khi thực hiện thao tác này.',
                 showConfirmButton: false,
-                timer: 2000
-            })
+                timer: 1500
+            }).then();
         }
     }
     return (
@@ -202,33 +201,34 @@ export default function ListEmployee() {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {message !== '' && (
-                                        <tr>
+                                    {message !== '' &&
+                                        (<tr>
                                             <td colSpan="10" className="text-center"><p>{message}</p></td>
                                         </tr>)
                                     }
 
                                     {employees !== [] && (employees.map((employee, index) => (
-                                        <tr className={`tr-employee ${deleteEmployee && deleteEmployee.id === employee.id ? 'check-delete-employee' : ''}`} key={index}
+                                        <tr className={`tr-employee ${deleteEmployee && deleteEmployee.id === employee.id ? 'check-delete-employee' : ''}`}
+                                            key={index}
                                             onClick={() => {
-                                            if (deleteEmployee === '') {
-                                                setDeleteEmployee(employee);
-                                            } else if (deleteEmployee.id !== employee.id) {
-                                                setDeleteEmployee(employee);
-                                            }else {
-                                                setDeleteEmployee('');
-                                            }
+                                                if (deleteEmployee === '') {
+                                                    setDeleteEmployee(employee);
+                                                } else if (deleteEmployee.id !== employee.id) {
+                                                    setDeleteEmployee(employee);
+                                                } else {
+                                                    setDeleteEmployee('');
+                                                }
 
-                                        }}>
+                                            }}>
                                             <td className={`px-3 py-2 `}>{index + 1}</td>
                                             <td className={`px-3 py-2 `}>{employee.codeEmployee}</td>
                                             <td className={`px-5 py-2 `}><img src={employee.image}
-                                                                                            alt={employee.nameEmployee}
-                                                                                            height="44.5" width="40"
-                                                                                            style={{
-                                                                                                borderRadius: "100px",
-                                                                                                marginRight: "3px"
-                                                                                            }}/>{employee.nameEmployee}
+                                                                              alt={employee.nameEmployee}
+                                                                              height="44.5" width="40"
+                                                                              style={{
+                                                                                  borderRadius: "100px",
+                                                                                  marginRight: "3px"
+                                                                              }}/>{employee.nameEmployee}
                                             </td>
                                             <td className={`px-3 py-3 `}>{format(parseISO(employee.birthday), 'dd/MM/yyyy')}</td>
                                             <td className={`px-3 py-3 `}>{employee.address}</td>
@@ -263,10 +263,10 @@ export default function ListEmployee() {
                                 </div>
                                 <button className={`btn btn-primary ${pageList === totalPage - 1 ? 'disabled' : ''}`}
                                         style={{margin: "5px"}} onClick={() => {
-                                            if (pageList < totalPage) {
-                                                setPageList((prev) => prev + 1)
-                                            }
-                                        }}>
+                                    if (pageList < totalPage) {
+                                        setPageList((prev) => prev + 1)
+                                    }
+                                }}>
                                     <AiOutlineDoubleRight className="mx-1"/>
                                 </button>
                             </div>
@@ -280,12 +280,19 @@ export default function ListEmployee() {
                         </button>
                     </Link>
                     {deleteEmployee !== '' ?
-                        <Link to={"/dashboard/employee/update/"+ deleteEmployee.id}>
+                        <Link to={"/dashboard/employee/update/" + deleteEmployee.id}>
                             <button className="btn btn-light btn-outline-primary m-1">
                                 <FiEdit className="mx-1"/> Sửa
                             </button>
                         </Link> :
-                        <button className="btn btn-light btn-outline-primary m-1">
+                        <button className="btn btn-light btn-outline-primary m-1" onClick={()=>{
+                            Swal.fire({
+                                icon:"warning",
+                                title:"Vui lòng chọn nhân viên trước khi thực hiện thao tác này.",
+                                showConfirmButton:false,
+                                timer: 1500
+                            }).then()
+                        }}>
                             <FiEdit className="mx-1"/> Sửa
                         </button>}
                     <button className="btn btn-light btn-outline-primary m-1" onClick={() => {
