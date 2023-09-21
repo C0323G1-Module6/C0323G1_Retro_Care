@@ -225,7 +225,7 @@ export default function ListEmployee() {
                                         </tr>)
                                     }
 
-                                    {employees !== [] && (employees.map((employee, index) => (
+                                    { employees.map((employee, index) => (
                                         <tr className={`tr-employee ${deleteEmployee && deleteEmployee.id === employee.id ? 'check-delete-employee' : ''}`}
                                             key={index}
                                             onClick={() => {
@@ -261,7 +261,7 @@ export default function ListEmployee() {
                                             <td className={`px-3 py-3 `}>{employee.address}</td>
                                             <td className={`px-3 py-3 `}>{employee.note}</td>
                                         </tr>
-                                    )))}
+                                    ))}
                                     </tbody>
                                 </table>
                             </div>
