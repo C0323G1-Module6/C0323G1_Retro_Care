@@ -17,10 +17,12 @@ const PrescriptionList = () => {
   const [page, setPage] = useState(0);
   const [id, setId] = useState();
   const [prescription, setPrescription] = useState();
+  const [seletedPrescription, setSelecdPrescription] = useState({
+    id: null,
+    code: ""
+  })
   const findAllPrescription = async () => {
     const res = await getAllPrescription(page);
-    console.log(res);
-    console.log(res.data.totalPage);
     setTotalPage(res.data.totalPages);
     setPrescriptions(res.data.content)
   }
@@ -38,18 +40,12 @@ const PrescriptionList = () => {
     }
   }
 
-  const handleRecordClick = async (id) => {
-    console.log(id);
-    setId(id);
-    const res = await getPrescriptionById(id);
-    setPrescription(res.data);
-  }
-  console.log(prescription);
+
 
   const deletePrescription = async () => {
     Swal.fire({
       title: "Xác nhận xoá !",
-      text: "Bạn có xác nhận xoá toa thuốc có mã :" + prescription.code,
+      text: "Bạn có xác nhận xoá toa thuốc có mã :" + seletedPrescription.code,
       showCancelButton: true,
       showConfirmButton: true,
       confirmButtonText: "Xoá",
@@ -57,7 +53,7 @@ const PrescriptionList = () => {
       icon: "question",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await removePrescription(id);
+        const response = await removePrescription(seletedPrescription.id);
         if (response.status === 200) {
           Swal.fire({
             text: "Xoá thành công ! ",
@@ -192,32 +188,34 @@ const PrescriptionList = () => {
               </thead>
               <tbody>
                 {
-                  prescriptions.map((p) => (
-                    <tr key={p.id} onClick={() => handleRecordClick(p.id)}>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                  prescriptions.map((p, index) => (
+                    <tr key={p.id} onClick={() => {
+                      setSelecdPrescription({ id: p?.id, code: p?.code })
+                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <div className="flex items-center">
                           <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">1</p>
+                            <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">{p.code}</p>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {p.name}
                         </p>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">{p.patient.name}</p>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {p.symptoms}
                         </p>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">
                           {p.note}
                         </p>
@@ -270,13 +268,17 @@ const PrescriptionList = () => {
           >
 
           </a> */}
-          <a
+          <Link to={`/dashboard/prescription/edit/${seletedPrescription.id}`} className="btn btn-outline-primary">
+            <FiEdit className="mx-1" />
+            Sửa
+          </Link>
+          {/* <a
             className="btn btn-outline-primary"
             href="ThanhKN_EditPrescription.html"
           >
             <FiEdit className="mx-1" />
             Sửa
-          </a>
+          </a> */}
           <button
             type="button"
             className="btn btn-outline-primary"
