@@ -8,6 +8,7 @@ import {
     uploadBytes,
     getDownloadURL,
 } from "firebase/storage";
+import {FidgetSpinner} from "react-loader-spinner"
 import { parse, differenceInYears } from 'date-fns';
 import {storage} from "../../firebase/firebase";
 import {v4} from "uuid";
@@ -128,6 +129,28 @@ const CreationEmployee = ()=>{
                 appUser:Yup.string().required("Vui lòng nhập tên tài khoản"),
             })}
             onSubmit={(value,{setErrors}) => {
+                let timerInterval
+                Swal.fire({
+                    title: 'Auto close alert!',
+                    html: 'I will close in <b></b> milliseconds.',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
                 saveEmployee(value,setErrors)
             }}
         >
@@ -254,18 +277,22 @@ const CreationEmployee = ()=>{
                                         <span>(<span style={{color: 'red'}}>*</span>) Thông tin bắt buộc</span>
                                     </div>
                                     <div className="col-8 mt-3">
-                                        <Link to={"/dashboard/employee"}>
-                                            <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
-                                                className="fa-solid fa-rotate-left"></i> Trở về
-                                            </button>
-                                        </Link>
-                                        <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
+                                            <div>
+                                            <Link to={"/dashboard/employee"}>
+                                                <button
+                                                    className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow"><i
+                                                    className="fa-solid fa-rotate-left"></i> Trở về
+                                                </button>
+                                            </Link>
+                                            <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
                                             <i className="fa-solid fa-rotate-right"></i>
                                             Làm mới
-                                        </button>
-                                        <button type={"submit"} className="btn btn-outline-primary float-end mx-1 mt-2 shadow"><i
+                                            </button>
+                                            <button type={"submit"} className="btn btn-outline-primary float-end mx-1 mt-2 shadow"><i
                                             className="fa-solid fa-plus"></i> Thêm Mới
-                                        </button>
+                                            </button>
+                                            </div>
+
                                     </div>
                                 </div>
                             </fieldset>

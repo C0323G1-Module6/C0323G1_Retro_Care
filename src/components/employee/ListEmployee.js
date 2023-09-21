@@ -118,7 +118,7 @@ export default function ListEmployee() {
                 } else {
                     getList().then(() => {
                         Swal.fire({
-                            icon: 'warning',
+                            icon: 'success',
                             title: 'Đã huỷ xoá thành công.',
                             showConfirmButton: false,
                             timer: 1500
