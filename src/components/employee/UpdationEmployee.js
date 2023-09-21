@@ -147,6 +147,28 @@ const UpdationEmployee = () => {
                     .matches(/^\d{9}(\d{3})?$/u,"Vui lòng chỉ nhập số và độ dài là 9 hoặc 12"),
             })}
             onSubmit={(value, {setErrors}) => {
+                let timerInterval
+                Swal.fire({
+                    title: 'Auto close alert!',
+                    html: 'I will close in <b></b> milliseconds.',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
                 updateEmployees(value,setErrors)
             }}
         >

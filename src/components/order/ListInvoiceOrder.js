@@ -5,13 +5,14 @@ import {
     AiOutlineDoubleRight,
 } from "react-icons/ai";
 import {useEffect, useState} from "react";
-import {getAllInvoiceOrder} from "../../services/order/OrderInvoice";
+import {getAllInvoiceOrder, getInvoiceByTime} from "../../services/order/OrderInvoice";
+import {Formik,Form,Field} from "formik";
+import * as Yup from "yup";
 
 const ListInvoiceOrder = () => {
     const [invoices,setInvoices] = useState([]);
     const loadAllInvoice =async () => {
         const tmpInvoice = await getAllInvoiceOrder();
-        console.log(tmpInvoice);
         setInvoices(tmpInvoice.data.content);
     }
     useEffect(() => {
@@ -28,18 +29,34 @@ const ListInvoiceOrder = () => {
 
                 <fieldset className="border border-dark rounded-3 p-3 h-100 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
                     <legend className="float-none w-auto px-3">Thông tin hóa đơn</legend>
+                    <Formik
+                        initialValues={{
+                            startDateTime:"",
+                            endDateTime:""
+                        }}
+                        validationSchema={Yup.object({
+                            startDateTime:Yup.string().required("Vui long nhập ngày bắt đầu"),
+                            endDateTime:Yup.string().required("Vui long nhập ngày bắt đầu")
+                            })}
+                        onSubmit={async (values)=>{
+                            console.log(values)
+                            const res = await getInvoiceByTime(values.startDateTime,values.endDateTime);
+                            console.log(res)
+                        }}
+                    >
+                        <Form>
                     <div className="row">
                         <div className="d-flex col-3">
                     <label className="me-2 p-2">Từ ngày</label>
-                    <input type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
+                    <Field name="startDateTime" type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
                         </div>
                         <div className="d-flex col-3">
                     <label className="me-2 p-2">Đến ngày</label>
-                    <input type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
+                    <Field name="endDateTime" type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
                         </div>
                         <div className="d-flex col-4">
                             <label className="me-2 p-2">Sắp xếp theo</label>
-                            <select type={"datetime-local"} className={"form-select"} style={{width:"200px"}}>
+                            <select className={"form-select"} style={{width:"200px"}}>
                                 <option>Mã hoá đơn</option>
                                 <option>Tên khách hàng</option>
                                 <option>Ngày lập giờ lập</option>
@@ -47,7 +64,12 @@ const ListInvoiceOrder = () => {
                                 <option>Tổng tiền</option>
                             </select>
                         </div>
+                        <div className="col-2">
+                            <button type="submit" className="btn btn-outline-primary">Tìm kiếm</button>
+                        </div>
                     </div>
+                        </Form>
+                    </Formik>
                 </fieldset>
 
                 <div className="pt-2">
