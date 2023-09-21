@@ -38,14 +38,21 @@ export default function Details() {
     const quantity = document.getElementById("quantity-value").value;
     const quantityInCart = await getQuantityInCart(1, medicineId);
     console.log(quantityInCart);
-    try {
-      const res = await checkQuantity(id, parseInt(quantity) + quantityInCart);
-      console.log(res);
-      const add = await addToCartFromHomeAndDetails(1, medicineId, quantity);
-      dispatch(getAllCarts(1));
-      toast.success("Thêm sản phẩm thành công!");
-    } catch {
-      swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+    if (parseInt(quantity) <= 0) {
+      swal.fire("Vui lòng thêm ít nhất 1 sản phẩm!", "", "warning");
+    } else {
+      try {
+        const res = await checkQuantity(
+          id,
+          parseInt(quantity) + quantityInCart
+        );
+        console.log(res);
+        const add = await addToCartFromHomeAndDetails(1, medicineId, quantity);
+        dispatch(getAllCarts(1));
+        toast.success("Thêm sản phẩm thành công!");
+      } catch {
+        swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+      }
     }
   };
 
