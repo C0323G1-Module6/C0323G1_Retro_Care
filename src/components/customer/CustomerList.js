@@ -134,7 +134,7 @@ function CustomerList() {
         text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Đúng vậy",
+        confirmButtonText: "OK",
         icon: "question",
       }).then(async (result) => {
         if (result.isConfirmed) {
@@ -155,7 +155,7 @@ function CustomerList() {
           }
         } else {
           Swal.fire({
-            text: "Không ",
+            text: "Hủy thao tác",
             icon: "warning",
             timer: 1000,
           });
@@ -231,10 +231,10 @@ function CustomerList() {
           </button>
         </div>
 
-        <div className="col-3 d-flex align-items-center justify-content-end">
+        <div className="col-3 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 ">
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 "style={{width:190}}>
               <option value={"group"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
