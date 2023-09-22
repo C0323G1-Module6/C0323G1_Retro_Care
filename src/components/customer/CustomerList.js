@@ -23,7 +23,6 @@ function CustomerList() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [groupValue, setGroupValue] = useState("");
   const [sortItem, setSortItem] = useState("");
-  const [sortType, setSortType] = useState("");
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [selectedCustomer, setSeletedCustomer] = useState({
@@ -34,7 +33,7 @@ function CustomerList() {
 
   // ------------------------------------------------------ Get Customers List ---------------------------------------
   const loadCustomerList = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
-    const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
+    const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem);
     if (result?.status === 200) {
       setCustomers(result?.data.content);
       setTotalPage(result?.data.totalPages);
@@ -42,9 +41,9 @@ function CustomerList() {
       Swal.fire({
         icon: 'error',
         title: 'Rất tiếc...',
-        text: 'Dữ liệu không tồn tại!',
+        text: 'Không tin bạn nhập không tồn tại!',
       })
-      handleReset();
+      setSearchValue("");
     }
   }
   const handleReset = () => {
@@ -55,7 +54,6 @@ function CustomerList() {
     setCode("");
     setGroupValue("");
     setSortItem("");
-    setSortType("");
   }
   // ----------------------------------------------------------- Pagination ---------------------------------------------
   const previousPage = () => {
@@ -73,14 +71,14 @@ function CustomerList() {
   // ------------------------------------------------------  Searching function -----------------------------------------
   const handleInputChange = (e) => {
     const { value } = e.target
-    setSearchValue(value.trim());
+    setSearchValue(value);
   }
 
-  // const handleKeyDown = event => {
-  //   if (event.key === 'Enter') {
-  //     handleSearchEvent();
-  //   }
-  // }
+  const handleKeyDown = event => {
+    if (event.key === 'Enter') {
+      handleSearchEvent();
+    }
+  }
 
   const handleSearchEvent = () => {
     switch (optionSearch) {
@@ -100,6 +98,7 @@ function CustomerList() {
         setCode(searchValue);
         break;
     }
+    // setSearchValue("");
   }
 
   const handleSelectChange = (event) => {
@@ -112,17 +111,13 @@ function CustomerList() {
     const { value } = e.target;
     setOptionSearch(+value);
     setSearchValue(document.getElementById("search").value);
+    console.log(searchValue);
     handleReset();
   }
 
   // ------------------------------------------------------ Sort -----------------------------------------------------
   const handleSortEvent = (event) => {
     setSortItem(event.target.value);
-    setSortType(document.getElementById("sortType").value);
-  }
-  const handleSort = (event) => {
-    setSortItem(document.getElementById("sortItem").value);
-    setSortType(event.target.value);
   }
 
   //--------------------------------------------------- Delete method -----------------------------------------------
@@ -185,8 +180,8 @@ function CustomerList() {
   }
   // --------------------------------------------------------------Use Effect ----------------------------------------------------
   useEffect(() => {
-    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
-  }, [page, name, code, address, phoneNumber, groupValue, sortItem, sortType]);
+    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
+  }, [page, name, code, address, phoneNumber, groupValue, sortItem]);
 
   if (!customers) {
     return <div></div>;
@@ -198,11 +193,11 @@ function CustomerList() {
         DANH SÁCH KHÁCH HÀNG
       </h1>
       <div className="row m-3" style={{ display: "flex" }}>
-        <div className="col-8 col-search">
+        <div className="col-9 col-search">
           <label className="m-1">Lọc theo: </label>
           <div className="btn-group">
             <select name='optionSearch' defaultValue={0} onChange={handleOptionSearchChange} className="form-select m-1" style={{ width: 200 }}>
-              <option value={0}>Mã khách hàng</option>
+              <option value={0}> Mã khách hàng</option>
               <option value={1}>Tên khách hàng</option>
               <option value={2}>Nhóm khách hàng</option>
               <option value={3}>Địa chỉ</option>
@@ -225,11 +220,10 @@ function CustomerList() {
             placeholder="Tìm kiếm khách hàng"
             className="bg-white align-middle appearance-none m-1"
             aria-describedby="button-addon"
-            id="search"
-            // onKeyDown={handleKeyDown}
+            id="search" onKeyDown={handleKeyDown}
             onChange={handleInputChange}
           />
-          <button onClick={handleSearchEvent}
+          <button onClick={() => handleSearchEvent()}
             className="btn btn-outline-primary"
             style={{ marginRight: "auto", width: "auto", marginLeft: 5 }}
             id="button-addon">
@@ -237,17 +231,13 @@ function CustomerList() {
           </button>
         </div>
 
-        <div className="col-4 d-flex align-items-center justify-content-end" >
+        <div className="col-3 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' id="sortItem" defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 " style={{ width: 180 }}>
-              <option value={"app_user_id"}>Nhóm khách hàng</option>
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 "style={{width:190}}>
+              <option value={"group"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
-            </select>
-            <select name="sortType" id="sortType" defaultValue={""} onChange={handleSort} className="form-select m-1 " style={{ width: 130 }}>
-              <option value={"ASC"}>Tăng dần</option>
-              <option value={"DESC"}>Giảm dần</option>
             </select>
           </div>
         </div>
@@ -260,79 +250,70 @@ function CustomerList() {
         >
           <thead>
             <tr
-              style={{ background: "#0d6efd", color: "#ffffff", height: 50 }}
+              style={{ background: "#0d6efd", color: "#ffffff" }}
             >
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 50 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 STT
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 190 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Mã khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Tên khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 150 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Ngày sinh
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Địa chỉ
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 170 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Số điện thoại
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 250 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Nhóm khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 180 }}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                 Ghi chú
               </th>
             </tr>
           </thead>
-          {customers && customers.length !== 0 ?
-            <tbody className="bg-light">
-              {customers.map((customer, index) => (
-                <tr key={index} id={index} onClick={() => {
-                  if (selectedCustomer.id === null || selectedCustomer.id !== customer?.id) {
-                    setSeletedCustomer({ id: customer?.id, name: customer?.name });
-                  } else {
-                    setSeletedCustomer({ id: null, name: "" });
-                  }
-                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec', height: 50 } : { height: 50 }}>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {index + 1}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.code}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.name.length > 20 ? `${customer?.name.slice(0, 20)}...` : customer?.name}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200  text-sm">
-                    {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.address.length > 20 ? `${customer?.address.slice(0, 20)}...` : customer?.address}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.phoneNumber}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.customerType}
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.note.length > 9 ? `${customer?.note.slice(0, 9)}...` : customer?.note}
-                  </td>
-                </tr>
-              ))}
-            </tbody> :
-            <tbody>
-              <tr style={{ height: '150px' }}>
-                <td style={{ fontSize: '30px', textAlign: 'center' }} colSpan="8">Không có dữ
-                  liệu
+          <tbody className="bg-light">
+            {customers.map((customer, index) => (
+              <tr key={index} id={index} onClick={() => {
+                if (selectedCustomer.id === null || selectedCustomer.id != customer?.id ) {
+                setSeletedCustomer({ id: customer?.id, name: customer?.name });
+                } else {
+                  setSeletedCustomer({id: null, name: ""});
+                }
+              }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {index + 1}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.code}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.name}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200  text-sm">
+                  {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.address}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.phoneNumber}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.customerType}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                  {customer?.note}
                 </td>
               </tr>
-            </tbody>
-          }
+            ))}
+          </tbody>
         </table>
         <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
           <div className="justify-content-center d-flex">
@@ -390,7 +371,7 @@ function CustomerList() {
           Trở về
         </a>
       </div>
-    </div >
+    </div>
   )
 }
 export default CustomerList;

@@ -8,7 +8,7 @@ import { FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { format } from 'date-fns';
 import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell, getNameEmployee } from "../../services/retail/RetailService";
-import { addJwtTokenToLocalStorage, getIdByUserName, infoAppUserByJwtToken } from "../../services/user/AppUserService";
+import { infoAppUserByJwtToken } from "../../services/user/AppUserService";
 import jsPDF from "jspdf";
 import diacriticless from "diacriticless";
 
@@ -29,25 +29,19 @@ export default function Retail() {
     const [date, setDate] = useState("");
     const [user, setUser] = useState({});
     const [employeeName, setEmployeeName] = useState("");
-    const [app_user_id, setApp_user_id] = useState(0);
-
+    const app_user_id = 16;
     const navigate = useNavigate();
 
 
     useEffect(() => {
-
-        getStart();
-
-    }, [])
-
-    const getStart = async () => {
-        await getCart();
+        getCart();
         setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString())
         const currentDate = new Date();
         const currentDateString = format(currentDate, 'dd/MM/yyyy');
         setDate(currentDateString)
-        getUser();
-    }
+        getEmployeeName();
+        console.log(user);
+    }, [])
 
     useEffect(() => {
         let money = 0;
@@ -57,38 +51,15 @@ export default function Retail() {
         setSum((pre) => money);
     }, [listCart])
 
-
-    const getAppUserId = async (name) => {
-        const id = await getIdByUserName(name);
-        setApp_user_id((pre) => id.data);
-    }
-
-
+   
     const getEmployeeName = async () => {
         const name = await getNameEmployee(app_user_id);
-        setEmployeeName((pre) => name);
+        setEmployeeName((pre)=>name);
     }
 
     useEffect(() => {
         findMedicine();
     }, [inputMedicine]);
-
-    useEffect(() => {
-        getEmployeeName(app_user_id)
-        getCart();
-    }, [app_user_id])
-
-    const getUser = async () => {
-        const data = await infoAppUserByJwtToken(); // Sử dụng await để đợi hàm không đồng bộ hoàn thàn
-        try {
-            await getAppUserId(data.sub)
-        } catch (e) {
-
-        }
-
-
-
-    }
 
 
     const toRetailPrescriptionInformation = () => {
@@ -122,7 +93,6 @@ export default function Retail() {
             showCancelButton: true,
             showConfirmButton: true,
             confirmButtonText: "Có, xóa đi",
-            cancelButtonText: "Hủy",
             icon: "question",
         }).then(async (result) => {
             if (result.isConfirmed) {
@@ -149,10 +119,8 @@ export default function Retail() {
 
 
     const setQuantity = async (quantity, cart) => {
-        if (quantity > 0) {
-            await setQuantityOfCart(app_user_id, cart.m_id, quantity);
-            await getCart();
-        }
+        await setQuantityOfCart(app_user_id, cart.m_id, quantity);
+        await getCart();
     }
 
     const addMedicine = async () => {
@@ -195,34 +163,18 @@ export default function Retail() {
 
     const pay = async () => {
         if (customer.app_user_id === 0) {
-            Swal.fire({
-                text: "Chưa có khách hàng",
-                icon: "warning",
-                timer: 1500,
-            });
+            alert("chua chon khach")
             return;
         }
         if (listCart.length === 0) {
-            Swal.fire({
-                text: "Chưa có gì để thanh toán",
-                icon: "warning",
-                timer: 1500,
-            });
+            alert("chua co gi")
             return;
         }
         const res = await payWhenSell(customer.app_user_id, app_user_id, code, note);
-        if(res.data==="" ){
         await getCart();
         clickSprintBill("da thanh toan");
         openSwalWhenSuccess();
         setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString());
-        } else{
-            Swal.fire({
-                text: `Thuốc ${res.data} không đủ, hãy kiểm tra lại`,
-                icon: "error",
-                timer: 2000,
-            });
-        }
     }
 
     const clickSprintBill = (status) => {
@@ -238,7 +190,7 @@ export default function Retail() {
         handleGeneratePDF(content, status);
     }
 
-    const handleGeneratePDF = async (content, status) => {
+    const handleGeneratePDF = async (content,status) => {
         // Tạo đối tượng jsPDF
         const doc = new jsPDF();
 
@@ -253,59 +205,59 @@ export default function Retail() {
         `
 
         // Định dạng và vẽ nội dung hóa đơn
-        doc.setFont('Arial', 'bold');
-        doc.setFontSize(16);
-        doc.text(billContent, 10, 10);
+  doc.setFont('Arial', 'bold');
+  doc.setFontSize(16);
+  doc.text(billContent, 10, 10);
 
-        // Vẽ tiêu đề bảng
-        const tableHeader = ['STT', 'Ten san pham', 'So luong', 'Gia', 'Thanh tien'];
-        const tableHeaderX = 30;
-        const tableHeaderY = 70;
-        const tableHeaderFontSize = 12;
+  // Vẽ tiêu đề bảng
+  const tableHeader = ['STT', 'Ten san pham', 'So luong', 'Gia', 'Thanh tien'];
+  const tableHeaderX = 30;
+  const tableHeaderY = 70;
+  const tableHeaderFontSize = 12;
 
-        doc.setFont('Arial', 'bold');
-        doc.setFontSize(tableHeaderFontSize);
-        doc.text(tableHeader.join('                        '), tableHeaderX, tableHeaderY);
+  doc.setFont('Arial', 'bold');
+  doc.setFontSize(tableHeaderFontSize);
+  doc.text(tableHeader.join('                        '), tableHeaderX, tableHeaderY);
 
-        // Vẽ dữ liệu sản phẩm
-        const tableDataX = 30;
-        const tableDataY = 80;
-        const tableDataFontSize = 12;
+  // Vẽ dữ liệu sản phẩm
+  const tableDataX = 30;
+  const tableDataY = 80;
+  const tableDataFontSize = 12;
 
-        doc.setFont('Arial', 'normal');
-        doc.setFontSize(tableDataFontSize);
-        listCart.forEach((product, index) => {
-            const { name, cd_quantity, price } = product;
-            const rowData = [
-                index + 1,
-                diacriticless(name),
-                cd_quantity,
-                price,
-                cd_quantity * price,
-            ];
-            const rowY = tableDataY + index * 10;
-            rowData.forEach((data, columnIndex) => {
-                const columnX = tableDataX + columnIndex * 40;
-                doc.text(data.toString(), columnX, rowY);
-            });
-        });
+  doc.setFont('Arial', 'normal');
+  doc.setFontSize(tableDataFontSize);
+  listCart.forEach((product, index) => {
+    const { name, cd_quantity, price } = product;
+    const rowData = [
+      index + 1,
+      diacriticless(name),
+      cd_quantity,
+      price,
+      cd_quantity * price,
+    ];
+    const rowY = tableDataY + index * 10;
+    rowData.forEach((data, columnIndex) => {
+      const columnX = tableDataX + columnIndex * 40;
+      doc.text(data.toString(), columnX, rowY);
+    });
+  });
 
-        // Vẽ tổng giá trị hóa đơn
-        const sumX = 30;
-        const sumY = tableDataY + listCart.length * 10 + 10;
+  // Vẽ tổng giá trị hóa đơn
+  const sumX = 30;
+  const sumY = tableDataY + listCart.length * 10 + 10;
 
-        doc.setFont('Arial', 'bold');
-        doc.text(`Tong: ${sum}`, sumX, sumY);
+  doc.setFont('Arial', 'bold');
+  doc.text(`Tong: ${sum}`, sumX, sumY);
 
-        // Vẽ ghi chú
-        const noteX = 30;
-        const noteY = sumY + 10;
+  // Vẽ ghi chú
+  const noteX = 30;
+  const noteY = sumY + 10;
 
-        doc.setFont('Arial', 'normal');
-        doc.text(note, noteX, noteY);
+  doc.setFont('Arial', 'normal');
+  doc.text(note, noteX, noteY);
 
-        // Lưu tài liệu PDF
-        doc.save('example.pdf');
+  // Lưu tài liệu PDF
+  doc.save('example.pdf');
     };
 
     return (

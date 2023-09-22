@@ -55,23 +55,23 @@ function CreateSupplierComponent() {
           validationSchema={yup.object({
             code: yup.string()
               .required("Không được để trống trường này.")
-              .min(3, "Mã nhà cung cấp tối thiểu 3 ký tự")
-              .max(30, "Mã nhà cung cấp tối đa 30 ký tự.")
-              .matches(/^(?!.*[^A-Z])(?!.*\s)[A-Z]{3,30}$/, "Nhập sai địn dạng vd: NUTINE"),
+              .min(3, "Mã nhà cung cấp tối thiểu 3 ký tự và tối đa 30 ký tự.")
+              .max(30, "Mã nhà cung cấp tối thiểu 3 ký tự và tối đa 30 ký tự.")
+              .matches(/^(?!.*[^A-Z])(?!.*\s)[A-Z]{3,30}$/, "Các ký tự được viết hoa,không có khoảng trắng,không có ký tự đặc biệt vd: NUTINE"),
             name: yup.string()
               .required("Không được để trống trường này")
-              .min(3, "Tên nhà cung cấp tối thiểu 3 ký tự")
-              .max(50, "Tên nhà cung cấp tối đa 50 ký tự")
-              .matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Nhập sai định dạng vd: Dược Phẩm Pharmacity"),
+              .min(3, "Tên nhà cung cấp tối thiểu 3 ký tự và tối đa 50 ký tự")
+              .max(50, "Tên nhà cung cấp tối thiểu 3 ký tự và tối đa 50 ký tự")
+              .matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Vui lòng viết hoa chữ cái đầu của từng từ và có 1 khoảng trắng giữa các từ, vd: Dược Phẩm Pharmacity"),
             email: yup.string()
               .required("Không được để trống trường này")
-              .min(12, "Email tối thiểu 12 ký tự ")
-              .max(50, "Email  tối đa 50 ký tự")
+              .min(12, "Email tối thiểu 12 ký tự và tối đa 50 ký tự")
+              .max(50, "Email tối thiểu 12 ký tự và tối đa 50 ký tự")
               .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Vui lòng nhập theo định dạng: xxx@xxx.xxx với x không phải là ký tự đặc biệt"),
             address: yup.string()
               .required("Không được để trống trường này")
-              .min(5, "Địa chỉ tối thiểu 5 ký tự ")
-              .max(100, "Địa chỉ tối đa 100 ký tự"),
+              .min(5, "Địa chỉ tối thiểu 5 ký tự và tối đa 100 ký tự")
+              .max(100, "Địa chỉ tối thiểu 5 ký tự và tối đa 100 ký tự"),
             phoneNumber: yup.string()
               .required("Không được để trống trường này")
               .min(10, "Số điện thoại vui lòng nhập 10 chữ số")

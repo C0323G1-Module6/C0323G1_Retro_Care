@@ -23,7 +23,7 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
-// Fix something
+     // Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [point, setPoint] = useState(0);
@@ -41,6 +41,7 @@ export default function Cart() {
     (total, el) => total + el.medicinePrice * el.quantityInCart,
     0
   );
+
 
   const getAppUserIdFirst = async () => {
     const isLoggedIn = infoAppUserByJwtToken();
