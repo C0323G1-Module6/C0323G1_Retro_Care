@@ -119,7 +119,7 @@ const Register = () => {
                         {/* Button submit */}
                         <div className="d-grid mt-3">
                             <button className="btn btn-primary" type="submit">
-                                Đăng ký
+                               Tiếp tục
                             </button>
                         </div>
 

@@ -18,7 +18,7 @@ const Login = () => {
             console.log(resolve.data.email)
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate("/home");
+            navigate(-1);
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -32,7 +32,7 @@ const Login = () => {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             const checkRoleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
-            navigate("/home");
+            navigate(-1);
         } catch (e) {
             Swal.fire({
                 icon: 'error',
