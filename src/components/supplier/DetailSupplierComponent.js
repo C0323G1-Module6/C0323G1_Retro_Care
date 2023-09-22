@@ -5,12 +5,16 @@ import {
     getSupplierDetailById
 } from "../../services/supplier/SupplierService";
 import Swal from "sweetalert2";
+import { format } from 'date-fns';
 
 function DetailSupplierComponent() {
     const {idSupplier} = useParams();
     const [invoices, setInvoices] = useState([]);
     const [supplier, setSupplier] = useState({});
-    let [page, setPage] = useState(0)
+    let [page, setPage] = useState(0);
+    let [startDate,setStartDate] = useState('');
+    let [endDate, setEndDate] = useState('');
+
 
     const getSupplier = async () => {
         try {
@@ -22,11 +26,14 @@ function DetailSupplierComponent() {
         }
     }
 
-    const getListInVoice = async ( pageable) => {
+    const getListInVoice = async ( pageable,startDate,endDate) => {
         try {
-            const invoiceData = await detailSupplierById(idSupplier, pageable);
+            const invoiceData = await detailSupplierById(idSupplier, pageable,startDate,endDate);
             setInvoices(invoiceData);
         } catch (error) {
+            await setPageFunction(0)
+            .then(await setHandleStartDate(''))
+            .then(await setHandleEndDdate(''))
             Swal.fire({
                 icon: "error",
                 title: "Không tìm thấy dữ liệu!",
@@ -37,17 +44,42 @@ function DetailSupplierComponent() {
     }
     useEffect(() => {
         getSupplier()
-        getListInVoice(idSupplier,page)
+        getListInVoice(page,startDate,endDate)
     },[idSupplier])
     const setPageFunction = async (pageAfter) => {
         setPage(pageAfter)
+    }
+    const setHandleStartDate = async (startDate) => {
+        setStartDate(startDate)
+    }
+    const setHandleEndDdate = async (endDate) => {
+        setEndDate(endDate)
+    }
+    const performSearch = async () => {
+        try {
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            await setPageFunction(0)
+            .then(await setHandleStartDate(startDate))
+            .then(await setHandleEndDdate(endDate))
+            .then(getListInVoice(0, startDate, endDate));
+        }catch(error) {
+            console.log(error);
+        }
+    }
+    console.log(invoices);
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của phím Enter
+            performSearch();
+        }
     }
     console.log(invoices);
 
     const nextPage = async () => {
         page += 1;
         if (page < invoices.totalPages) {
-            await setPageFunction(page).then((await getListInVoice(idSupplier, page)))
+            await setPageFunction(page).then((await getListInVoice( page,startDate,endDate)))
         } else {
             page -= 1
         }
@@ -56,8 +88,17 @@ function DetailSupplierComponent() {
         if (page >= 1) {
             page -= 1
         }
-        await setPageFunction(page).then((await getListInVoice(idSupplier, page)))
+        await setPageFunction(page).then((await getListInVoice( page,startDate,endDate)))
     }
+    const changePrice = (price) => {
+        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    useEffect(() => {
+        document.body.style.backgroundColor = '#edf2f7';
+    }, []);
+    useEffect(() => {
+        document.title = 'RetroCare - Chi tiết nhà cung cấp'
+    },[])
 
     if (!invoices){
         return null;
@@ -81,9 +122,9 @@ function DetailSupplierComponent() {
                     <div className="container mx-auto sm:px-8">
                         <div>
                             <div>
-                                <h2 className="text-2xl font-semibold leading-tight"
-                                    style={{textAlign: 'center', marginBottom: '20px'}}>DANH SÁCH
-                                    HOÁ ĐƠN NHẬP</h2>
+                                <h1 className="text-2xl font-semibold leading-tight"
+                                    style={{textAlign: 'center', marginBottom: '20px', color:'blue'}}>DANH SÁCH
+                                    HOÁ ĐƠN NHẬP</h1>
                             </div>
                             <div className="information" style={{
                                 border: '3px solid lightgrey',
@@ -129,7 +170,7 @@ function DetailSupplierComponent() {
                             </div>
                             <br/>
                             <div className="row row-input-search">
-                                <input type="date" style={{
+                                <input type="date" id="startDate" defaultValue={''} onKeyPress={handleKeyPress} style={{
                                     width: '200px',
                                     marginRight: '10px',
                                     marginLeft: '10px',
@@ -139,7 +180,7 @@ function DetailSupplierComponent() {
                                     borderStyle: 'solid',
                                     borderColor: '#e2e8f0'
                                 }} className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"/>
-                                <input type="date" style={{
+                                <input type="date" id="endDate" defaultValue={''}  onKeyPress={handleKeyPress} style={{
                                     width: '200px',
                                     borderRadius: '5px',
                                     boxSizing: 'border-box',
@@ -149,6 +190,9 @@ function DetailSupplierComponent() {
                                 }} className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"/>
                                 <div className=" col-7" style={{display: 'flex'}}>
                                     <div className="btn btn-outline-primary col-4"
+                                    onClick={async () => {
+                                        await performSearch();
+                                    }}
                                          style={{marginRight: 'auto', width: '100px'}}>
                                         Tìm kiếm
                                     </div>
@@ -209,7 +253,7 @@ function DetailSupplierComponent() {
                                                         </td>
                                                         <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                                                             <p className="text-gray-900 whitespace-no-wrap">
-                                                                {item.createDate}
+                                                            {format(new Date(item.createDate), 'dd-MM-yyyy')}
                                                             </p>
                                                         </td>
                                                         <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
@@ -219,14 +263,15 @@ function DetailSupplierComponent() {
                                                         </td>
                                                         <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
                                                             <p className="text-gray-900 whitespace-no-wrap">
-                                                                {item.totalAmount} VNĐ
+                                                            {changePrice(item.totalAmount)} VNĐ
                                                             </p>
                                                         </td>
                                                         <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                                                            {item.amountDue} VNĐ
+                                                           {changePrice(item.amountDue)} VNĐ
                                                         </td>
                                                     </tr>
                                                     )
+
                                             })}
                                             </tbody> : <tbody>
                                             <tr style={{height: '150px'}}>
@@ -238,7 +283,7 @@ function DetailSupplierComponent() {
                                         }
                                     </table>
                                     <Link className="btn btn-outline-primary"
-                                      to={`/supplier`}
+                                      to={`/dashboard/supplier`}
                                        style={{
                                            position: 'absolute',
                                            marginTop: '8px',
