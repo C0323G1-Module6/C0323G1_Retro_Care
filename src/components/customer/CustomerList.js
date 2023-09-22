@@ -31,7 +31,6 @@ function CustomerList() {
     name: ""
   });
   const [optionSearch, setOptionSearch] = useState();
-  const [showContent, setShowContent] = useState(false);
 
   // ------------------------------------------------------ Get Customers List ---------------------------------------
   const loadCustomerList = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
@@ -45,7 +44,7 @@ function CustomerList() {
         title: 'Rất tiếc...',
         text: 'Dữ liệu không tồn tại!',
       })
-      setSearchValue("");
+      handleReset();
     }
   }
   const handleReset = () => {
@@ -101,7 +100,6 @@ function CustomerList() {
         setCode(searchValue);
         break;
     }
-    // setSearchValue("");
   }
 
   const handleSelectChange = (event) => {
@@ -114,7 +112,6 @@ function CustomerList() {
     const { value } = e.target;
     setOptionSearch(+value);
     setSearchValue(document.getElementById("search").value);
-    console.log(searchValue);
     handleReset();
   }
 
@@ -232,7 +229,7 @@ function CustomerList() {
             // onKeyDown={handleKeyDown}
             onChange={handleInputChange}
           />
-          <button onClick={() => handleSearchEvent()}
+          <button onClick={handleSearchEvent}
             className="btn btn-outline-primary"
             style={{ marginRight: "auto", width: "auto", marginLeft: 5 }}
             id="button-addon">
@@ -265,28 +262,28 @@ function CustomerList() {
             <tr
               style={{ background: "#0d6efd", color: "#ffffff" }}
             >
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 50}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 50}}>
                 STT
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 190}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 190}}>
                 Mã khách hàng
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
                 Tên khách hàng
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 150}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 150}}>
                 Ngày sinh
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
                 Địa chỉ
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 170}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 170}}>
                 Số điện thoại
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 250}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 250}}>
                 Nhóm khách hàng
               </th>
-              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 180}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 180}}>
                 Ghi chú
               </th>
             </tr>
