@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
@@ -81,7 +81,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                   </li>
                 </ul>
               </nav>
-              <div className="header-right col-lg-6 d-flex align-items-center">
+              <div className="header-right col-lg-6 d-flex align-items-center justify-content-end">
                 <form className="header-search-form for-des">
                   <input
                     type="search"
@@ -97,10 +97,13 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <CiSearch />
                   </button>
                 </form>
-                <Link to="/cart" href="" className="header-btn header-cart">
-                  <FiShoppingCart />
-                  <span className="cart-number">{carts.length}</span>
-                </Link>
+                {userName && (
+                  <Link to="/cart" href="" className="header-btn header-cart">
+                    <FiShoppingCart />
+                    <span className="cart-number">{carts.length}</span>
+                  </Link>
+                )}
+
                 <a href="#" className="user">
                   <img
                     src="https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
