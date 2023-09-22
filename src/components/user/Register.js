@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as appUserService from '../../services/user/AppUserService';
 import * as Yup from 'yup';
@@ -9,7 +9,9 @@ import * as Yup from 'yup';
 
 const Register = () => {
     const navigate = useNavigate();
-    // Register AppUser
+    useEffect(() => {
+        document.title = 'RetroCare - Đăng ký'
+    }, [])
     const registerAppUser = async (appUser, setErrors) => {
 
         const cloneAppUser = {
