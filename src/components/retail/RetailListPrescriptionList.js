@@ -51,7 +51,6 @@ export default function RetailListPrescriptionList() {
   }
   return (
     <div className="container">
-      <h1>{prescriptionId}</h1>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#0D6EFD' }}>
         Danh sách toa thuốc kê sẵn
       </h1>

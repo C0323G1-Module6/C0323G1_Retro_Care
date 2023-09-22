@@ -416,7 +416,7 @@ function InvoiceList() {
                 </div>
                 <div className=" " style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
                     <div className=" ">
-                        <Link to={`/invoice/create`}><a className="btn btn-outline-primary"
+                        <Link to={`/dashboard/invoice/create`}><a className="btn btn-outline-primary"
                                                         href="#"
                                                         title="Thêm"
                                                         style={{marginLeft: '5px'}}>
@@ -445,9 +445,22 @@ function InvoiceList() {
                             </a>
                         </Link>
 
-                        <Link to={`/dashboard/invoice/update/${idClick?.id}`}><a className="btn btn-outline-primary"
-                                                                                 title="Sửa"
-                                                                                 style={{marginLeft: '5px'}}>
+                        <Link to={`/dashboard/invoice/edit/${idClick?.id}`}>
+                            <a className="btn btn-outline-primary"
+                               title="Sửa"
+                               style={{marginLeft: '5px'}}
+                               onClick={(e) => {
+                                   if (idClick?.id == null || idClick?.id == undefined) {
+                                       e.preventDefault();
+                                       Swal.fire({
+                                           icon: 'error',
+                                           title: 'Bạn chưa chọn hóa đơn!',
+                                           showConfirmButton: false,
+                                           timer: 1500,
+                                       });
+                                       return false;
+                                   }
+                               }}>
                             <FiEdit style={{fontSize: '20px', marginBottom: '5px'}}/> Sửa
                         </a></Link>
 

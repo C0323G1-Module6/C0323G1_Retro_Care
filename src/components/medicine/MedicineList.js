@@ -5,7 +5,6 @@ import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import swal from "sweetalert2";
 
 function MedicineList() {
-    const params = useParams();
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [page, setPage] = useState(0);
@@ -17,8 +16,8 @@ function MedicineList() {
 
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
-    const [limit, setLimit] = useState(5)
-    const [conditional, setConditional] = useState("")
+    const [limit, setLimit] = useState(5);
+    const [conditional, setConditional] = useState("");
 
 // ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
@@ -79,10 +78,25 @@ function MedicineList() {
 // ----------------------------------------- Search ---------------------------------------
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
         const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
-        setMedicineList(result?.content);
-        setTotalPage(result?.totalPages);
-        // console.log(result?.content)
+        if (result?.status === 200) {
+            setMedicineList(result?.data.content);
+            setTotalPage(result?.data.totalPages);
+        } else {
+            await swal.fire({
+                icon: 'warning',
+                title: 'Không tìm thấy dữ liệu cần tìm.',
+                showConfirmButton: true,
+                timer: 1500
+            })
+            handleResetList();
+        }
     }
+
+        const handleResetList = () => {
+            setSearchInMedicine("searchByCode");
+            setSearchInput("");
+            setConditional("");
+        }
 // select child
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
@@ -97,13 +111,6 @@ function MedicineList() {
     const handleSearch = async () => {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
-        console.log(page)
-        console.log(limit)
-        console.log(searchInput)
-        console.log(conditional)
-        console.log(searchInMedicine)
-         // await getListSearchMedicine(searchInMedicine,searchInput,page,limit,conditional)
-
     }
 
 // select father
@@ -115,11 +122,6 @@ function MedicineList() {
         setConditional(e.target.value);
     }
 
-    // useEffect(() => {
-    //     getListMedicine(page);
-    // }, [page])
-
-
     useEffect(() => {
         getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }, [searchInput, page, limit])
@@ -130,7 +132,7 @@ function MedicineList() {
     return (
         <>
             <div className="container">
-                <div className="row header" >
+                <div className="row header">
                     <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>DANH SÁCH THUỐC</h1>
                 </div>
                 <div className="row row-function" style={{display: 'flex'}}>
@@ -221,32 +223,30 @@ function MedicineList() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
-                                    medicineList.map((item, index) => (
-                                        <tr key={index} id={index} onClick={() => {
-                                            if (selectMedicine === null || selectMedicine.id !== item.id) {
-                                                setSelectMedicine({id: item.id, name: item?.name});
-                                            } else if (selectMedicine.id === item.id) {
-                                                setSelectMedicine({id: null, name: ""});
-                                            }
-
-                                        }}
-                                            style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
-                                        </tr>
-                                    ))}
+                                {medicineList ? (medicineList.map((item, index) => (
+                                    <tr key={index} id={index} onClick={() => {
+                                        if (selectMedicine === null || selectMedicine.id !== item.id) {
+                                            setSelectMedicine({id: item.id, name: item?.name});
+                                        } else if (selectMedicine.id === item.id) {
+                                            setSelectMedicine({id: null, name: ""});
+                                        }
+                                    }}
+                                        style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
+                                    </tr>
+                                ))) : (<h1>Tiếc quá! Retro Care không có dữ liệu về phần này.</h1>)}
                                 </tbody>
                             </table>
                         </div>
