@@ -5,6 +5,9 @@ import { getSupplierById, updateSupplierById } from "../../services/supplier/Sup
 import { ErrorMessage, Form, Field, Formik } from "formik";
 import * as yup from "yup";
 import Swal from 'sweetalert2';
+import XRegExp from 'xregexp';
+import { FiEdit } from "react-icons/fi";
+import { AiOutlineRollback } from "react-icons/ai";
 
 
 function UpdateSupplierComponent() {
@@ -12,14 +15,52 @@ function UpdateSupplierComponent() {
   const [supplier, setSupplier] = useState({});
   const { idSupplier } = useParams();
 
+
   const getSupplier = async () => {
     const data = await getSupplierById(idSupplier);
     setSupplier(data);
-  }
 
+  }
+  const handleSubmit = async (value, setErrors) => {
+    try {
+      await updateSupplierById(idSupplier,value);
+      Swal.fire(
+        {
+          icon:'success',
+          title:'Thay đổi thành công',
+          timer:2000,
+          showCancelButton:true,
+          showConfirmButton:false
+        }
+      ).then(() => {navigate("/dashboard/supplier")});
+    } catch (err) {
+      console.log(err);
+      if (err.response.data) {
+        setErrors(err.response.data);
+      }
+      if (err.response.status === 406) {
+        console.log(err);
+        setErrors(err.response.data);
+      }
+      if(err.response.status === 404){
+        Swal.fire(
+          {
+            icon: 'warning',
+            title:'Không tìm thấy nhà cung cấp',
+            timer:2000,
+            showCancelButton:true,
+            showConfirmButton:false
+          }
+        ).then(() => {navigate("/dashboard/supplier")});
+      }
+    }
+  };
   useEffect(() => {
     getSupplier()
   }, [idSupplier])
+  useEffect(() => {
+    document.title = 'RetroCare - Chỉnh sửa nhà cung cấp'
+},[])
 
   console.log(supplier.code);
   return (
@@ -48,13 +89,13 @@ function UpdateSupplierComponent() {
                 name: yup.string()
                   .required("Không được để trống trường này")
                   .min(3, "Tên nhà cung cấp tối thiểu 3 ký tự và tối đa 100 ký tự")
-                  .max(100, "Tên nhà cung cấp thiểu 3 ký tự và tối đa 100 ký tự")
-                  .required(/^[\p{Lu}][\p{Ll}]*([\s][\p{Lu}][\p{Ll}]*)*$/, "Vui lòng viết hoa chữ cái đầu của từng từ và có khoảng trắng giữa các từ, vd: Dược Phẩm Pharmacity"),
+                  .max(100, "Tên nhà cung cấp tối thiểu 3 ký tự và tối đa 100 ký tự")
+                  .matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Vui lòng viết hoa chữ cái đầu của từng từ và có khoảng trắng giữa các từ, vd: Dược Phẩm Pharmacity"),
                 email: yup.string()
                   .required("Không được để trống trường này")
                   .min(12, "Email tối thiểu 12 ký tự và tối đa 50 ký tự")
                   .max(50, "Email tối thiểu 12 ký tự và tối đa 50 ký tự")
-                  .required(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Vui lòng nhập theo định dạng: xxx@xxx.xxx với x không phải là ký tự đặc biệt"),
+                  .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Vui lòng nhập theo định dạng: xxx@xxx.xxx với x không phải là ký tự đặc biệt"),
                 address: yup.string()
                   .required("Không được để trống trường này")
                   .min(5, "Địa chỉ tối thiểu 5 ký tự và tối đa 150 ký tự")
@@ -66,22 +107,9 @@ function UpdateSupplierComponent() {
                   .matches(/^0[0-9]{9}$/, "Vui lòng nhập theo định dạng 0xxxxxxxxx với x là ký tự số")
 
               })}
-              onSubmit={async (supplier) => {
-                const newSupplier = {
-                  ...supplier
-                }
-                console.log(newSupplier);
-                updateSupplierById(idSupplier, newSupplier).then(() => {
-                  Swal.fire({
-                    icon: 'success',
-                    title: 'Thay đổi thành công',
-                    timer: 2000
-                  }).then(() => {
-                    navigate('/supplier')
-                  })
-                })
-              }
-              }>
+              onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
+
+              >
               <Form style={{ marginTop: '33px' }}>
                 <fieldset className="form-input shadow">
                   <legend className="float-none w-auto px-3">
@@ -92,15 +120,15 @@ function UpdateSupplierComponent() {
                       <label>Mã nhà cung cấp <span style={{ color: 'red' }}>*</span> </label>
                     </div>
                     <div className="col-8">
-                      <Field className="form-control mt-2 border border-dark" name='code' type="text" />
+                      <Field className="form-control mt-2 border border-dark" name='code' disabled type="text" />
                       <ErrorMessage className="p-3 mb-2 text-danger" name='code' component='div'> </ErrorMessage>
                     </div>
                     <div className="col-4 p-2">
                       <label>Tên nhà cung cấp<span style={{ color: 'red' }}>*</span> </label>
                     </div>
                     <div className="col-8">
-                      <Field className="form-control mt-2 border border-dark" name='name' type="text" />
-                      <ErrorMessage className="p-3 mb-2 text-danger" name='name' component='div' />
+                      <Field className="form-control mt-2 border border-dark" name="name" type="text" />
+                      <ErrorMessage className="p-3 mb-2 text-danger" name="name" component='div' />
                     </div>
                     <div className="col-4 p-2">
                       <label>Số điện thoại <span style={{ color: 'red' }}>*</span></label>
@@ -135,9 +163,9 @@ function UpdateSupplierComponent() {
                       </div>
                     </div>
                     <div className="col-8 mt-3">
-                      <Link to={`/supplier`} type="button" className="btn btn-outline-secondary  float-end mx-1 mt-2 shadow"><i className="fa-solid fa-rotate-left" />Trở về</Link>
+                      <Link to={`/dashboard/supplier`} type="button" className="btn btn-outline-secondary  float-end mx-1 mt-2 shadow"><AiOutlineRollback className="fa-solid fa-rotate-left" />Trở về</Link>
                       <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow" type="submit">
-                        Thay đổi
+                      <FiEdit className="mx-1" /> Hoàn thành
                       </button>
                     </div>
                   </div>

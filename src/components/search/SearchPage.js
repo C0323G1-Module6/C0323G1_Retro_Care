@@ -74,7 +74,7 @@ export const SearchPage = () => {
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title">Kết quả</p>
+                <p className="sec-sub-title">Kết quả tìm kiếm</p>
               </div>
               <div
                 className="ms-5 fs-6 mb-1"

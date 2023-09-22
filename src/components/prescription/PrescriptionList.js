@@ -8,7 +8,7 @@ import {
 } from "react-icons/ai";
 import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
 import Swal from "sweetalert2";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const PrescriptionList = () => {
   const [prescriptions, setPrescriptions] = useState([]);
@@ -22,7 +22,7 @@ const PrescriptionList = () => {
   })
   const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
   const [searchInput, setSearchInput] = useState("");
-
+  const navigate = useNavigate();
   const findAllPrescription = async () => {
     const res = await getAllPrescription(page,searchInput,searchInMedicine);
     setTotalPage(res.data.totalPages);
@@ -53,7 +53,26 @@ const PrescriptionList = () => {
   }
   console.log(searchInput);
 
+  const handleEdit = async () => {
+    if (seletedPrescription.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn toa thuốc trước khi thực hiện thao tác này!',
+      })
+    } else {
+      navigate(`/dashboard/prescription/edit/${seletedPrescription.id}`);
+    }
+  }
+
   const deletePrescription = async () => {
+    if (seletedPrescription.id == null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Rất tiếc...',
+        text: 'Vui lòng chọn toa thuốc trước khi thực hiện thao tác này!',
+      })
+    } else {
     Swal.fire({
       title: "Xác nhận xoá !",
       text: "Bạn có xác nhận xoá toa thuốc có mã :" + seletedPrescription.code,
@@ -81,6 +100,7 @@ const PrescriptionList = () => {
         });
       }
     });
+  }
   };
 
   useEffect(() => {
@@ -142,7 +162,7 @@ const PrescriptionList = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="true"
               >
-                Mã khách hàng
+                Mã toa thuốc
               </button>
               <ul className="dropdown-menu">
                 <li>
@@ -191,8 +211,13 @@ const PrescriptionList = () => {
                 {
                   prescriptions.map((p, index) => (
                     <tr key={p.id} onClick={() => {
-                      setSelecdPrescription({ id: p?.id, code: p?.code })
-                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                      if (seletedPrescription.id === null || seletedPrescription.id != p?.id ) {
+                        setSelecdPrescription({ id: p?.id, code: p?.code });
+                        } else {
+                          setSelecdPrescription({id: null, code: ""});
+                        }
+                      // setSelecdPrescription({ id: p?.id, code: p?.code })
+                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#629eec' } : {}}>
                       <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <div className="flex items-center">
                           <div className="ml-3">
@@ -263,23 +288,14 @@ const PrescriptionList = () => {
             <FaPlus className="mx-1" />
             Thêm mới
           </Link>
-          {/* <a
-            className="btn btn-outline-primary"
-            href="ThanhKN_CreatePrescription.html"
-          >
-
-          </a> */}
-          <Link to={`/dashboard/prescription/edit/${seletedPrescription.id}`} className="btn btn-outline-primary">
+          {/* <Link to={`/dashboard/prescription/edit/${seletedPrescription.id}`} className="btn btn-outline-primary">
             <FiEdit className="mx-1" />
             Sửa
-          </Link>
-          {/* <a
-            className="btn btn-outline-primary"
-            href="ThanhKN_EditPrescription.html"
-          >
-            <FiEdit className="mx-1" />
+          </Link> */}
+          <button className="btn btn-outline-primary" onClick={()=>handleEdit()}>
+          <FiEdit className="mx-1" />
             Sửa
-          </a> */}
+          </button>
           <button
             type="button"
             className="btn btn-outline-primary"
