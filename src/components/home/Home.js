@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import { addToCartFromHomeAndDetails } from "../../services/order/CartService";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllCarts } from "../order/redux/cartAction";
+import * as utils from "../../services/utils/utils";
 
 const Home = () => {
   const [medicineList, setMedicineList] = useState([]);
@@ -47,9 +48,10 @@ const Home = () => {
     dispatch(getAllCarts(1));
     toast.success("Thêm sản phẩm thành công");
   };
+  const doNothing = () => {};
   return (
     <div>
-      <Header onInputChange={null} />
+      <Header onInputChange={doNothing} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
@@ -158,9 +160,9 @@ const Home = () => {
                 className="mySwiper"
               >
                 {medicineList?.map((el, index) => {
-                  const randomIndex = Math.floor(Math.random() * 3);
-                  const discountOptions = [5, 10, 15];
-                  const discountPercentage = discountOptions[randomIndex];
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
                   const actualPrice =
                     Math.ceil(
                       el.medicinePrice /
@@ -203,7 +205,9 @@ const Home = () => {
                               )}{" "}
                               VNĐ
                             </span>
-                            <span className="product-unit">Hộp</span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
                           </div>
                           <div>
                             <span className="actual-price">
@@ -255,9 +259,9 @@ const Home = () => {
                 className="mySwiper"
               >
                 {favoriteList?.map((el, index) => {
-                  const randomIndex = Math.floor(Math.random() * 3);
-                  const discountOptions = [5, 10, 15];
-                  const discountPercentage = discountOptions[randomIndex];
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
                   const actualPrice =
                     Math.ceil(
                       el.medicinePrice /
@@ -300,7 +304,9 @@ const Home = () => {
                               )}{" "}
                               VNĐ
                             </span>
-                            <span className="product-unit">Hộp</span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
                           </div>
                           <div>
                             <span className="actual-price">
