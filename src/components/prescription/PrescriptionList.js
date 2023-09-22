@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
@@ -6,7 +6,88 @@ import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
 } from "react-icons/ai";
+import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
+import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
+
 const PrescriptionList = () => {
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [totalPage, setTotalPage] = useState(0);
+  const [page, setPage] = useState(0);
+  const [id, setId] = useState();
+  const [prescription, setPrescription] = useState();
+  const [seletedPrescription, setSelecdPrescription] = useState({
+    id: null,
+    code: ""
+  })
+  const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
+  const [searchInput, setSearchInput] = useState("");
+
+  const findAllPrescription = async () => {
+    const res = await getAllPrescription(page,searchInput,searchInMedicine);
+    setTotalPage(res.data.totalPages);
+    setPrescriptions(res.data.content)
+  }
+
+
+  const nextPage = () => {
+    if (page < totalPage) {
+      setPage((prev) => prev + 1)
+    }
+  }
+
+  const prevPage = () => {
+    if (page > -1) {
+      setPage((prev) => prev - 1)
+    }
+  }
+
+  const handleSearchOption = (e) => {
+    setSearchInMedicine(e.target.value);
+  }
+  console.log(searchInMedicine);
+
+  const handleSearch = async () => {
+    setSearchInput(document.getElementById("search").value);
+    setPage(0);
+  }
+  console.log(searchInput);
+
+  const deletePrescription = async () => {
+    Swal.fire({
+      title: "Xác nhận xoá !",
+      text: "Bạn có xác nhận xoá toa thuốc có mã :" + seletedPrescription.code,
+      showCancelButton: true,
+      showConfirmButton: true,
+      confirmButtonText: "Xoá",
+      cancelButtonText: "Huỷ",
+      icon: "question",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await removePrescription(seletedPrescription.id);
+        if (response.status === 200) {
+          Swal.fire({
+            text: "Xoá thành công ! ",
+            icon: "success",
+            timer: 1500,
+          });
+        }
+        await findAllPrescription();
+      } else {
+        Swal.fire({
+          text: "Huỷ xoá toa thuốc ! ",
+          icon: "warning",
+          timer: 1500,
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    findAllPrescription();
+  }, [page,searchInMedicine,searchInput])
+
+
   return (
     <div className="container">
       <div className="py-8">
@@ -22,46 +103,36 @@ const PrescriptionList = () => {
         <div className="row row-function d-flex">
           <div className="col-9 col-search d-flex align-items-center justify-content-start gap-3">
             <label>Lọc theo</label>
+
+
             <div className="btn-group">
-              <button
-                type="button"
-                className="btn btn-outline-primary dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="true"
-              >
-                Mã khách hàng
-              </button>
-              <ul className="dropdown-menu">
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Tên toa
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Đối tượng
-                  </a>
-                </li>
-                <li>
-                  <a className="dropdown-item" href="#">
-                    Triệu chứng
-                  </a>
-                </li>
-              </ul>
+              <select 
+                onChange={(e) => handleSearchOption(e)}
+                style={{ width: '150px', borderRadius: '5px', color: 'blue' }}
+                id="select" className="appearance-none pl-8 pr-6 py-2">
+                <option selected value="searchByCode">Mã toa thuốc</option>
+                <option value="searchByName">Tên toa thuốc</option>
+                <option value="searchBySymptoms">Triệu chứng</option>
+              </select>
             </div>
-            <input
-              style={{ width: 200, borderRadius: 5 }}
-              className="appearance-none pl-8 pr-6 py-2 bg-smoke-white text-sm focus:outline-none"
-              placeholder="Tìm kiếm toa thuốc"
-            />
-            <button
-              className="btn btn-outline-primary"
-              style={{ marginRight: "auto", height: 40, marginLeft: 5 }}
-            >
-              <i className="fa-solid fa-magnifying-glass" />
+
+
+            <input style={{ width: '250px', borderRadius: '5px' }}
+              className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
+              placeholder="Tìm kiếm toa thuốc..."
+              id={'search'} />
+
+
+            <button className="btn btn-outline-primary"
+              style={{ marginRight: `auto`, width: `auto`, marginLeft: '5px' }}
+              onClick={() => handleSearch()} value="searchInMedicine">
+              <i className="fa-solid fa-magnifying-glass"></i>
               Tìm kiếm
             </button>
           </div>
+
+
+
           <div className="col-3 d-flex align-items-center justify-content-end gap-3">
             <label>Sắp xếp</label>
             <div className="btn-group">
@@ -71,7 +142,7 @@ const PrescriptionList = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="true"
               >
-                Mã khách hàng
+                Mã toa thuốc
               </button>
               <ul className="dropdown-menu">
                 <li>
@@ -117,161 +188,47 @@ const PrescriptionList = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <div className="flex items-center">
-                      <div className="ml-3">
-                        <p className="text-gray-900 whitespace-no-wrap">1</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">TT01</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Viêm họng
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">Trẻ em</p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Đau họng, ho
-                    </p>
-                  </td>
-                  <td className="px-3 py-3 border-b border-gray-200 bg-white text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">
-                      Cấm trẻ sơ sinh
-                    </p>
-                  </td>
-                </tr>
+                {
+                  prescriptions.map((p, index) => (
+                    <tr key={p.id} onClick={() => {
+                      setSelecdPrescription({ id: p?.id, code: p?.code })
+                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#629eec' } : {}}>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                        <div className="flex items-center">
+                          <div className="ml-3">
+                            <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">{p.code}</p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.name}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">{p.patient.name}</p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.symptoms}
+                        </p>
+                      </td>
+                      <td className="px-3 py-3 border-b border-gray-200text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">
+                          {p.note}
+                        </p>
+                      </td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </table>
             <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
               <div className="justify-content-center d-flex">
-                <button className="btn btn-primary" style={{ margin: 5 }}>
+                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => prevPage()}>
                   <AiOutlineDoubleLeft />
                 </button>
                 <div
@@ -283,9 +240,9 @@ const PrescriptionList = () => {
                     borderRadius: 5,
                   }}
                 >
-                  1/5
+                  {page + 1}/{totalPage}
                 </div>
-                <button className="btn btn-primary" style={{ margin: 5 }}>
+                <button className="btn btn-primary" style={{ margin: 5 }} onClick={() => nextPage()}>
                   <AiOutlineDoubleRight />
                 </button>
                 <div
@@ -302,25 +259,31 @@ const PrescriptionList = () => {
           </div>
         </div>
         <div className="d-flex align-items-center justify-content-end gap-3">
-          <a
+          <Link to={"/dashboard/prescription/create"} className="btn btn-outline-primary">
+            <FaPlus className="mx-1" />
+            Thêm mới
+          </Link>
+          {/* <a
             className="btn btn-outline-primary"
             href="ThanhKN_CreatePrescription.html"
           >
-            <FaPlus className="mx-1" />
-            Thêm mới
-          </a>
-          <a
+
+          </a> */}
+          <Link to={`/dashboard/prescription/edit/${seletedPrescription.id}`} className="btn btn-outline-primary">
+            <FiEdit className="mx-1" />
+            Sửa
+          </Link>
+          {/* <a
             className="btn btn-outline-primary"
             href="ThanhKN_EditPrescription.html"
           >
             <FiEdit className="mx-1" />
             Sửa
-          </a>
+          </a> */}
           <button
             type="button"
             className="btn btn-outline-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            onClick={() => deletePrescription()}
           >
             <FaRegTrashAlt className="mx-1" />
             Xoá

@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./Home.css";
-import logo from "../../img/logo.jpg";
 import arrow from "../../img/arrow.png";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -14,91 +13,45 @@ import {
   Autoplay,
   EffectCoverflow,
 } from "swiper/modules";
-import { CiSearch } from "react-icons/ci";
-import { FiShoppingCart } from "react-icons/fi";
-import { BsMeta, BsTwitter, BsYoutube, BsInstagram } from "react-icons/bs";
-
-export function AddScript(url) {
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
+import * as homeService from "../../services/home/HomeService";
+import Footer from "../layout/Footer";
+import Header from "../layout/Header";
+import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { addToCartFromHomeAndDetails } from "../../services/order/CartService";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllCarts } from "../order/redux/cartAction";
+import * as utils from "../../services/utils/utils";
 
 const Home = () => {
+  const [medicineList, setMedicineList] = useState([]);
+  const [favoriteList, setFavoriteList] = useState([]);
+  const dispatch = useDispatch();
+  const carts = useSelector((state) => state.cartReducer);
+
+  useEffect(() => {
+    getMedicineList();
+    getFavoriteList();
+  }, []);
+
+  const getMedicineList = async () => {
+    const response = await homeService.findMedicineForHomepage("", "");
+    setMedicineList(response);
+  };
+
+  const getFavoriteList = async () => {
+    const response = await homeService.findFavoriteMedicineForHomepage();
+    setFavoriteList(response);
+  };
+  const addToCart = async (medicineId) => {
+    const response = await addToCartFromHomeAndDetails(1, medicineId, 1);
+    dispatch(getAllCarts(1));
+    toast.success("Thêm sản phẩm thành công");
+  };
+  const doNothing = () => {};
   return (
     <div>
-      <header className="site-header">
-        <div className="container">
-          <div className="row">
-            <div className="col-lg-2">
-              <div className="header-logo">
-                <a href="/HuyL_home.html">
-                  <img src={logo} width={160} height={40} alt="Logo" />
-                </a>
-              </div>
-            </div>
-            <div className="col-lg-10">
-              <div className="main-navigation d-flex justify-content-between">
-                <button className="menu-toggle">
-                  <span></span>
-                  <span></span>
-                </button>
-                <nav className="header-menu col-lg-6">
-                  <ul className="menu food-nav-menu">
-                    <li>
-                      <a href="/HuyL_home.html">Trang chủ</a>
-                    </li>
-                    <li>
-                      <a href="#menu">Danh mục</a>
-                    </li>
-                  </ul>
-                </nav>
-                <div className="header-right col-lg-6">
-                  <form
-                    action="/prototype/search/HuyL_searchContent.html"
-                    className="header-search-form for-des"
-                  >
-                    <input
-                      type="search"
-                      className="form-input"
-                      placeholder="Tìm kiếm..."
-                    />
-                    <button type="submit">
-                      <CiSearch />
-                    </button>
-                  </form>
-                  <a
-                    href="/prototype/cart/HanhNLM_cart.html"
-                    className="header-btn header-cart"
-                  >
-                    <FiShoppingCart />
-                    <span className="cart-number">3</span>
-                  </a>
-                  <a
-                    href="prototype/account/NhatNHH_login.html"
-                    className="user"
-                  >
-                    <img
-                      src="https://cdn.landesa.org/wp-content/uploads/default-user-image.png"
-                      alt="user-img"
-                      className="user-img"
-                    />
-                    <span className="user-info">Đăng nhập</span>
-
-                    <div className="user-dropdown-list">
-                      <div className="user-dropdown-item">
-                        <i className="bx bx-log-out-circle"></i>
-                        <div className="dropdown-text">Đăng xuất</div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      <Header onInputChange={doNothing} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
@@ -206,185 +159,71 @@ const Home = () => {
                 modules={[Navigation, Pagination]}
                 className="mySwiper"
               >
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">30% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P22870_1-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <button className="card-btn">Mua</button>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Eye-drops</p>
-                      <span className="price">60.000 VNĐ</span>
-                      <span className="actual-price">90.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P23715_5-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <button className="card-btn">Mua</button>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Elevit</p>
-                      <span className="price">100.000 VNĐ</span>
-                      <span className="actual-price">80.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">25% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P19999_11-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">B-Complex</p>
-                      <span className="price">99.000 VNĐ</span>
-                      <span className="actual-price">66.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P17820_11-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">
-                        InnerB Collagen
-                      </p>
-                      <span className="price">89.000 VNĐ</span>
-                      <span className="actual-price">180.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  {" "}
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P01392_112-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Panadol Extra</p>
-                      <span className="price">99.000 VNĐ</span>
-                      <span className="actual-price">200.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P00779_11-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Fugacar</p>
-                      <span className="price">20.000 VNĐ</span>
-                      <span className="actual-price">40.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P00053_New-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Berroca</p>
-                      <span className="price">75.000 VNĐ</span>
-                      <span className="actual-price">100.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P25907_1-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Sản phẩm 1</p>
-                      <span className="price">20.000 VNĐ</span>
-                      <span className="actual-price">40.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
+                {medicineList?.map((el, index) => {
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+                ;
               </Swiper>
             </div>
           </div>
@@ -419,192 +258,71 @@ const Home = () => {
                 modules={[Navigation, Pagination]}
                 className="mySwiper"
               >
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">20% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P00222_11-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Phosphalugen</p>
-                      <span className="price">90.000 VNĐ</span>
-                      <span className="actual-price">100.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">30% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P25055_11-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">
-                        LiveSpo Clausy
-                      </p>
-                      <span className="price">150.000 VNĐ</span>
-                      <span className="actual-price">99.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <a href="/prototype/cart/HanhNLM_product-details.html">
-                        <img
-                          src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P25907_1-thumbnail-510x510-70.jpg"
-                          className="product-thumb"
-                          alt=""
-                        />
-                      </a>
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">
-                        KUDOS Bone (Tuýp 20 viên)
-                      </p>
-                      <span className="price">113.000 VNĐ</span>
-                      <span className="actual-price">96.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">25% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P10577_11-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Anessa</p>
-                      <span className="price">80.000 VNĐ</span>
-                      <span className="actual-price">70.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">10% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P00053_New-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Berroca</p>
-                      <span className="price">80.000 VNĐ</span>
-                      <span className="actual-price">75.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">5% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P02359_11-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Megaduo</p>
-                      <span className="price">95.000 VNĐ</span>
-                      <span className="actual-price">100.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P09293_1-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Sản phẩm 1</p>
-                      <span className="price">20.000 VNĐ</span>
-                      <span className="actual-price">40.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="product-card">
-                    <div className="product-image">
-                      <span className="discount-tag">50% off</span>
-                      <img
-                        src="https://data-service.pharmacity.io/pmc-upload-media/production/pmc-ecm-core/__sized__/products/P25907_1-thumbnail-510x510-70.jpg"
-                        className="product-thumb"
-                        alt=""
-                      />
-                      <a href="/prototype/cart/HanhNLM_cart.html">
-                        <button type="button" className="card-btn">
-                          Mua
-                        </button>
-                      </a>
-                    </div>
-                    <div className="product-info">
-                      <p className="product-short-description">Sản phẩm 1</p>
-                      <span className="price">20.000 VNĐ</span>
-                      <span className="actual-price">40.000 VNĐ</span>
-                    </div>
-                  </div>
-                </SwiperSlide>
+                {favoriteList?.map((el, index) => {
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+                ;
               </Swiper>
             </div>
           </div>
@@ -788,114 +506,8 @@ const Home = () => {
           </div>
         </section>
       </div>
-
-      <footer className="site-footer" id="contact">
-        <div className="top-footer pt-5">
-          <div className="sec-wp">
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-4">
-                  <div className="footer-info">
-                    <div className="footer-logo">
-                      <a href="index.html">
-                        <img src="logo.jpg" alt="" />
-                      </a>
-                    </div>
-                    <p>Liên hệ với chúng tôi</p>
-                    <div className="social-icon">
-                      <ul>
-                        <li>
-                          <a href="#">
-                            <BsMeta />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsInstagram />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsTwitter />
-                          </a>
-                        </li>
-                        <li>
-                          <a href="#">
-                            <BsYoutube />
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-lg-8">
-                  <div className="footer-flex-box">
-                    <div className="footer-menu">
-                      <h3 className="h3-title">Danh mục</h3>
-                      <ul className="column-2">
-                        <li>
-                          <a href="#home">Dược phẩm</a>
-                        </li>
-                        <li>
-                          <a href="#about">Thực phẩm chức năng</a>
-                        </li>
-                        <li>
-                          <a href="#menu">Chăm sóc sức khoẻ</a>
-                        </li>
-                        <li>
-                          <a href="#gallery">Chăm sóc da</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="footer-menu food-nav-menu">
-                      <h3 className="h3-title">Liên kết</h3>
-                      <ul className="column-2">
-                        <li>
-                          <a href="#about">Trang chủ</a>
-                        </li>
-                        <li>
-                          <a href="#blog">Blog</a>
-                        </li>
-                        <li>
-                          <a href="#contact">Contact</a>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="footer-menu">
-                      <h3 className="h3-title">Về chúng tôi</h3>
-                      <ul>
-                        <li>
-                          <a href="#">Chính sách</a>
-                        </li>
-                        <li>
-                          <a href="#">Chăm sóc khách hàng</a>
-                        </li>
-                        <li>
-                          <a href="#">Quy định giao hàng</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bottom-footer">
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-12 text-center">
-                <div className="copyright-text">
-                  <p>
-                    Copyright &copy; 2023
-                    <span className="name"> C0323G1 </span>CodeGym Đà Nẵng.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
+      <ToastContainer autoClose={2000} className="toast-position" />
     </div>
   );
 };

@@ -232,7 +232,6 @@ ul {
 .user-info {
   margin-left: 1rem;
   color: #0d0d25;
-  text-transform: capitalize;
   font-weight: 500;
   position: relative;
 }
@@ -737,7 +736,7 @@ p {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ff8243;
+  background: grey;
   border-radius: 10px;
 }
 
@@ -1152,7 +1151,7 @@ p {
   flex: 0 0 auto;
   width: 250px;
   height: 450px;
-  margin-right: 40px;
+  /* margin-right: 40px; */
 }
 
 .product-image {
@@ -1168,18 +1167,18 @@ p {
 .product-thumb {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 .discount-tag {
   position: absolute;
   background: #fff;
-  padding: 5px;
-  border-radius: 5px;
+  padding: 3px;
+  border-radius: 10px;
   color: #ff7d7d;
   right: 10px;
   top: 10px;
-  text-transform: capitalize;
+  border: 1px solid #ff7d7d;
 }
 
 .card-btn {
@@ -1201,6 +1200,7 @@ p {
 
 .product-card:hover .card-btn {
   opacity: 1;
+  background: #ff7d7d;
 }
 
 .card-btn:hover {
@@ -1223,9 +1223,11 @@ p {
   height: 20px;
   line-height: 20px;
   overflow: hidden;
-  opacity: 0.5;
+  opacity: 0.7;
   text-transform: capitalize;
   margin: 5px 0;
+  color: black;
+  font-weight: 600;
 }
 
 .price {
@@ -1234,9 +1236,15 @@ p {
 }
 
 .actual-price {
+  font-weight: 600;
+  font-size: 15px;
+  color: #ff7d7d;
+  text-decoration: line-through;
+}
+
+.product-unit {
   margin-left: 20px;
   opacity: 0.5;
-  text-decoration: line-through;
 }
 
 .pre-btn,

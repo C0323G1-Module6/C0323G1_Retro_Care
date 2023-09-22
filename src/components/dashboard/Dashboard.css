@@ -107,6 +107,7 @@ a {
   white-space: nowrap;
   pointer-events: none;
   transition: 0s;
+  color: black;
 }
 .sidebar li:hover .tooltip {
   opacity: 1;
@@ -215,10 +216,15 @@ a {
   font-size: 18px;
   font-weight: 700;
   color: #0c356a;
+  min-width: 80%;
+  background-color: #e4e9f7;
+  border-radius: 5px;
 }
 .sidebar li .profile-details:hover {
   color: white;
   cursor: pointer;
+  background-color: #0c356a;
+  color: #e4e9f7;
 }
 .sidebar li img {
   height: 45px;
@@ -234,6 +240,8 @@ a {
   white-space: nowrap;
 }
 .sidebar .profile #log_out {
+  display: flex;
+  justify-content: center;
   position: absolute;
   top: 50%;
   right: 0;
@@ -250,9 +258,11 @@ a {
   width: 50px;
   background: none;
 }
+#log_out:hover {
+  cursor: pointer;
+}
 .home-section {
   position: relative;
-  background: #e4e9f7;
   min-height: 100vh;
   top: 0;
   left: 78px;
