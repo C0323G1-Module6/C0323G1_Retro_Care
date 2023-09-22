@@ -23,11 +23,11 @@ function MedicineList() {
             swal.fire({
                 icon: "error",
                 title: "Rất tiếc...",
-                text: "Vui lòng chọn khách hàng trước khi thực hiện thao tác này!",
+                text: "Vui lòng chọn thuốc trước khi thực hiện thao tác này!",
             })
         } else {
             swal.fire({
-                title: "Bạn có muốn xoá sản phẩm này?",
+                title: "Bạn có muốn xoá sản phẩm này " + selectMedicine.name + "?" ,
                 text: selectMedicine.name,
                 icon: "warning",
                 showCancelButton: true,
