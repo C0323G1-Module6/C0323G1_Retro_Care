@@ -5,7 +5,6 @@ import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import swal from "sweetalert2";
 
 function MedicineList() {
-    const params = useParams();
     const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [page, setPage] = useState(0);
@@ -78,42 +77,26 @@ function MedicineList() {
     }
 // ----------------------------------------- Search ---------------------------------------
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
-        if (medicineList !== undefined){
-            const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
-            setMedicineList(result?.content);
-            setTotalPage(result?.totalPages);
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+        if (result?.status === 200) {
+            setMedicineList(result?.data.content);
+            setTotalPage(result?.data.totalPages);
         } else {
-            setMedicineList((pre) => []);
-            setTotalPage(0);
             await swal.fire({
                 icon: 'warning',
                 title: 'Không tìm thấy dữ liệu cần tìm.',
                 showConfirmButton: true,
                 timer: 1500
             })
-            setMedicineList([searchInMedicine,searchInput,page,limit,conditional]);
-            setTotalPage(0)
+            handleResetList();
         }
-
-        // try {
-        //     const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
-        //     setMedicineList(result?.content);
-        //     setTotalPage(result?.totalPages);
-        //     await swal.fire({
-        //         icon: "success",
-        //         title: 'Đã tìm thấy dữ liệu.',
-        //         showConfirmButton: true,
-        //         timer: 1500
-        //     })
-        // } catch (noContent) {
-        //     swal.fire({
-        //         icon: 'warning',
-        //         title: 'Không tìm thấy dữ liệu cần tìm.',
-        //         showConfirmButton: false,
-        //         timer: 1500
-        //     })
-        // }
     }
+
+        const handleResetList = () => {
+            setSearchInMedicine("searchByCode");
+            setSearchInput("");
+            setConditional("");
+        }
 // select child
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
