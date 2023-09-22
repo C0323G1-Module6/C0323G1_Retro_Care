@@ -41,7 +41,7 @@ function CustomerList() {
       Swal.fire({
         icon: 'error',
         title: 'Rất tiếc...',
-        text: 'Không tin bạn nhập không tồn tại!',
+        text: 'Dữ liệu không tồn tại!',
       })
       setSearchValue("");
     }
@@ -71,7 +71,7 @@ function CustomerList() {
   // ------------------------------------------------------  Searching function -----------------------------------------
   const handleInputChange = (e) => {
     const { value } = e.target
-    setSearchValue(value);
+    setSearchValue(value.trim());
   }
 
   const handleKeyDown = event => {
@@ -234,8 +234,8 @@ function CustomerList() {
         <div className="col-3 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 "style={{width:190}}>
-              <option value={"group"}>Nhóm khách hàng</option>
+            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 " style={{ width: 190 }}>
+              <option value={"app_user_id"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
             </select>
@@ -246,7 +246,7 @@ function CustomerList() {
       <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
         <table
           className="table table-hover w-100 leading-normal overflow-hidden rounded-3 m-0"
-          id="myTable"
+          id="myTable" 
         >
           <thead>
             <tr
@@ -281,10 +281,10 @@ function CustomerList() {
           <tbody className="bg-light">
             {customers.map((customer, index) => (
               <tr key={index} id={index} onClick={() => {
-                if (selectedCustomer.id === null || selectedCustomer.id != customer?.id ) {
-                setSeletedCustomer({ id: customer?.id, name: customer?.name });
+                if (selectedCustomer.id === null || selectedCustomer.id !== customer?.id) {
+                  setSeletedCustomer({ id: customer?.id, name: customer?.name });
                 } else {
-                  setSeletedCustomer({id: null, name: ""});
+                  setSeletedCustomer({ id: null, name: "" });
                 }
               }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
                 <td className="px-3 py-3 border-b border-gray-200 text-sm">
