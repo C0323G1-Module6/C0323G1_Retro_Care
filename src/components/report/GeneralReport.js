@@ -23,44 +23,7 @@ const GeneralReport = () => {
   const [medicineNeedMore, setMedicineNeedMore] = useState([]);
   const [saleDiary, setSaleDiary] = useState([]);
 
-  useEffect(() => {
-    loadDataReport(startDate, endDate, reportName);
-  }, [startDate, endDate, reportName]);
-  const loadDataReport = async (startDate, endDate, reportName) => {
-    const result = [];
-    switch (reportName) {
-      case "revenue":
-        result = await getReport(startDate, endDate, reportName);
-        setRevenue(result);
-        break;
-      case "profit":
-        result = await getReport(startDate, endDate, reportName);
-        setProfit(result);
-        break;
-      case "debt":
-        result = await getReport(startDate, endDate, reportName);
-        setDebt(result);
-        break;
-      case "expireMedicine":
-        result = await getReport(startDate, endDate, reportName);
-        setExpireMedicine(result);
-        break;
-      case "bestSellerMedicine":
-        result = await getReport(startDate, endDate, reportName);
-        setBestSellerMedicine(result);
-        break;
-      case "saleDiary":
-        result = await getReport(startDate, endDate, reportName);
-        setSaleDiary(result);
-        break;
-      case "medicineNeedMore":
-        result = await getReport(startDate, endDate, reportName);
-        setMedicineNeedMore(result);
-        break;
-      default:
-        break;
-    }
-  };
+  
 
   const exportExcel = (dataArray, sheetName, fileName) => {
     const workbook = new ExcelJS.Workbook();
@@ -141,9 +104,7 @@ const GeneralReport = () => {
         values.reportName
       );
       exportExcel(result, "report", "report.xlsx");
-      // console.log(result);
     } catch (err) {
-      console.log(err);
       if (err.response.data) {
         setErrors(err.response.data);
       }
@@ -175,47 +136,51 @@ const GeneralReport = () => {
                     <h5>Thời gian xuất báo cáo</h5>
                     <div className="row justify-content-center py-3">
                       <div className="d-flex">
-                      <div className="col-2 h-75">
-                        <label className="p-2">Từ ngày</label>
-                      </div>
-                      <div className="col-3 h-75">
-                        <Field
-                          className="form-control"
-                          type="date"
-                          name="startDate"
-                          id="startDate"
-                        />
-                        <ErrorMessage
-                          className="text-danger"
-                          name="startDate"
-                          component="small"
-                        />
-                      </div>
-                      <div className="col-2 h-75">
-                        <label className="p-2">Đến ngày</label>
-                      </div>
-                      <div className="col-3 h-75">
-                        <Field
-                          className="form-control"
-                          type="date"
-                          name="endDate"
-                          id="endDate"
-                        />
-                        <ErrorMessage
-                          className="text-danger"
-                          name="endDate"
-                          component="small"
-                        />
-                      </div>
-                      <div className="col-2 h-75 mx-2">
-                        <button
-                          type="submit"
-                          className="btn btn-outline-primary"
-                        >
-                          <AiOutlinePrinter className="mx-1"/>
-                          Xuất excel
-                        </button>
-                      </div>
+                        <div className="col-2 h-75">
+                          <label className="p-2">Từ ngày</label>
+                        </div>
+                        <div className="col-3 h-75">
+                          <Field
+                            className="form-control"
+                            type="date"
+                            name="startDate"
+                            id="startDate"
+                          />
+                          <div className="my-2" style={{ height: "16px" }}>
+                            <ErrorMessage
+                              className="text-danger"
+                              name="startDate"
+                              component="small"
+                            />
+                          </div>
+                        </div>
+                        <div className="col-2 h-75">
+                          <label className="p-2">Đến ngày</label>
+                        </div>
+                        <div className="col-3 h-75">
+                          <Field
+                            className="form-control"
+                            type="date"
+                            name="endDate"
+                            id="endDate"
+                          />
+                          <div className="my-2" style={{ height: "16px" }}>
+                            <ErrorMessage
+                              className="text-danger"
+                              name="endDate"
+                              component="small"
+                            />
+                          </div>
+                        </div>
+                        <div className="col-2 h-75 mx-2">
+                          <button
+                            type="submit"
+                            className="btn btn-outline-primary"
+                          >
+                            <AiOutlinePrinter className="mx-1" />
+                            Xuất excel
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div className=" col-12 my-5  justify-content-center">
