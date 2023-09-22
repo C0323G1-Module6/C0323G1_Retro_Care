@@ -1,4 +1,3 @@
-import './style.css'
 import {Formik, Form, Field, ErrorMessage} from 'formik'
 import React, {useEffect, useRef, useState} from "react";
 import * as Yup from "yup";
@@ -102,9 +101,21 @@ const UpdationEmployee = () => {
     }, [param.id])
 
     const loadEmployee = async (id) => {
-        const newEmployee = await getEmployee(id);
-        console.log(newEmployee.data)
-        setEmployee(newEmployee.data);
+        try {
+            const newEmployee = await getEmployee(id);
+            console.log(newEmployee.data)
+            setEmployee(newEmployee.data);
+        }catch (err){
+            if(err.response.status ===404){
+                navigate("/dashboard/employee");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Không thể tìm thấy nhân viên!',
+                })
+            }
+        }
+
     }
     if (employee === undefined) {
         return null;
@@ -180,20 +191,25 @@ const UpdationEmployee = () => {
                                  style={{borderRadius: "50px", objectFit: "cover"}}/>
                         </div>
                         <div className="col-8  d-flex justify-content-center ">
-                            <fieldset className="form-input shadow">
+                            <fieldset className="shadow" style={{width: '590px',
+                                height: 'auto',
+                                border: '1px solid #000000',
+                                padding: '20px',
+                                borderRadius: '20px',
+                                backgroundColor: '#F8F9Fa'}}>
                                 <legend className="float-none w-auto px-3"><h2>Chỉnh sửa thông tin nhân viên</h2>
                                 </legend>
                                 <div className="row">
 
                                     <div className="col-3 p-2">
-                                        <label>Mã nhân viên</label>
+                                        <label style={{ fontWeight:"bold"}}>Mã nhân viên</label>
                                     </div>
                                     <div className="col-9">
                                         <Field disable name='codeEmployee' className="text-black-50 form-control mt-2 "
                                                type='text'/>
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Tên nhân viên <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Tên nhân viên <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='nameEmployee' className="form-control border border-dark mt-2"
@@ -204,7 +220,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Địa chỉ <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Địa chỉ <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='address' className="form-control border border-dark mt-2"
@@ -216,7 +232,7 @@ const UpdationEmployee = () => {
 
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Số điện thoại <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Số điện thoại <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='phoneNumber' className="form-control border border-dark mt-2"
@@ -228,7 +244,7 @@ const UpdationEmployee = () => {
 
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Ngày vào làm <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Ngày vào làm <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='startDay' className="form-control border border-dark mt-2"
@@ -239,7 +255,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     <div className="col-3  p-2">
-                                        <label>Ngày sinh <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Ngày sinh <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='birthday' className="form-control border border-dark mt-2"
@@ -251,7 +267,7 @@ const UpdationEmployee = () => {
                                     </div>
 
                                     <div className="col-3 p-2">
-                                        <label>CCCD <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>CCCD <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='idCard' className="form-control border border-dark mt-2"
@@ -262,7 +278,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     {/*<div className="col-3 p-2">*/}
-                                    {/*    <label>Chức vụ <sup>*</sup></label>*/}
+                                    {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
                                     {/*</div>*/}
                                     {/*<div className="col-9">*/}
                                     {/*    <select as='select' className="form-select border border-dark mt-2">*/}
@@ -274,7 +290,7 @@ const UpdationEmployee = () => {
                                     {/*    </div>*/}
                                     {/*</div>*/}
                                     <div className="col-3 p-2">
-                                        <label>Ảnh nhân viên</label>
+                                        <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
                                     </div>
                                     <div className='col-9'>
                                         <div className="input-group mt-2 ">
