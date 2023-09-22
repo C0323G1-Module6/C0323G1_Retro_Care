@@ -185,132 +185,132 @@ export function CreateInvoice() {
                         <Form>
                             <FieldArray name="invoiceDetailDtoSet">
                                 {({ remove, push }) => (<>
-                                        <div className="row">
-                                            <div className="col-8">
-                                                <fieldset className="border border-dark rounded-3 p-3 h-100 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
-                                                    <legend className="float-none w-auto px-3">Thông tin hóa đơn</legend>
-                                                    <div className="row" ref={elementRef}>
-                                                        <div className="col-7">
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="makh" className="col-sm-4 col-form-label">Mã NCC</label>
-                                                                <div className="col-sm-8">
-                                                                    <div className="row">
-                                                                        <div className="col-10 p-0">
-                                                                            <SelectPicker onChange={(value) => {
-                                                                                let supplierObject = JSON.parse(value);
-                                                                                document.getElementById("supplierId").value = supplierObject.id;
-                                                                                document.getElementById("supplierName").value = supplierObject.name;
-                                                                                document.getElementById("supplierAddress").value = supplierObject.address;
+                                    <div className="row">
+                                        <div className="col-8">
+                                            <fieldset className="border border-dark rounded-3 p-3 h-100 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+                                                <legend className="float-none w-auto px-3">Thông tin hóa đơn</legend>
+                                                <div className="row" ref={elementRef}>
+                                                    <div className="col-7">
+                                                        <div className="mb-3 row">
+                                                            <label htmlFor="makh" className="col-sm-4 col-form-label">Mã NCC</label>
+                                                            <div className="col-sm-8">
+                                                                <div className="row">
+                                                                    <div className="col-10 p-0">
+                                                                        <SelectPicker onChange={(value) => {
+                                                                            let supplierObject = JSON.parse(value);
+                                                                            document.getElementById("supplierId").value = supplierObject.id;
+                                                                            document.getElementById("supplierName").value = supplierObject.name;
+                                                                            document.getElementById("supplierAddress").value = supplierObject.address;
 
-                                                                            }}
-                                                                                          locale={{ searchPlaceholder: "Tìm kiếm" }}
-                                                                                          placeholder={"Tìm kiếm"}
-                                                                                          preventOverflow virtualized data={dataSupllier}
-                                                                                          style={{ width: '90%' }}
-                                                                            />
-                                                                            <input id="supplierId" hidden name="supplierId" type="number" ></input>
-                                                                        </div>
-                                                                        <div className="col-2 h-auto p-0">
-                                                                            <button type="button" className="w-100 btn btn-outline-primary float-end">
-                                                                                <FaPlus />
-                                                                            </button>
-                                                                        </div>
+                                                                        }}
+                                                                            locale={{ searchPlaceholder: "Tìm kiếm" }}
+                                                                            placeholder={"Tìm kiếm"}
+                                                                            preventOverflow virtualized data={dataSupllier}
+                                                                            style={{ width: '90%' }}
+                                                                        />
+                                                                        <input id="supplierId" hidden name="supplierId" type="number" ></input>
+                                                                    </div>
+                                                                    <div className="col-2 h-auto p-0">
+                                                                        <button type="button" className="w-100 btn btn-outline-primary float-end">
+                                                                            <FaPlus />
+                                                                        </button>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input1" className="col-sm-4 col-form-label">Tên nhà cung cấp</label>
-                                                                <div className="col-sm-8">
-                                                                    <input type="text" id="supplierName" disabled defaultValue="Công ty DOMESO" className="form-control" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input2" disabled className="col-sm-4 col-form-label">Địa chỉ</label>
-                                                                <div className="col-sm-8">
-                                                                    <input type="text" disabled id="supplierAddress" className="form-control" defaultValue="AbcXyz" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input3" className="col-sm-4 col-form-label">Ghi chú</label>
-                                                                <div className="col-sm-8">
-                                                                    <Field type="text" name="note" className="form-control" id="input3" />
-                                                                    <ErrorMessage style={{ color: 'red' }} component='span' name="note" />
-                                                                </div>
+                                                        </div>
+                                                        <div className="mb-3 row">
+                                                            <label htmlFor="input1" className="col-sm-4 col-form-label">Tên nhà cung cấp</label>
+                                                            <div className="col-sm-8">
+                                                                <input type="text" id="supplierName" disabled defaultValue="Công ty DOMESO" className="form-control" />
                                                             </div>
                                                         </div>
-                                                        <div className="col-5">
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input4" className="col-sm-4 col-form-label">Số HĐ</label>
-                                                                <div className="col-sm-8">
-                                                                    <input type="text" defaultValue={maxCode.toString()} className="form-control" disabled id="input4" />
-
-                                                                </div>
+                                                        <div className="mb-3 row">
+                                                            <label htmlFor="input2" disabled className="col-sm-4 col-form-label">Địa chỉ</label>
+                                                            <div className="col-sm-8">
+                                                                <input type="text" disabled id="supplierAddress" className="form-control" defaultValue="AbcXyz" />
                                                             </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input5" className="col-sm-4 col-form-label">Số CT</label>
-                                                                <div className="col-sm-8">
-                                                                    <Field type="text" name="documentNumber" className="form-control" id="input5" />
-                                                                    <ErrorMessage style={{ color: 'red' }} component="span" name="documentNumber" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input6" className="col-sm-4 col-form-label">Ngày lập</label>
-                                                                <div className="col-sm-8">
-                                                                    <input type="date" defaultValue={new Date().toISOString().split('T')[0]} disabled className="form-control" id="input6" />
-                                                                </div>
-                                                            </div>
-                                                            <div className="mb-3 row">
-                                                                <label htmlFor="input7" className="col-sm-4 col-form-label">Nhân viên</label>
-                                                                <div className="col-sm-8">
-                                                                    <input type="text" disabled className="form-control" id="input7" />
-                                                                </div>
+                                                        </div>
+                                                        <div className="mb-3 row">
+                                                            <label htmlFor="input3" className="col-sm-4 col-form-label">Ghi chú</label>
+                                                            <div className="col-sm-8">
+                                                                <Field type="text" name="note" className="form-control" id="input3" />
+                                                                <ErrorMessage style={{ color: 'red' }} component='span' name="note" />
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </fieldset>
-                                            </div>
-                                            <div className="col-4">
-                                                <fieldset className="border border-dark rounded-3 p-3 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
-                                                    <legend className="float-none w-auto px-3">Thanh toán</legend>
-                                                    <div className="row">
+                                                    <div className="col-5">
                                                         <div className="mb-3 row">
-                                                            <label htmlFor="input8" className="col-sm-4 col-form-label">Tiền thuốc</label>
+                                                            <label htmlFor="input4" className="col-sm-4 col-form-label">Số HĐ</label>
                                                             <div className="col-sm-8">
-                                                                <input type="text" disabled id="medicinePrice" className="form-control" />
-                                                            </div>
-                                                        </div>
+                                                                <input type="text" defaultValue={maxCode.toString()} className="form-control" disabled id="input4" />
 
-                                                        <div className="mb-3 row">
-                                                            <label htmlFor="input10" className="col-sm-4 col-form-label">Tổng tiền</label>
-                                                            <div className="col-sm-8">
-                                                                <input type="text" disabled id="totalPrice" className="form-control" />
                                                             </div>
                                                         </div>
                                                         <div className="mb-3 row">
-                                                            <label htmlFor="input11" className="col-sm-4 col-form-label">Thanh toán</label>
+                                                            <label htmlFor="input5" className="col-sm-4 col-form-label">Số CT</label>
                                                             <div className="col-sm-8">
-                                                                <Field type="number" name="paid" className="form-control" id="paid" />
-                                                                <ErrorMessage style={{ color: 'red' }} component='span' name="paid" />
+                                                                <Field type="text" name="documentNumber" className="form-control" id="input5" />
+                                                                <ErrorMessage style={{ color: 'red' }} component="span" name="documentNumber" />
                                                             </div>
                                                         </div>
                                                         <div className="mb-3 row">
-                                                            <label htmlFor="input12" className="col-sm-4 col-form-label">Còn lại</label>
+                                                            <label htmlFor="input6" className="col-sm-4 col-form-label">Ngày lập</label>
                                                             <div className="col-sm-8">
-                                                                <input type="number" id="extant" disabled className="form-control" />
+                                                                <input type="date" defaultValue={new Date().toISOString().split('T')[0]} disabled className="form-control" id="input6" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="mb-3 row">
+                                                            <label htmlFor="input7" className="col-sm-4 col-form-label">Nhân viên</label>
+                                                            <div className="col-sm-8">
+                                                                <input type="text" disabled className="form-control" id="input7" />
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </fieldset>
-                                            </div>
+                                                </div>
+                                            </fieldset>
                                         </div>
-                                        <div className="row">
-                                            <div className="col-12">
-                                                <fieldset className="border border-dark rounded-3 p-3 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
-                                                    <legend className="float-none w-auto px-3">Danh sách thuốc</legend>
-                                                    <div className="row">
-                                                        <div className="table-responsive">
-                                                            <table id="editableTable" className="table table-hover rounded-3 overflow-hidden">
-                                                                <thead className="text-light " style={{ backgroundColor: '#0d6efd' }}>
+                                        <div className="col-4">
+                                            <fieldset className="border border-dark rounded-3 p-3 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+                                                <legend className="float-none w-auto px-3">Thanh toán</legend>
+                                                <div className="row">
+                                                    <div className="mb-3 row">
+                                                        <label htmlFor="input8" className="col-sm-4 col-form-label">Tiền thuốc</label>
+                                                        <div className="col-sm-8">
+                                                            <input type="text" disabled id="medicinePrice" className="form-control" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="mb-3 row">
+                                                        <label htmlFor="input10" className="col-sm-4 col-form-label">Tổng tiền</label>
+                                                        <div className="col-sm-8">
+                                                            <input type="text" disabled id="totalPrice" className="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-3 row">
+                                                        <label htmlFor="input11" className="col-sm-4 col-form-label">Thanh toán</label>
+                                                        <div className="col-sm-8">
+                                                            <Field type="number" name="paid" className="form-control" id="paid" />
+                                                            <ErrorMessage style={{ color: 'red' }} component='span' name="paid" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-3 row">
+                                                        <label htmlFor="input12" className="col-sm-4 col-form-label">Còn lại</label>
+                                                        <div className="col-sm-8">
+                                                            <input type="number" id="extant" disabled className="form-control" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <fieldset className="border border-dark rounded-3 p-3 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+                                                <legend className="float-none w-auto px-3">Danh sách thuốc</legend>
+                                                <div className="row">
+                                                    <div className="table-responsive">
+                                                        <table id="editableTable" className="table table-hover rounded-3 overflow-hidden">
+                                                            <thead className="text-light " style={{ backgroundColor: '#0d6efd' }}>
                                                                 <tr>
                                                                     <th scope="col">Tên thuốc</th>
                                                                     <th scope="col">Đơn vị tính</th>
@@ -322,8 +322,8 @@ export function CreateInvoice() {
                                                                     <th scope="col">Số lô</th>
                                                                     <th scope="col">Hạn dùng</th>
                                                                 </tr>
-                                                                </thead>
-                                                                <tbody id="editableBody" ref={elementRef}>
+                                                            </thead>
+                                                            <tbody id="editableBody" ref={elementRef}>
 
 
                                                                 {
@@ -410,32 +410,32 @@ export function CreateInvoice() {
 
 
 
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
-                                                    <button onClick={() => push({
-                                                        medicineId: 0,
-                                                        discount: 0,
-                                                        medicineQuantity: 1,
-                                                        lot: "",
-                                                        expiry: new Date().toISOString().split('T')[0]
-                                                    })} type="button" className="btn btn-outline-primary"> <FaPlus className="mx-1" /> Thêm thuốc
-                                                    </button>
-                                                </fieldset>
-                                                <div className="d-flex justify-content-end gap-3 my-3">
-                                                    <button type="submit" className="btn btn-outline-primary"> <FaPlus className="mx-1" /> Thêm mới
-                                                    </button>
-                                                    <button type="button" onClick={selectedRow !== -1 ? () => { remove(selectedRow); setSelectedRow(-1) } : null} className="btn btn-outline-primary"><FaRegTrashAlt className="mx-1" />
-                                                        Xoá thuốc
-                                                    </button>
-                                                    <button type="button" onClick={() => setInvoiceInfo()} className="btn btn-outline-primary">
-                                                        <AiOutlineRollback className="mx-1" /> Trở về
-                                                    </button>
                                                 </div>
+                                                <button onClick={() => push({
+                                                    medicineId: 0,
+                                                    discount: 0,
+                                                    medicineQuantity: 1,
+                                                    lot: "",
+                                                    expiry: new Date().toISOString().split('T')[0]
+                                                })} type="button" className="btn btn-outline-primary"> <FaPlus className="mx-1" /> Thêm thuốc
+                                                </button>
+                                            </fieldset>
+                                            <div className="d-flex justify-content-end gap-3 my-3">
+                                                <button type="submit" className="btn btn-outline-primary"> <FaPlus className="mx-1" /> Thêm mới
+                                                </button>
+                                                <button type="button" onClick={selectedRow !== -1 ? () => { remove(selectedRow); setSelectedRow(-1) } : null} className="btn btn-outline-primary"><FaRegTrashAlt className="mx-1" />
+                                                    Xoá thuốc
+                                                </button>
+                                                <button type="button" onClick={() => setInvoiceInfo()} className="btn btn-outline-primary">
+                                                    <AiOutlineRollback className="mx-1" /> Trở về
+                                                </button>
                                             </div>
                                         </div>
-                                    </>
+                                    </div>
+                                </>
                                 )}
                             </FieldArray>
                         </Form>
