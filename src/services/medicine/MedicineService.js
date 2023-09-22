@@ -47,16 +47,17 @@ export const findAll = async (page) => {
     }
 };
 
-export const searchMedicine = async (searchInMedicine, search, page, limit) => {
-    try {
-        const result = await axios.get(
-            `http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}`
-        );
-        console.log(result.data)
-        return result.data;
-    } catch (error) {
-        return error;
-    }
+
+export const searchMedicine = async (searchInMedicine, search, page, limit, conditional) => {
+  try {
+    const result = await axios.get(
+      `http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}&conditional=${conditional}`
+    );
+    console.log(result.data)
+    return result.data;
+  } catch (error) {
+    return error;
+  }
 };
 
 export const deleteMedicine = async (id) => {
