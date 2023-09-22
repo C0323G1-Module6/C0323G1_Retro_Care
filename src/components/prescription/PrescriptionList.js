@@ -142,7 +142,7 @@ const PrescriptionList = () => {
                 data-bs-toggle="dropdown"
                 aria-expanded="true"
               >
-                Mã khách hàng
+                Mã toa thuốc
               </button>
               <ul className="dropdown-menu">
                 <li>
@@ -192,7 +192,7 @@ const PrescriptionList = () => {
                   prescriptions.map((p, index) => (
                     <tr key={p.id} onClick={() => {
                       setSelecdPrescription({ id: p?.id, code: p?.code })
-                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#629eec' } : {}}>
                       <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <div className="flex items-center">
                           <div className="ml-3">
