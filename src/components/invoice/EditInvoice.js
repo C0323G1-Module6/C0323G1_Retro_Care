@@ -4,6 +4,7 @@ import {
     AiOutlineRollback,
     AiOutlineDoubleLeft,
     AiOutlineDoubleRight,
+<<<<<<< HEAD
 } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
@@ -12,6 +13,10 @@ import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
+=======
+  } from "react-icons/ai";
+
+>>>>>>> 7cf80d80ac8f0c20199e3d7790d62d6b8f245597
 export function EditInvoice() {
     const [supplier, setSupplier] = useState([]);
     const [invoice, setInvoice] = useState({
