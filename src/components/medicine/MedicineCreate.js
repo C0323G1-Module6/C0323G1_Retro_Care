@@ -22,6 +22,10 @@ export default function MedicineCreate() {
         getListCountries();
     }, []);
 
+    useEffect(() => {
+        document.title = 'RetroCare - Thêm mới thuốc'
+    })
+
     const getListUnits = async () => {
         const result = await getAllUnit();
         setUnits(result);
@@ -100,6 +104,7 @@ export default function MedicineCreate() {
     };
     return (
         <>
+            <div id="tincute">
             <Formik
                 initialValues={{
                     code: "",
@@ -474,6 +479,7 @@ export default function MedicineCreate() {
                     </div>
                 </div>
             </Formik>
+            </div>
         </>
     )
 }
