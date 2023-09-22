@@ -3,7 +3,7 @@ import {Formik, Form, Field, ErrorMessage} from 'formik'
 import React, {useEffect, useRef, useState} from "react";
 import * as Yup from "yup";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {crateEmployee, getEmployee, updateEmployee} from "../../services/employee/EmployeeService";
+import { getEmployee, updateEmployee} from "../../services/employee/EmployeeService";
 import {v4} from "uuid";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../firebase/firebase";
@@ -17,19 +17,38 @@ const UpdationEmployee = () => {
     const imgPreviewRef = useRef(null)
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
-    const updateEmployees = async (employeeUpdate) => {
+    const updateEmployees = async (employeeUpdate,setErrors) => {
         if (imageUpload != null) {
             const fileName = `images/${imageUpload.name + v4()}`
             const imageRef = ref(storage, fileName);
             await uploadBytes(imageRef, imageUpload).then((snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
                     console.log(url);
-                    await updateEmployee({
-                        ...employeeUpdate,
-                        image: url
-                    }).then(() => {
-                        navigate("/dashboard/employee")
-                    })
+                    try {
+                        await updateEmployee({
+                            ...employeeUpdate,
+                            image: url
+                        }).then(() => {
+                            navigate("/dashboard/employee")
+                        }).then(
+                            () => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Chỉnh sửa thành công !',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    customClass: {
+                                        icon: 'icon-post',
+                                    }
+                                })
+                            }
+                        )
+                    }catch (err){
+                        if(err.response.data){
+                            setErrors(err.response.data)
+                        }
+                    }
+
                 })
             })
         } else {
@@ -127,11 +146,30 @@ const UpdationEmployee = () => {
                     .max(12,"Vui lòng nhập từ 12 kí tự trở xuống")
                     .matches(/^\d{9}(\d{3})?$/u,"Vui lòng chỉ nhập số và độ dài là 9 hoặc 12"),
             })}
-            onSubmit={(value, {setSubmitting}) => {
-                setSubmitting(false);
-                updateEmployees(value).then(() => {
-                    setSubmitting(true);
-                });
+            onSubmit={(value, {setErrors}) => {
+                let timerInterval
+                Swal.fire({
+                    title: 'Auto close alert!',
+                    html: 'I will close in <b></b> milliseconds.',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
+                updateEmployees(value,setErrors)
             }}
         >
             <Form>

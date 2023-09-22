@@ -3,8 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { getAllIndicationsByPrescription, getOnePrescriptionById } from "../../services/retail/RetailService";
-
+import { addMedicineToCart, getAllIndicationsByPrescription, getOnePrescriptionById } from "../../services/retail/RetailService";
+import jsPDF from "jspdf";
+import diacriticless from "diacriticless";
 
 
 export default function RetailPrescriptionInfomation() {
@@ -14,6 +15,7 @@ export default function RetailPrescriptionInfomation() {
     const { id } = useParams();
     const [indications, setIndications] = useState([]);
     const navigate = useNavigate();
+    const appUserId = 16;
 
 
     useEffect(() => {
@@ -21,9 +23,22 @@ export default function RetailPrescriptionInfomation() {
         getIndications();
     }, []);
 
-    const backToList = () =>{
+    const backToList = () => {
         navigate("/dashboard/retail/prescription-list");
     }
+
+    const addPrescriptionToCart = async () => {
+        indications.forEach(async (element) => {
+            await addMedicineToCart(appUserId, element.medicine_id, element.frequency * element.dosage * duration);
+        })
+    }
+
+    const addToCart = () => {
+        addPrescriptionToCart();
+        navigate("/dashboard/retail");
+    }
+
+
 
 
     const getPrescription = async () => {
@@ -37,12 +52,12 @@ export default function RetailPrescriptionInfomation() {
         setIndications((pre) => data);
     }
 
-    const deleteMedicine =(id)=>{
+    const deleteMedicine = (id) => {
         const list = indications.filter(item => item.id !== id);
-        setIndications((pre)=>list);
-        }
-        
-    
+        setIndications((pre) => list);
+    }
+
+
 
     const openSwal = (id) => {
         Swal.fire({
@@ -52,15 +67,15 @@ export default function RetailPrescriptionInfomation() {
             showConfirmButton: true,
             confirmButtonText: "Yes, delete it",
             icon: "question",
-        }).then( (result) => {
+        }).then((result) => {
             if (result.isConfirmed) {
                 // code here
                 deleteMedicine(id);
-                    Swal.fire({
-                        text: "Delete successfully ",
-                        icon: "success",
-                        timer: 1500,
-                    });
+                Swal.fire({
+                    text: "Delete successfully ",
+                    icon: "success",
+                    timer: 1500,
+                });
             } else {
                 Swal.fire({
                     text: "You choose cancel ",
@@ -71,10 +86,79 @@ export default function RetailPrescriptionInfomation() {
         });
     };
 
+    const handleGeneratePDF = async () => {
+        // Tạo đối tượng jsPDF
+        const doc = new jsPDF();
+
+        const billContent = `
+        Ten toa thuoc: ${diacriticless(prescription.name)}
+        -----------------------------
+        Doi tuong: ${diacriticless(prescription.patient.name)}
+        -----------------------------
+        So ngay uong: ${duration.toString()}
+        -----------------------------
+        
+        `
+
+        // Định dạng và vẽ nội dung hóa đơn
+        doc.setFont('Arial', 'bold');
+        doc.setFontSize(16);
+        doc.text(billContent, 10, 10);
+
+        // Vẽ tiêu đề bảng
+        const tableHeader = ['STT', 'Ten thuoc', 'So lan/ ngay', 'So vien/ lan uong'];
+        const tableHeaderX = 30;
+        const tableHeaderY = 70;
+        const tableHeaderFontSize = 12;
+
+        doc.setFont('Arial', 'bold');
+        doc.setFontSize(tableHeaderFontSize);
+        doc.text(tableHeader.join('                      '), tableHeaderX, tableHeaderY);
+
+        // Vẽ dữ liệu sản phẩm
+        const tableDataX = 30;
+        const tableDataY = 80;
+        const tableDataFontSize = 12;
+
+        doc.setFont('Arial', 'normal');
+        doc.setFontSize(tableDataFontSize);
+        indications.forEach((indication, index) => {
+            const { dosage, frequency, name } = indication;
+            const rowData = [
+                index + 1,
+                diacriticless(name),
+                frequency,
+                dosage
+            ];
+            const rowY = tableDataY + index * 10;
+            rowData.forEach((data, columnIndex) => {
+                const columnX = tableDataX + columnIndex * 40;
+                doc.text(data.toString(), columnX, rowY);
+            });
+        });
+
+        // Vẽ tổng giá trị hóa đơn
+        const sumX = 30;
+        const sumY = tableDataY + indications.length * 10 + 10;
+
+        doc.setFont('Arial', 'bold');
+        
+
+        // Vẽ ghi chú
+        const noteX = 30;
+        const noteY = sumY + 10;
+
+        doc.setFont('Arial', 'normal');
+        doc.text(diacriticless(prescription.note), noteX, noteY);
+
+        // Lưu tài liệu PDF
+        doc.save('example.pdf');
+    };
+
     return (
         <>
             {prescription !== null &&
-                <>  
+                <>
                     <div className="d-flex flex-wrap gap-3 justify-content-center mt-10">
                         <fieldset className="border border-dark rounded-3 p-3 w-50" style={{ backgroundColor: '#F8F9FA' }}>
                             <legend className="float-none w-auto px-3">Thông tin đơn thuốc</legend>
@@ -110,13 +194,13 @@ export default function RetailPrescriptionInfomation() {
                                     {indications.map((indication, index) => (
                                         <div key={indication.id}>
                                             <div className="mb-3 row d-flex align-items-center justify-content-start">
-                                                <label className="col-sm-1 col-form-label">{index+1}</label>
+                                                <label className="col-sm-1 col-form-label">{index + 1}</label>
                                                 <div className="col-sm-5">
                                                     <input className="form-control" value={indication.name} readOnly />
                                                 </div>
-                                                
+
                                                 <div className="col-sm-2">
-                                                    <input readOnly className="form-control" value={indication.frequency*indication.dosage*duration} />
+                                                    <input readOnly className="form-control" value={indication.frequency * indication.dosage * duration} />
                                                 </div>
                                                 <label className="col-sm-2 col-form-label">Viên</label>
 
@@ -125,7 +209,7 @@ export default function RetailPrescriptionInfomation() {
                                                         type="button"
                                                         title="Xóa"
                                                         className="btn btn-outline-primary"
-                                                        onClick={()=>openSwal(indication.id)}
+                                                        onClick={() => openSwal(indication.id)}
                                                     >
                                                         <i className="fa-solid fa-trash"></i> Xoá
                                                     </a>
@@ -152,10 +236,10 @@ export default function RetailPrescriptionInfomation() {
 
 
                                 </fieldset>
-                                <a className="btn btn-outline-primary">Thêm vào hóa đơn</a>
-                                <a className="btn btn-outline-primary">In toa</a>
+                                <a className="btn btn-outline-primary" onClick={() => addToCart()}>Thêm vào hóa đơn</a>
+                                <a className="btn btn-outline-primary" onClick={()=>handleGeneratePDF()}>In toa</a>
                                 <a className="btn btn-outline-primary"
-                                onClick={()=>backToList()}
+                                    onClick={() => backToList()}
                                 ><i className="fa-regular fa-circle-left"></i>Huỷ</a>
                             </div>
                         </fieldset>
