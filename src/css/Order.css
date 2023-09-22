@@ -1,71 +1,59 @@
-.input-group {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.btn-input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0px;
 }
-
-.button-minus,
-.button-plus {
-    background-color: lightblue;
-    color: black;
-    font-weight: bold;
-    border: 1px solid whitesmoke;
-    width: 38px;
-    padding: 5px 5px;
-    border-radius: 5px;
-    cursor: pointer;
+.btn-minus,
+.btn-plus {
+  background-color: lightblue;
+  color: black;
+  font-weight: bold;
+  border: 1px solid whitesmoke !important;
+  width: 38px !important;
+  padding: 5px 5px !important;
+  border-radius: 5px !important;
+  cursor: pointer;
 }
-
-.button-minus:hover,
-.button-plus:hover {
-    background-color: orange;
+.btn-minus:hover,
+.btn-plus:hover {
+  background-color: orange;
 }
-
 .input-quantity::-webkit-outer-spin-button,
 .input-quantity::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
-
+/* iddddd */
 .btn-in-cart:hover {
-    color: palevioletred;
+  color: palevioletred;
 }
-
 .btn-in-cart {
-    height: 10px;
-    width: 15px;
-    background: none;
-    border: none;
-    font-weight: bold;
+  height: 10px;
+  width: 15px;
+  background: none !important;
+  border: none !important;
+  font-weight: bold;
 }
-
 .carousel-control-next,
 .carousel-control-prev
-
-/*, .carousel-indicators */
-    {
-    filter: invert(100%);
+/*, .carousel-indicators */ {
+  filter: invert(100%);
 }
-
-
 .paypal-button-number-1 {
-    display: none;
-
+  display: none;
 }
-
 .paypal-button:nth-of-type(2) {
-    display: none;
+  display: none;
 }
-
 .paypal-button-container:nth-of-type(2),
 .paypal-button-layout-vertical:nth-of-type(2),
 .paypal-button-shape-rect:nth-of-type(2),
 .paypal-button-number-multiple:nth-of-type(2),
 .paypal-button-env-sandbox:nth-of-type(2) {
-    display: none;
+  display: none;
 }
-
 .toast-position {
-    top: 5rem !important;
+  top: 5rem !important;
 }

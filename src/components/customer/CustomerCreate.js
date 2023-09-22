@@ -18,6 +18,7 @@ const CustomerCreate = () => {
   const [customerCode, setCustomerCode] = useState("");
   useEffect(() => {
     getCode();
+    document.title = 'RetroCare - Thêm mới khách hàng';
   }, []);
   const getCode = async () => {
     const result = await getCustomerCode();
@@ -108,7 +109,7 @@ const CustomerCreate = () => {
 
             <fieldset className="form-input shadow">
               <legend className="float-none w-auto px-3">
-                <h4>Thêm thông tin khách hàng</h4>
+                <h4>Thông tin khách hàng</h4>
               </legend>
               <div className="row p-2">
                 <div className="col-4 p-2">
