@@ -9,7 +9,6 @@ import Swal from "sweetalert2";
 
 
 const Login = () => {
-    const [roleEmployee, setRoleEmployee] = useState();
     const navigate = useNavigate();
     useEffect(() => {
         document.title = 'RetroCare - Đăng nhập'
@@ -33,7 +32,6 @@ const Login = () => {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             const checkRoleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
-            setRoleEmployee(checkRoleEmployee);
             navigate("/home");
         } catch (e) {
             Swal.fire({
@@ -111,7 +109,7 @@ const Login = () => {
                                     <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
                                 </a>
                             </div>
-                            {roleEmployee && (
+                        
 
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
@@ -119,7 +117,7 @@ const Login = () => {
                                     Đăng ký
                                 </Link>
                             </div>
-                            )}
+                  
 
                         </div>
                     </div>
