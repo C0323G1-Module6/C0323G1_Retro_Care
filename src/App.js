@@ -30,7 +30,9 @@ import SearchPage from "./components/search/SearchPage";
 import Cart from "./components/order/Cart";
 import Details from "./components/order/Details";
 import "react-toastify/dist/ReactToastify.css";
+
 function App() {
+  axiosClient();
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
