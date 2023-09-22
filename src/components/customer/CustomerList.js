@@ -300,7 +300,7 @@ function CustomerList() {
                   } else {
                     setSeletedCustomer({ id: null, name: "" });
                   }
-                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
+                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec' } : {}}>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {index + 1}
                   </td>
