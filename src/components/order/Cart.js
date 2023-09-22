@@ -49,7 +49,7 @@ export default function Cart() {
       } else {
         quantity.value = 99;
       }
-      await addToCart(2, medicineId, quantity.value);
+      await addToCart(1, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
@@ -89,7 +89,7 @@ export default function Cart() {
       const res = await checkQuantity(medicineId, quantity.value);
       // if enuf
 
-      await addToCart(2, medicineId, quantity.value);
+      await addToCart(1, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
@@ -119,7 +119,7 @@ export default function Cart() {
 
   const checkQuantityBeforePayment = async () => {
     // input appuserID in replace of 2
-    const invalidQuantityObj = await checkAvailability(2);
+    const invalidQuantityObj = await checkAvailability(1);
     if (Object.keys(invalidQuantityObj).length > 0) {
       setQuantities(invalidQuantityObj);
       return false;
@@ -174,7 +174,7 @@ export default function Cart() {
             console.log(point);
             const plusPoint = totalPrice / 100;
             const loyaltyPoint = point + plusPoint - discount;
-            const res = await createOrder(2, loyaltyPoint, totalPrice);
+            const res = await createOrder(1, loyaltyPoint, totalPrice);
             swal.fire(
               "Thanh toán thành công!",
               "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của RetroCare!",
@@ -200,7 +200,7 @@ export default function Cart() {
     }).format(money);
 
   const getLoyaltyPoint = async () => {
-    const data = await getPoint(2);
+    const data = await getPoint(1);
     setPoint(data);
   };
 
@@ -226,7 +226,7 @@ export default function Cart() {
   };
 
   useEffect(() => {
-    dispatch(getAllCarts(2));
+    dispatch(getAllCarts(1));
   }, [isUpdated]);
   useEffect(() => {
     getLoyaltyPoint();
@@ -305,7 +305,7 @@ export default function Cart() {
                               </td>
                               {/*                            quantity*/}
                               <td className="align-middle">
-                                <div className="input-group d-flex flex-md-row flex-column justify-content-center align-items-center">
+                                <div className=" d-flex flex-md-row flex-column justify-content-center align-items-center">
                                   <input
                                     onClick={() =>
                                       handleMinus(
@@ -316,7 +316,7 @@ export default function Cart() {
                                     }
                                     type="button"
                                     defaultValue="-"
-                                    className="  d-flex flex-column justify-content-center btn-in-cart"
+                                    className="  d-flex flex-column justify-content-center align-items-end btn-in-cart"
                                     data-field="quantity"
                                   />
                                   <input

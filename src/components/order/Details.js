@@ -6,12 +6,13 @@ import {
   checkQuantity,
   getQuantityInCart,
 } from "../../services/order/CartService";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import swal from "sweetalert2";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "./redux/cartAction";
+import "../../css/Order.css";
 
 export default function Details() {
   const dispatch = useDispatch();
@@ -35,13 +36,13 @@ export default function Details() {
 
   const addToCart = async (medicineId) => {
     const quantity = document.getElementById("quantity-value").value;
-    const quantityInCart = await getQuantityInCart(2, medicineId);
+    const quantityInCart = await getQuantityInCart(1, medicineId);
     console.log(quantityInCart);
     try {
       const res = await checkQuantity(id, parseInt(quantity) + quantityInCart);
       console.log(res);
-      const add = await addToCartFromHomeAndDetails(2, medicineId, quantity);
-      dispatch(getAllCarts(2));
+      const add = await addToCartFromHomeAndDetails(1, medicineId, quantity);
+      dispatch(getAllCarts(1));
       toast.success("Thêm sản phẩm thành công!");
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
@@ -80,7 +81,7 @@ export default function Details() {
   return (
     <>
       <Header />
-      <div>
+      <div className="mb-5">
         {medicine.id && (
           <div
             className="container mt-5 position-relative"
@@ -187,11 +188,11 @@ export default function Details() {
                 )}
 
                 <div className="buttons d-flex justify-content-between align-items-center">
-                  <div className="input-group col d-flex justify-content-start">
+                  <div className="btn-input-group col d-flex justify-content-start align-items-end ">
                     <input
                       type="button"
                       defaultValue="-"
-                      className="button-minus"
+                      className="btn-minus"
                       data-field="quantity"
                       onClick={handleMinus}
                     />
@@ -210,19 +211,20 @@ export default function Details() {
                     <input
                       type="button"
                       defaultValue="+"
-                      className="button-plus"
+                      className="btn-plus"
                       data-field="quantity"
                       onClick={handlePlus}
                     />
                   </div>
                   <button
                     onClick={() => addToCart(medicine.id)}
-                    className="col btn"
+                    className="col btn fw-bold mb-0"
                     style={{
                       backgroundColor: "orange",
-                      height: 38,
+                      height: "38px",
                       textDecoration: "none",
                       color: "black",
+                      cursor: "pointer",
                     }}
                   >
                     THÊM VÀO GIỎ HÀNG
@@ -255,6 +257,7 @@ export default function Details() {
         )}
       </div>
       <Footer />
+      <ToastContainer autoClose={2000} className="toast-position" />
     </>
   );
 }
