@@ -22,7 +22,7 @@ export async function getMedicineForDisplay(medicineId) {
   const res = await axios.get(
     `http://localhost:8080/api/carts/get-details?medicineId=${medicineId}`
   );
-  return res.data;
+  return res;
 }
 
 export async function getCarts(appUserId) {
