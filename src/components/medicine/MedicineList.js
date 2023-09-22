@@ -17,8 +17,8 @@ function MedicineList() {
 
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
-    const [limit, setLimit] = useState(5)
-    const [conditional, setConditional] = useState("")
+    const [limit, setLimit] = useState(5);
+    const [conditional, setConditional] = useState("");
 
 // ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
@@ -78,10 +78,41 @@ function MedicineList() {
     }
 // ----------------------------------------- Search ---------------------------------------
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
-        setMedicineList(result?.content);
-        setTotalPage(result?.totalPages);
-        // console.log(result?.content)
+        if (medicineList !== undefined){
+            const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+            setMedicineList(result?.content);
+            setTotalPage(result?.totalPages);
+        } else {
+            setMedicineList((pre) => []);
+            setTotalPage(0);
+            await swal.fire({
+                icon: 'warning',
+                title: 'Không tìm thấy dữ liệu cần tìm.',
+                showConfirmButton: true,
+                timer: 1500
+            })
+            setMedicineList([searchInMedicine,searchInput,page,limit,conditional]);
+            setTotalPage(0)
+        }
+
+        // try {
+        //     const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+        //     setMedicineList(result?.content);
+        //     setTotalPage(result?.totalPages);
+        //     await swal.fire({
+        //         icon: "success",
+        //         title: 'Đã tìm thấy dữ liệu.',
+        //         showConfirmButton: true,
+        //         timer: 1500
+        //     })
+        // } catch (noContent) {
+        //     swal.fire({
+        //         icon: 'warning',
+        //         title: 'Không tìm thấy dữ liệu cần tìm.',
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     })
+        // }
     }
 // select child
     const handleShowCondition = () => {
@@ -97,13 +128,6 @@ function MedicineList() {
     const handleSearch = async () => {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
-        console.log(page)
-        console.log(limit)
-        console.log(searchInput)
-        console.log(conditional)
-        console.log(searchInMedicine)
-         // await getListSearchMedicine(searchInMedicine,searchInput,page,limit,conditional)
-
     }
 
 // select father
@@ -115,11 +139,6 @@ function MedicineList() {
         setConditional(e.target.value);
     }
 
-    // useEffect(() => {
-    //     getListMedicine(page);
-    // }, [page])
-
-
     useEffect(() => {
         getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }, [searchInput, page, limit])
@@ -130,7 +149,7 @@ function MedicineList() {
     return (
         <>
             <div className="container">
-                <div className="row header" >
+                <div className="row header">
                     <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>DANH SÁCH THUỐC</h1>
                 </div>
                 <div className="row row-function" style={{display: 'flex'}}>
@@ -221,32 +240,30 @@ function MedicineList() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
-                                    medicineList.map((item, index) => (
-                                        <tr key={index} id={index} onClick={() => {
-                                            if (selectMedicine === null || selectMedicine.id !== item.id) {
-                                                setSelectMedicine({id: item.id, name: item?.name});
-                                            } else if (selectMedicine.id === item.id) {
-                                                setSelectMedicine({id: null, name: ""});
-                                            }
-
-                                        }}
-                                            style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
-                                        </tr>
-                                    ))}
+                                {medicineList ? (medicineList.map((item, index) => (
+                                    <tr key={index} id={index} onClick={() => {
+                                        if (selectMedicine === null || selectMedicine.id !== item.id) {
+                                            setSelectMedicine({id: item.id, name: item?.name});
+                                        } else if (selectMedicine.id === item.id) {
+                                            setSelectMedicine({id: null, name: ""});
+                                        }
+                                    }}
+                                        style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
+                                    </tr>
+                                ))) : (<h1>Tiếc quá! Retro Care không có dữ liệu về phần này.</h1>)}
                                 </tbody>
                             </table>
                         </div>
