@@ -23,12 +23,18 @@ export const addJwtTokenToLocalStorage = (jwtToken) => {
 export const infoAppUserByJwtToken = () => {
     const jwtToken = localStorage.getItem("JWT");
     if (jwtToken) {
-        const result = jwt_decode(jwtToken); 
+        const result = jwt_decode(jwtToken);
         return result;
     }
 }
 
 export const getIdByUserName = (userName) => {
-    const id = axios.get(`/get-id-app-user/${userName}`); 
-    return id;
+    const result = axios.get(`http://localhost:8080/api/user/get-id-app-user/${userName}`);
+    return result;
+}
+
+export const checkRoleAppUser = (roleName) => {
+    const roleList = jwt_decode(localStorage.getItem("JWT")).roleList;
+    const checkRole = roleList.some(role => role.authority === roleName)
+    return checkRole;
 }
