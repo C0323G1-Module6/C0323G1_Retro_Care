@@ -18,15 +18,19 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
+
 export default function Details() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [activeIndex, setActiveIndex] = useState(0); // this is to control 'active' value
   const { id } = useParams();
   console.log(id);
+
   const [medicine, setMedicine] = useState({});
   const [images, setImages] = useState([]);
   const [appUserId, setAppUserId] = useState(null);
+
   const getMedicineDetails = async () => {
     try {
       const res = await getMedicineForDisplay(id);
@@ -44,6 +48,7 @@ export default function Details() {
       }
     }
   };
+
   const addToCart = async (medicineId) => {
     const isLoggedIn = infoAppUserByJwtToken();
     if (!isLoggedIn) {
@@ -56,6 +61,7 @@ export default function Details() {
       console.log(id.data);
       setAppUserId(id.data);
       // Fix something
+
       // do checking
       const quantity = document.getElementById("quantity-value").value;
       const quantityInCart = await getQuantityInCart(id.data, medicineId);
@@ -82,6 +88,7 @@ export default function Details() {
       }
     }
   };
+
   function handlePlus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value < 99) {
@@ -90,6 +97,7 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
+
   function handleMinus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value > 1) {
@@ -99,14 +107,17 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
+
   const currency = (money) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(money);
+
   useEffect(() => {
     getMedicineDetails();
   }, []);
+
   return (
     <>
       <Header />
@@ -208,12 +219,14 @@ export default function Details() {
                   </p>
                 </div>
                 <p className="mt-2">{medicine.medicine_Note}</p>
+
                 {Math.floor(medicine.quantity / medicine.conversion_Rate) >
                 0 ? (
                   <h6 style={{ color: "green" }}>Còn hàng</h6>
                 ) : (
                   <h6 style={{ color: "red" }}>Hết hàng</h6>
                 )}
+
                 <div className="buttons d-flex justify-content-between align-items-center">
                   <div className="btn-input-group col d-flex justify-content-start align-items-end ">
                     <input

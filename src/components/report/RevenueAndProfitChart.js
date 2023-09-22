@@ -2,7 +2,7 @@ import { AiOutlineLineChart, AiOutlineRollback } from "react-icons/ai";
 import "./Report.css";
 import { Link } from "react-router-dom";
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import {
   Chart as ChartJS,
@@ -15,11 +15,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import {
-  getProfit,
-  getRevenue,
-  getSumReport,
-} from "../../services/report/ReportService";
+import { getProfit, getRevenue } from "../../services/report/ReportService";
 import { format, parseISO } from "date-fns";
 ChartJS.register(
   CategoryScale,
@@ -31,12 +27,11 @@ ChartJS.register(
   Legend
 );
 const RevenueAndProfitChart = () => {
-  const [revenues, setRevenue] = useState([]);
-  const [profits, setProfit] = useState([]);
-  const [sumReport, setSumReport] = useState({});
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  let mes = "";
+  const [revenues, setRevenue] = useState([]);
+  const [profits, setProfit] = useState([]);
+  const [periodRevenue, setPeriodRevenue] = useState(0);
   const drawChart = (revenue, profit) => {
     const options = {
       responsive: true,
@@ -58,93 +53,45 @@ const RevenueAndProfitChart = () => {
         },
       },
     };
-
-    let finishDate = new Date(endDate);
-    let dates = [];
-    let revenueData = [];
-    let profitData = [];
-
-    // Tạo mảng các ngày từ startDate đến endDate
-    let currentDate = new Date(startDate);
-    while (currentDate <= finishDate) {
-      dates.push(currentDate.toISOString().slice(0, 10)); // Lưu ý: Chỉ lấy phần ngày tháng (YYYY-MM-DD)
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-
-    // Sắp xếp mảng các ngày theo thứ tự tăng dần
-    dates.sort((a, b) => new Date(a) - new Date(b));
-    if (revenue != [] || profit != []) {
-      mes = "";
-      // Lặp qua mảng các ngày đã sắp xếp và kiểm tra dữ liệu doanh thu
-      dates.forEach((date) => {
-        const revenueObj = revenue.find((item) => item.sellDate === date);
-        const profitObj = profit.find((item) => item.sellDate === date);
-        if (revenueObj) {
-          revenueData.push(revenueObj.total);
-        } else {
-          revenueData.push(0); // Hoặc có thể sử dụng 0 nếu biểu đồ yêu cầu
-        }
-        if (profitObj) {
-          profitData.push(profitObj.total);
-        } else {
-          profitData.push(0); // Hoặc có thể sử dụng 0 nếu biểu đồ yêu cầu
-        }
-        console.log(revenueObj);
-      });
-    } else {
-      mes = "Không có dữ liệu";
-    }
-
-    const labels = dates.map((item) => format(parseISO(item), "dd/MM/yyyy"));
-
+    const labels = revenue.map((item) =>
+      format(parseISO(item.sellDate), "dd/MM/yyyy")
+    );
+    console.log(labels);
     const data = {
       labels,
       datasets: [
         {
           label: "Doanh thu",
-          // data: revenue.map((item) => item.total),
-          data: revenueData,
+          data: revenue.map((item) => item.total),
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
         {
           label: "Lợi nhuận",
-          // data: profit.map((item) => item.total),
-          data: profitData,
+          data: profit.map((item) => item.total),
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
       ],
     };
     console.log(data);
-
     return <Line options={options} data={data} />;
   };
-
   const handleSubmit = async (values, setErrors) => {
     try {
       const revenueResult = await getRevenue(values.startDate, values.endDate);
       const profitResult = await getProfit(values.startDate, values.endDate);
-      const sumReportResult = await getSumReport(
-        values.startDate,
-        values.endDate
-      );
       setRevenue(revenueResult);
       setProfit(profitResult);
-      setSumReport(sumReportResult);
       setStartDate(values.startDate);
       setEndDate(values.endDate);
     } catch (err) {
-      console.log(err);
       if (err.response.data) {
         setErrors(err.response.data);
       }
-      setRevenue([]);
-      setProfit([]);
-      setSumReport([]);
     }
   };
-
+  console.log(periodRevenue);
   return (
     <>
       <Formik
@@ -221,31 +168,31 @@ const RevenueAndProfitChart = () => {
                         <p>Doanh thu</p>
                       </div>
                       <div className="col-7">
-                        <p> {sumReport.sumRevenue} VNĐ</p>
+                        <p> {periodRevenue} VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Lợi nhuận</p>
                       </div>
                       <div className="col-7">
-                        <p> {sumReport.sumProfit} VNĐ</p>
+                        <p> 17,400,000 VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Doanh thu TB</p>
                       </div>
                       <div className="col-7">
-                        <p> {sumReport.averageRevenue} VNĐ</p>
+                        <p> 24,857,143 VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Lợi nhuận TB</p>
                       </div>
                       <div className="col-7">
-                        <p> {sumReport.averageProfit} VNĐ</p>
+                        <p> 2,485,715 VNĐ</p>
                       </div>
                     </div>
                   </fieldset>
                 </div>
               </div>
-              <div className="col-8">
+              <div className="col-8 ">
                 <div className="row">
                   <fieldset
                     className="form-input shadow mx-auto my-3"
@@ -255,18 +202,15 @@ const RevenueAndProfitChart = () => {
                       <h5>Biểu đồ</h5>
                     </legend>
                     {drawChart(revenues, profits)}
-                    <div style={{ height: "20px" }}>
-                      <p style={{ textAlign: "center", color: "red" }}>{mes}</p>
-                    </div>
+                    <Link
+                      to={"/dashboard/report"}
+                      className="btn btn-outline-primary float-end mx-3 mt-4"
+                    >
+                      <AiOutlineRollback className="mx-1" />
+                      Trở về
+                    </Link>
                   </fieldset>
                 </div>
-                <Link
-                  to={"/dashboard/report"}
-                  className="btn btn-outline-primary float-end"
-                >
-                  <AiOutlineRollback className="mx-1" />
-                  Trở về
-                </Link>
               </div>
             </div>
           </div>

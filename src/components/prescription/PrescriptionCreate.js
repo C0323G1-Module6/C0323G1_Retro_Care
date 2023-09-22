@@ -4,8 +4,8 @@ import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
 import { createPrescription } from "../../services/prescription/prescription";
 import * as Yup from 'yup';
-import { Link, useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
     const [chooseMedicines, setChooseMedicines] = useState([]);
@@ -21,24 +21,9 @@ function PrescriptionCreate() {
         setChooseMedicines(res);
     }
 
-    const createNewPrescription = async (value,setErrors) => {
-        
-        console.log(value);
-        
-        try {
-            const result = await createPrescription(value);
-            Swal.fire(
-              "Thêm mới thành công !",
-              "khách hàng" + value.name + "đã được thêm mới!",
-              "success"
-            );
-            navigate("/dashboard/prescription")
-          } catch (err) {
-            console.log(err);
-            if (err.response.data) {
-              setErrors(err.response.data);
-            }
-          }
+    const createNewPrescription = async (value) => {
+        await createPrescription(value);
+        navigate("/dashboard/prescription")
     }
 
     useEffect(() => {
@@ -81,20 +66,20 @@ function PrescriptionCreate() {
                             .required("Số ngày uống không được để trống!")
                             .max(30, "Số ngày uống không được quá 30 ngày!")
                             .min(1, "Số ngày uống không được nhỏ hơn 0!"),
-                        // indicationDto: Yup.object().shape({
-                        //     dosage: Yup.number().required("Số lần uống không được để trống!")
-                        //         .max(30, "Số lần uống không được quá 30 ngày!")
-                        //         .min(1, "Số lần uống không được nhỏ hơn 0!"),
-                        //     frequency: Yup.number().required("Số viên uống không được để trống!")
-                        //         .max(30, "Số viên uống không được quá 30 ngày!")
-                        //         .min(1, "Số viên uống không được nhỏ hơn 0!"),
-                        // })
+                        indicationDto: Yup.object().shape({
+                            dosage: Yup.number().required("Số lần uống không được để trống!")
+                                .max(30, "Số lần uống không được quá 30 ngày!")
+                                .min(1, "Số lần uống không được nhỏ hơn 0!"),
+                            frequency: Yup.number().required("Số viên uống không được để trống!")
+                                .max(30, "Số viên uống không được quá 30 ngày!")
+                                .min(1, "Số viên uống không được nhỏ hơn 0!"),
+                        })
 
                     })}
 
-                    onSubmit={(values, {setErrors}) => {
-                        console.log(values, setErrors);
-                        createNewPrescription(values,setErrors);
+                    onSubmit={(values) => {
+                        console.log(values);
+                        createNewPrescription(values);
                     }}
                 >
                     {({ values }) => (
@@ -105,9 +90,7 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Mã toa thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='code' placeholder="Nhập mã toa thuốc..." />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="code" component="small" style={{ color: 'red' }} />
-                                        </div>
+                                        <ErrorMessage name="code" component="div" style={{ color: 'red' }} />
                                     </div>
                                 </div>
 
@@ -115,21 +98,15 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Tên đơn thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='name' placeholder="Nhập tên toa thuốc..." />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="name" component="small" style={{ color: 'red' }} />
-                                        </div>
+                                        <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Triệu chứng</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" placeholder="Nhập triệu chứng..." name='symptoms' />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="symptoms" component="small" style={{ color: 'red' }} />
-                                        </div>
+                                        <ErrorMessage name="symptoms" component="div" style={{ color: 'red' }} />
                                     </div>
-
-                                    
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Đối tượng</label>
@@ -145,11 +122,8 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Số ngày uống </label>
                                     <div className="col-sm-2">
                                         <Field type="number" className="form-control" name='duration' placeholder="..."  />
-                                        
+                                        <ErrorMessage name="duration" component="div" style={{ color: 'red' }} />
                                     </div>
-                                    <div style={{height: '15px', marginLeft: '32rem'}}>
-                                        <ErrorMessage name="duration" component="small" style={{ color: 'red' }} />
-                                        </div>
 
                                 </div>
                                 <div className="mb-3 row">
@@ -180,8 +154,9 @@ function PrescriptionCreate() {
                                                                 <datalist id="medicine-options" >
                                                                     {chooseMedicines.map((medicine, index) => (
                                                                         <>
-                                                                            <option value={medicine.name}></option>
+                                                                            <option value={medicine.id}>{medicine.name}</option>
                                                                         </>
+
                                                                     ))}
                                                                 </datalist>
 
@@ -233,7 +208,7 @@ function PrescriptionCreate() {
                                     <div className="d-flex justify-content-end w-100 gap-2">
                                         <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
                                             Thêm mới</button>
-                                            <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
+                                        <a href="/dashboard/prescription" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a>
                                     </div>
                                 </div>
                             </Form>

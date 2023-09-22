@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
 import { editPrescription, getPrescriptionById } from "../../services/prescription/prescription";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getListIndication } from "../../services/prescription/indication";
 
 function PrescriptionEdit() {
@@ -81,7 +81,7 @@ function PrescriptionEdit() {
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Mã toa thuốc</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='code' disabled />
+                                        <Field type="text" className="form-control" name='code' />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
@@ -142,7 +142,7 @@ function PrescriptionEdit() {
 
                                                                 <datalist id="medicine-options">
                                                                     {chooseMedicines.map((medicine, index) => (
-                                                                        <option value={medicine.name}>{medicine.name}</option>
+                                                                        <option value={medicine.id}>{medicine.name}</option>
                                                                     ))}
                                                                 </datalist>
 
@@ -190,8 +190,7 @@ function PrescriptionEdit() {
                                     <div className="d-flex justify-content-end w-100 gap-2">
                                         <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
                                             Sửa</button>
-                                            <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
-                                        {/* <a href="/dashboard/prescription" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a> */}
+                                        <a href="/dashboard/prescription" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a>
                                     </div>
                                 </div>
                             </Form>

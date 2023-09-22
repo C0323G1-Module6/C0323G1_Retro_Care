@@ -3,13 +3,9 @@ import { deleteSupplierById, getListSupplier, getSupplierById } from "../../serv
 import Swal from "sweetalert2";
 import { Link  } from "react-router-dom";
 import '../../css/supplier/ThanhVh_ListSupplier.css'
-import {
-    AiOutlineRollback,
-    AiOutlineDoubleLeft,
-    AiOutlineDoubleRight,
-  } from "react-icons/ai";
-  import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
-  import { FiEdit } from "react-icons/fi";
+
+
+
 
 
 function SupplierListComponent() {
@@ -162,13 +158,16 @@ function SupplierListComponent() {
         }
     };
 
-
     return (
         <>
             <div id="ThanhVH">
                 <meta charSet="UTF-8" />
                 <title>Quản lý nhà cung cấp</title>
-            
+                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+                    integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+                    crossOrigin="anonymous" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
                 <link rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" />
                 <div className=" antialiased font-sans bg-gray-200">
@@ -176,7 +175,7 @@ function SupplierListComponent() {
                         <div>
                             <div>
                                 <h2 className="text-2xl font-semibold leading-tight"
-                                    style={{ textAlign: 'center', marginBottom: '20px',color:'blue' }}>DANH
+                                    style={{ textAlign: 'center', marginBottom: '20px' }}>DANH
                                     SÁCH
                                     NHÀ CUNG CẤP</h2>
                             </div>
@@ -365,20 +364,18 @@ function SupplierListComponent() {
                             </div>
                         </div>
                         <div className="function" style={{ textAlign: 'right', marginTop: '-10px' }}>
-                        <Link className="btn btn-outline-primary" style={{marginRight:'10px'}}
-                                to={`/dashboard/supplier/create-supplier`}><FaPlus
-                                    /> Thêm mới</Link>
-                            
-                            <Link className="btn btn-outline-primary" style={{marginRight:'10px'}}
-                            to={`/dashboard/supplier/update-supplier/${supplier.idSupplier}`}>
-                              <FiEdit /> Sửa
+                            <Link className="btn btn-outline-primary" to={`/home`}>Trở về</Link>
+                            <Link className="btn btn-outline-primary"
+                            to={`/dashboard/supplier/update-supplier/${supplier.idSupplier}`}><i
+                                    className="fa-solid fa-pen-to-square" /> Sửa
                             </Link>
-                            <button type="button" title="Xóa" style={{marginRight:'10px'}}
+                            <button type="button" title="Xóa"
                                 className="btn btn-outline-primary" onClick={handleDelete}>
-                                <FaRegTrashAlt /> Xoá
+                                <i className="fa-solid fa-trash" /> Xoá
                             </button>
-                            <Link className="btn btn-outline-primary" to={`/home`}><AiOutlineRollback />Trở về</Link>
-                            
+                            <Link className="btn btn-outline-primary"
+                                to={`/dashboard/supplier/create-supplier`}><i
+                                    className="fa-solid fa-plus" /> Thêm mới</Link>
                         </div>
                     </div>
                 </div>
