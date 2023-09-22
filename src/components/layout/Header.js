@@ -115,7 +115,9 @@ const Header = ({ inputSearch, onInputChange }) => {
                       <span className="user-info">Đăng nhập</span>
                     </Link>
                   ) : (
-                    <span className="user-info">{userName.sub}</span>
+                    <span className="user-info" style={{ overflow: "hidden" }}>
+                      {userName.sub}
+                    </span>
                   )}
 
                   <div className="user-dropdown-list">
