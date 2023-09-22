@@ -10,13 +10,14 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { SelectPicker } from "rsuite";
 import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
-import { useNavigate, useParams } from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import * as Yup from "yup";
  function EditInvoice() {
     const [supplier, setSupplier] = useState([]);
     const [invoice, setInvoice] = useState({
 
     });
+    const navigate= useNavigate();
     const param = useParams();
     useEffect(() => {
         getSupplier();
@@ -62,10 +63,10 @@ import * as Yup from "yup";
                             note: invoice.note,
                             supplierId: 0
                         }}
-                        onSubmit={(invoiceValue) => {
+                        onSubmit={async (invoiceValue) => {
                             let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                            alert(JSON.stringify(newInvoiceValue));
-                            editInvoice(newInvoiceValue);
+                            await editInvoice(newInvoiceValue);
+                            navigate("/dashboard/invoice");
                         }}
 
                         validationSchema={Yup.object({
@@ -243,11 +244,11 @@ import * as Yup from "yup";
                                     <div className="d-flex justify-content-end gap-3 my-3">
                                         <button type="submit" className="btn btn-outline-primary"><FiEdit className="mx-1" /> Sửa
                                         </button>
-                                        <a href="/prototype/warehouse/HuyHD_Warehouse.html">
+                                        <Link to={"/dashboard/invoice"}>
                                             <button type="button" className="btn btn-outline-primary">
                                                 <AiOutlineRollback className="mx-1" /> Trở về
                                             </button>
-                                        </a>
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
