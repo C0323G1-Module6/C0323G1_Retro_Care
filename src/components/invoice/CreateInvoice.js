@@ -10,7 +10,7 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { SelectPicker } from "rsuite";
 import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import * as Yup from "yup";
 
 function CreateInvoice() {
@@ -153,7 +153,8 @@ function CreateInvoice() {
                     }}
                     onSubmit={async (invoiceValue) => {
                         let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                        createInvoice(newInvoiceValue);
+                       await createInvoice(newInvoiceValue);
+                       await navigate("/dashboard/invoice");
                     }}
 
                     validationSchema={Yup.object({
@@ -429,9 +430,9 @@ function CreateInvoice() {
                                                 <button type="button" onClick={selectedRow !== -1 ? () => { remove(selectedRow); setSelectedRow(-1) } : null} className="btn btn-outline-primary"><FaRegTrashAlt className="mx-1" />
                                                     Xoá thuốc
                                                 </button>
-                                                <button type="button" onClick={() => setInvoiceInfo()} className="btn btn-outline-primary">
+                                                <Link to={"/dashboard/invoice"}><button type="button" onClick={() => setInvoiceInfo()} className="btn btn-outline-primary">
                                                     <AiOutlineRollback className="mx-1" /> Trở về
-                                                </button>
+                                                </button></Link>
                                             </div>
                                         </div>
                                     </div>
