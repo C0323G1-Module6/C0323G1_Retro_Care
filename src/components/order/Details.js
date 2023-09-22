@@ -60,6 +60,7 @@ export default function Details() {
       console.log("igiigigig");
       console.log(id.data);
       setAppUserId(id.data);
+      // Fix something
 
       // do checking
       const quantity = document.getElementById("quantity-value").value;

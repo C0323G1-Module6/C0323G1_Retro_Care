@@ -23,7 +23,7 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
-
+     // Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [point, setPoint] = useState(0);
