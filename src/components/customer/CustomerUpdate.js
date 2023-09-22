@@ -89,6 +89,7 @@ const CustomerUpdate = () => {
 
   useEffect(() => {
     loadCustomerDetail(params.id);
+    document.title = 'RetroCare - Sửa thông tin khách hàng';
   }, [params.id]);
   if (!customer) {
     return null;
@@ -124,7 +125,7 @@ const CustomerUpdate = () => {
                 .matches(
                     /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
                     "Nhập sai định dạng vd:nguyenvanan@gmail.com"
-                ).max(50,"Email tối đa 50 ký tự"),
+                ).max(30,"Email tối đa 30 ký tự"),
             note: Yup.string().max(200, "Ghi chú tối đa 200 ký tự."),
           })}
           onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
