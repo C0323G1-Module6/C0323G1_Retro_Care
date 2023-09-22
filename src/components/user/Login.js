@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as appUserService from '../../services/user/AppUserService';
 import { BsFacebook } from "react-icons/bs"
 import { AiFillGoogleCircle } from "react-icons/ai"
@@ -7,13 +7,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { LoginSocialFacebook } from "reactjs-social-login";
 import Swal from "sweetalert2";
 
+
 const Login = () => {
     const navigate = useNavigate();
-
+    useEffect(() => {
+        document.title = 'RetroCare - Đăng nhập'
+    }, [])
     const loginWithFacebook = async (resolve) => {
         try {
+            console.log(resolve.data.email)
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
-            console.log(result);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             navigate("/home");
         } catch (e) {
@@ -28,7 +31,8 @@ const Login = () => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate("/home")
+            const checkRoleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
+            navigate("/home");
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -47,7 +51,6 @@ const Login = () => {
             }}
 
             onSubmit={(values, { setSubmitting }) => {
-
                 setSubmitting(false);
 
                 let cloneValues = {
@@ -55,6 +58,7 @@ const Login = () => {
 
                 }
                 loginByUserName(cloneValues);
+
             }}
         >
             <Form>
@@ -94,10 +98,9 @@ const Login = () => {
                                     className="btn border-0"
                                     appId="294412776626440"
                                     onResolve={(resolve) => {
-                                        console.log(resolve);
                                         loginWithFacebook(resolve);
                                     }}
-                                    onReject={(reject) => console.log(reject)}
+
                                 >
                                     <BsFacebook color="blue" size={30} />
                                 </LoginSocialFacebook>
@@ -106,12 +109,16 @@ const Login = () => {
                                     <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
                                 </a>
                             </div>
+                        
+
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
                                 <Link to={`/register`} className="text-primary fw-bold">
                                     Đăng ký
                                 </Link>
                             </div>
+                  
+
                         </div>
                     </div>
                 </div>

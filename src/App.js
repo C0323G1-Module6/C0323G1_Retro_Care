@@ -30,6 +30,7 @@ import SearchPage from "./components/search/SearchPage";
 import Cart from "./components/order/Cart";
 import Details from "./components/order/Details";
 import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
+import CreateInvoice from "./components/invoice/CreateInvoice";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
@@ -99,6 +100,7 @@ function App() {
           path="/dashboard/medicine/update/:id"
           element={<MedicineEdit />}
         />
+        <Route path="/dashboard/invoice/create" element={<CreateInvoice />} />
       </Route>
       <Route path="/cart" element={<Cart />}></Route>
       <Route path="/details/:id" element={<Details />}></Route>
