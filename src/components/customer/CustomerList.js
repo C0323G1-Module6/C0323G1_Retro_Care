@@ -240,12 +240,12 @@ function CustomerList() {
         <div className="col-4 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' id="sortItem" defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 " style={{ width: 190 }}>
+            <select name='sortIterm' id="sortItem" defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 " style={{ width: 180 }}>
               <option value={"app_user_id"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
             </select>
-            <select name="sortType" id="sortType" defaultValue={""} onChange={handleSort} className="form-select m-1 " style={{ width: 110 }}>
+            <select name="sortType" id="sortType" defaultValue={""} onChange={handleSort} className="form-select m-1 " style={{ width: 130 }}>
               <option value={"ASC"}>Tăng dần</option>
               <option value={"DESC"}>Giảm dần</option>
             </select>
