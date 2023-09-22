@@ -61,26 +61,26 @@ export default function RetailPrescriptionInfomation() {
 
     const openSwal = (id) => {
         Swal.fire({
-            title: "Delete Confirmation",
-            text: "Do you want to delete: ",
+            title: "Xác nhận xóa",
+            text: "Bạn có chắc muốn xóa thuốc này ra khỏi toa",
             showCancelButton: true,
             showConfirmButton: true,
-            confirmButtonText: "Yes, delete it",
+            confirmButtonText: "Có",
             icon: "question",
         }).then((result) => {
             if (result.isConfirmed) {
                 // code here
                 deleteMedicine(id);
                 Swal.fire({
-                    text: "Delete successfully ",
+                    text: "Xóa thành công ",
                     icon: "success",
-                    timer: 1500,
+                    timer: 1000,
                 });
             } else {
                 Swal.fire({
-                    text: "You choose cancel ",
+                    text: "Bạn chọn hủy ",
                     icon: "warning",
-                    timer: 1500,
+                    timer: 1000,
                 });
             }
         });
@@ -142,7 +142,7 @@ export default function RetailPrescriptionInfomation() {
         const sumY = tableDataY + indications.length * 10 + 10;
 
         doc.setFont('Arial', 'bold');
-        
+
 
         // Vẽ ghi chú
         const noteX = 30;
@@ -182,7 +182,11 @@ export default function RetailPrescriptionInfomation() {
                                 <label className="col-sm-3 col-form-label">Số ngày uống </label>
                                 <div className="col-sm-2">
                                     <input type="number" className="form-control"
-                                        value={duration} onChange={(event) => setDuration(event.target.value)}
+                                        value={duration} onChange={(event) => {
+                                            if (event.target.value > 0) {
+                                                setDuration(event.target.value)
+                                            }
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -237,7 +241,7 @@ export default function RetailPrescriptionInfomation() {
 
                                 </fieldset>
                                 <a className="btn btn-outline-primary" onClick={() => addToCart()}>Thêm vào hóa đơn</a>
-                                <a className="btn btn-outline-primary" onClick={()=>handleGeneratePDF()}>In toa</a>
+                                <a className="btn btn-outline-primary" onClick={() => handleGeneratePDF()}>In toa</a>
                                 <a className="btn btn-outline-primary"
                                     onClick={() => backToList()}
                                 ><i className="fa-regular fa-circle-left"></i>Huỷ</a>
