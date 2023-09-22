@@ -13,7 +13,7 @@ import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
-export function CreateInvoice() {
+function CreateInvoice() {
     const navigate = useNavigate();
     const [supplier, setSupplier] = useState([]);
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -445,3 +445,4 @@ export function CreateInvoice() {
         </>
     );
 }
+export default CreateInvoice;
