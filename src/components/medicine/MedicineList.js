@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import swal from "sweetalert2";
 
 function MedicineList() {
-    const navigate = useNavigate()
     const [medicineList, setMedicineList] = useState([])
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
@@ -19,7 +18,6 @@ function MedicineList() {
     const [limit, setLimit] = useState(5);
     const [conditional, setConditional] = useState("");
 
-// ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
         if (selectMedicine.id == null) {
             swal.fire({
@@ -29,7 +27,7 @@ function MedicineList() {
             })
         } else {
             swal.fire({
-                title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+                title: "Bạn có muốn xoá sản phẩm này?",
                 text: selectMedicine.name,
                 icon: "warning",
                 showCancelButton: true,
@@ -56,14 +54,7 @@ function MedicineList() {
                 });
         }
     };
-// ---------------------------------------- Get list ---------------------------------------------
 
-    // const getListMedicine = async (page) => {
-    //     const result = await medicineService.findAll(page);
-    //     setMedicineList(result?.data.content);
-    //     setTotalPage(result?.data.totalPages);
-    //     console.log(totalPage);
-    // }
     const previousPage = () => {
         if (page > 0) {
             setPage((pre) => pre - 1)
@@ -75,7 +66,7 @@ function MedicineList() {
             setPage((pre) => pre + 1)
         }
     }
-// ----------------------------------------- Search ---------------------------------------
+
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
         const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
         if (result?.status === 200) {
@@ -97,7 +88,7 @@ function MedicineList() {
             setSearchInput("");
             setConditional("");
         }
-// select child
+
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
         const conditional = document.getElementById("conditional");
@@ -113,7 +104,6 @@ function MedicineList() {
         setPage(0);
     }
 
-// select father
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
@@ -200,25 +190,16 @@ function MedicineList() {
                                         ĐVT
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        ĐV DĐ
+                                        ĐV QĐ
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         Số lượng
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá nhập
+                                        Giá bán
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá lẻ
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % CK
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        %LN XL
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % VAT
+                                        Giá bán lẻ
                                     </th>
                                 </tr>
                                 </thead>
@@ -240,11 +221,8 @@ function MedicineList() {
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price + " vnđ"}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice+" vnđ"}</td>
                                     </tr>
                                 ))) : (<h1>Tiếc quá! Retro Care không có dữ liệu về phần này.</h1>)}
                                 </tbody>
@@ -285,18 +263,17 @@ function MedicineList() {
                     </div>
 
                     <div className="d-flex align-items-center justify-content-end gap-3 mt-3">
-                        <a
-                            className="btn btn-outline-primary"
-                            href="TinVV_CreateMedicine.html">
+
+                        <Link to={'/dashboard/medicine/create'} className="btn btn-outline-primary">
                             <i className="fa-solid fa-plus"></i>
                             Thêm mới
-                        </a>
-                        <a
-                            className="btn btn-outline-primary"
-                            href="TinVV_MedicineCreate.html">
+                        </Link>
+                        <Link
+                            to={`/dashboard/medicine/update/${selectMedicine.id}`}
+                            className="btn btn-outline-primary">
                             <i className="fa-regular fa-pen-to-square"></i>
                             Sửa
-                        </a>
+                        </Link>
                         <button
                             type="button"
                             onClick={() => handleDelete()}
@@ -304,15 +281,14 @@ function MedicineList() {
                             <i className="fa-solid fa-trash"></i>
                             Xoá
                         </button>
-                        <a className="btn btn-outline-primary" href="/HuyL_home.html">
+                        <Link to={`/home`} className="btn btn-outline-primary">
                             <i className="fa-solid fa-rotate-left"></i>
                             Trở về
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
         </>
     )
 }
-
 export default MedicineList;

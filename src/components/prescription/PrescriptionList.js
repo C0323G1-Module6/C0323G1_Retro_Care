@@ -189,7 +189,7 @@ const PrescriptionList = () => {
             <table className="w-100 leading-normal overflow-hidden rounded-3 table table-hover m-0">
               <thead>
                 <tr style={{ background: "#0d6efd", color: "#ffffff" }}>
-                  <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" />
+                  <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">STT</th> 
                   <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                     Mã toa thuốc
                   </th>

@@ -1,4 +1,3 @@
-import "./style.css";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
@@ -24,8 +23,6 @@ const CreationEmployee = () => {
     const imageRef = ref(storage, fileName);
     await uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then(async (url) => {
-        console.log(url);
-        console.log(employee);
         try {
           await crateEmployee({
             ...employee,
@@ -105,40 +102,38 @@ const CreationEmployee = () => {
       }}
       validationSchema={Yup.object({
         nameEmployee: Yup.string()
-          .required("Vui lòng nhập tên nhân viên")
-          .max(100, "Vui lòng nhập dưới 100 kí tự")
+          .required("Vui lòng nhập tên nhân viên.")
+          .max(100, "Vui lòng nhập dưới 100 kí tự.")
           .matches(
             /^[\p{L}\s]+$/u,
-            "Tên nhân viên chỉ được chứa chữ cái và khoảng trắng"
-          ),
+            "Tên nhân viên chỉ được chứa chữ cái và khoảng trắng."),
         address: Yup.string()
-          .required("Vui lòng nhập địa chỉ")
-          .max(100, "Vui lòng nhập dưới 100 kí tự"),
+          .required("Vui lòng nhập địa chỉ.")
+          .max(100, "Vui lòng nhập dưới 100 kí tự."),
         phoneNumber: Yup.string()
-          .required("Vui lòng nhập số điện thoại")
-          .min(10, "Vui lòng chỉ nhập từ 10 đến 11 số")
-          .max(11, "Vui lòng chỉ nhập từ 10 đến 11 số")
+          .required("Vui lòng nhập số điện thoại.")
+          .min(10, "Vui lòng chỉ nhập từ 10 đến 11 số.")
+          .max(11, "Vui lòng chỉ nhập từ 10 đến 11 số.")
           .matches(
             /^0\d{9,10}$/u,
-            "Số điện thoại phải đúng định dạng 0XXXXXXXXX"
-          ),
-        startDay: Yup.date().required("Vui lòng nhập ngày bắt đầu làm"),
+            "Số điện thoại phải đúng định dạng 0XXXXXXXXX"),
+        startDay: Yup.date().required("Vui lòng nhập ngày bắt đầu làm.."),
         birthday: Yup.string()
-          .required("Vui lòng nhập ngày sinh")
-          .test("age", "Nhân viên chưa đủ 18 tuổi", function (value) {
+          .required("Vui lòng nhập ngày sinh.")
+          .test("age", "Nhân viên chưa đủ 18 tuổi.", function (value) {
             const currentDate = new Date();
             const selectedDate = parse(value, "yyyy-MM-dd", new Date());
             const age = differenceInYears(currentDate, selectedDate);
             return age >= 18;
           }),
         idCard: Yup.string()
-          .required("Vui lòng nhập CCCD hoặc CMND")
-          .max(12, "Vui lòng nhập từ 12 kí tự trở xuống")
+          .required("Vui lòng nhập CCCD hoặc CMND.")
+          .max(12, "Vui lòng nhập từ 12 kí tự trở xuống.")
           .matches(
             /^\d{9}(\d{3})?$/u,
-            "Vui lòng chỉ nhập số và độ dài là 9 hoặc 12"
-          ),
-        appUser: Yup.string().required("Vui lòng nhập tên tài khoản"),
+            "Vui lòng chỉ nhập số và độ dài là 9 hoặc 12."),
+        appUser: Yup.string().required("Vui lòng nhập tên tài khoản."),
+        note: Yup.string().max(100,"Vui lòng nhập note dưới 100 kí tự")
       })}
       onSubmit={(value, { setErrors }) => {
         let timerInterval;
@@ -183,13 +178,18 @@ const CreationEmployee = () => {
               />
             </div>
             <div className="col-8  d-flex justify-content-center ">
-              <fieldset className="form-input shadow">
+              <fieldset className=" shadow" style={{width: '590px',
+                height: 'auto',
+                border: '1px solid #000000',
+                padding: '20px',
+                borderRadius: '20px',
+                backgroundColor: '#F8F9Fa'}}>
                 <legend className="float-none w-auto px-3">
                   <h2>Thông tin nhân viên</h2>
                 </legend>
                 <div className="row">
                   <div className="col-3 p-2">
-                    <label>Mã nhân viên</label>
+                    <label style={{ fontWeight:"bold"}}>Mã nhân viên</label>
                   </div>
                   <div className="col-9">
                     <Field
@@ -200,8 +200,8 @@ const CreationEmployee = () => {
                     />
                   </div>
                   <div className="col-3 p-2">
-                    <label>
-                      Tên nhân viên <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Tên nhân viên <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -219,8 +219,8 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   <div className="col-3 p-2">
-                    <label>
-                      Địa chỉ <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Địa chỉ <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -238,8 +238,8 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   <div className="col-3 p-2">
-                    <label>
-                      Số điện thoại <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Số điện thoại <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -257,8 +257,8 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   <div className="col-3 p-2">
-                    <label>
-                      Tên tài khoản <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Tên tài khoản <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -276,8 +276,8 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   <div className="col-3 p-2">
-                    <label>
-                      Ngày vào làm <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Ngày vào làm <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -295,8 +295,8 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   <div className="col-3  p-2">
-                    <label>
-                      Ngày sinh <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      Ngày sinh <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -315,8 +315,8 @@ const CreationEmployee = () => {
                   </div>
 
                   <div className="col-3 p-2">
-                    <label>
-                      CCCD/CMND <sup>*</sup>
+                    <label style={{ fontWeight:"bold"}}>
+                      CCCD/CMND <sup style={{color:"red"}}>*</sup>
                     </label>
                   </div>
                   <div className="col-9">
@@ -334,7 +334,7 @@ const CreationEmployee = () => {
                     </div>
                   </div>
                   {/*<div className="col-3 p-2">*/}
-                  {/*    <label>Chức vụ <sup>*</sup></label>*/}
+                  {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
                   {/*</div>*/}
                   {/*<div className="col-9">*/}
                   {/*    <select  className="form-select border border-dark mt-2">*/}
@@ -346,7 +346,7 @@ const CreationEmployee = () => {
                   {/*    /!*</div>*!/*/}
                   {/*</div>*/}
                   <div className="col-3 p-2">
-                    <label>Ảnh nhân viên</label>
+                    <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
                   </div>
                   <div className="col-9">
                     <div className="input-group mt-2 ">
@@ -392,7 +392,7 @@ const CreationEmployee = () => {
                           <i className="fa-solid fa-rotate-left"></i> Trở về
                         </button>
                       </Link>
-                      <button className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
+                      <button type="reset" className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
                         <i className="fa-solid fa-rotate-right"></i>
                         Làm mới
                       </button>
