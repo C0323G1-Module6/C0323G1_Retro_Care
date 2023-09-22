@@ -7,12 +7,19 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { format } from 'date-fns';
-import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell } from "../../services/retail/RetailService";
+import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell, getNameEmployee } from "../../services/retail/RetailService";
+import { infoAppUserByJwtToken } from "../../services/user/AppUserService";
+import jsPDF from "jspdf";
+import diacriticless from "diacriticless";
+
+
+
+
 
 export default function Retail() {
     const [inputMedicine, setInputMedicine] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [customer, setCustomer] = useState({ name: "Khách lẻ", app_user_id: 1 })
+    const [customer, setCustomer] = useState({ name: "Khách lẻ", app_user_id: -1 })
     const [chooseMedicines, setChooseMedicines] = useState([]);
     const [listCart, setListCart] = useState([]);
     const [note, setNote] = useState("");
@@ -20,7 +27,9 @@ export default function Retail() {
     const [idCartDetail, setIdCartDetail] = useState(0);
     const [code, setCode] = useState("");
     const [date, setDate] = useState("");
-    const app_user_id = 2;
+    const [user, setUser] = useState({});
+    const [employeeName, setEmployeeName] = useState("");
+    const app_user_id = 16;
     const navigate = useNavigate();
 
 
@@ -30,6 +39,8 @@ export default function Retail() {
         const currentDate = new Date();
         const currentDateString = format(currentDate, 'dd/MM/yyyy');
         setDate(currentDateString)
+        getEmployeeName();
+        console.log(user);
     }, [])
 
     useEffect(() => {
@@ -39,6 +50,12 @@ export default function Retail() {
         })
         setSum((pre) => money);
     }, [listCart])
+
+   
+    const getEmployeeName = async () => {
+        const name = await getNameEmployee(app_user_id);
+        setEmployeeName((pre)=>name);
+    }
 
     useEffect(() => {
         findMedicine();
@@ -58,25 +75,33 @@ export default function Retail() {
         }
     }
 
+    const openSwalWhenSuccess = () => {
+        Swal.fire({
+            text: "Đã thanh toán",
+            icon: "success",
+            timer: 1000,
+        });
+    }
+
     const openSwal = async () => {
         if (idCartDetail === 0) {
             return;
         }
         Swal.fire({
-            title: "Delete Confirmation",
-            text: "Do you want to delete: ",
+            title: "Xác nhận xóa",
+            text: "Bạn có thực sự muốn xóa: ",
             showCancelButton: true,
             showConfirmButton: true,
-            confirmButtonText: "Yes, delete it",
+            confirmButtonText: "Có, xóa đi",
             icon: "question",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const response = await deleteMedicineFromCart(idCartDetail);
                 if (response.status === 200) {
                     Swal.fire({
-                        text: "Delete successfully ",
+                        text: "Xóa thành công ",
                         icon: "success",
-                        timer: 1500,
+                        timer: 1000,
                     });
                     setIdCartDetail(0);
                     await getCart();
@@ -84,9 +109,9 @@ export default function Retail() {
 
             } else {
                 Swal.fire({
-                    text: "You choose cancel ",
+                    text: "Đã hủy",
                     icon: "warning",
-                    timer: 1500,
+                    timer: 1000,
                 });
             }
         });
@@ -114,7 +139,7 @@ export default function Retail() {
 
     const getCustomer = async () => {
         if (phoneNumber === "") {
-            setCustomer({ name: "Khách lẻ", app_user_id: 1 })
+            setCustomer({ name: "Khách lẻ", app_user_id: -1 })
         } else {
             const customer = await getCustomerByPhone(phoneNumber);
             if (customer == "") {
@@ -145,11 +170,95 @@ export default function Retail() {
             alert("chua co gi")
             return;
         }
-        const res = await payWhenSell(customer.app_user_id, app_user_id,code,note);
+        const res = await payWhenSell(customer.app_user_id, app_user_id, code, note);
         await getCart();
+        clickSprintBill("da thanh toan");
+        openSwalWhenSuccess();
         setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString());
     }
 
+    const clickSprintBill = (status) => {
+        const content = {
+            "customer": customer,
+            "listCart": listCart,
+            "code": code,
+            "note": note,
+            "sum": sum,
+            "content": status
+        }
+
+        handleGeneratePDF(content, status);
+    }
+
+    const handleGeneratePDF = async (content,status) => {
+        // Tạo đối tượng jsPDF
+        const doc = new jsPDF();
+
+        const billContent = `
+        HOA DON      ${status}
+        -----------------------------
+        Ma hoa don: ${code}
+        -----------------------------
+        Khanh hang: ${diacriticless(content.customer.name)}
+        -----------------------------
+        
+        `
+
+        // Định dạng và vẽ nội dung hóa đơn
+  doc.setFont('Arial', 'bold');
+  doc.setFontSize(16);
+  doc.text(billContent, 10, 10);
+
+  // Vẽ tiêu đề bảng
+  const tableHeader = ['STT', 'Ten san pham', 'So luong', 'Gia', 'Thanh tien'];
+  const tableHeaderX = 30;
+  const tableHeaderY = 70;
+  const tableHeaderFontSize = 12;
+
+  doc.setFont('Arial', 'bold');
+  doc.setFontSize(tableHeaderFontSize);
+  doc.text(tableHeader.join('                        '), tableHeaderX, tableHeaderY);
+
+  // Vẽ dữ liệu sản phẩm
+  const tableDataX = 30;
+  const tableDataY = 80;
+  const tableDataFontSize = 12;
+
+  doc.setFont('Arial', 'normal');
+  doc.setFontSize(tableDataFontSize);
+  listCart.forEach((product, index) => {
+    const { name, cd_quantity, price } = product;
+    const rowData = [
+      index + 1,
+      diacriticless(name),
+      cd_quantity,
+      price,
+      cd_quantity * price,
+    ];
+    const rowY = tableDataY + index * 10;
+    rowData.forEach((data, columnIndex) => {
+      const columnX = tableDataX + columnIndex * 40;
+      doc.text(data.toString(), columnX, rowY);
+    });
+  });
+
+  // Vẽ tổng giá trị hóa đơn
+  const sumX = 30;
+  const sumY = tableDataY + listCart.length * 10 + 10;
+
+  doc.setFont('Arial', 'bold');
+  doc.text(`Tong: ${sum}`, sumX, sumY);
+
+  // Vẽ ghi chú
+  const noteX = 30;
+  const noteY = sumY + 10;
+
+  doc.setFont('Arial', 'normal');
+  doc.text(note, noteX, noteY);
+
+  // Lưu tài liệu PDF
+  doc.save('example.pdf');
+    };
 
     return (
         <>
@@ -184,7 +293,7 @@ export default function Retail() {
                     <div className="col-md-4">
                         <div>
                             <label htmlFor="employee">Nhân viên</label>
-                            <input id="employee" name="employee" value="Nguyễn Long Vũ" readOnly className="form-control" />
+                            <input id="employee" name="employee" value={employeeName} readOnly className="form-control" />
                             <label htmlFor="date">Ngày lập</label>
                             <input id="date" name="date" value={date} className="form-control" readOnly />
                         </div>
@@ -280,7 +389,7 @@ export default function Retail() {
                         >
                             <i className="fa-solid fa-trash"></i> Xoá
                         </a>
-                        <button className="btn btn-outline-primary">In phiếu</button>
+                        <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}>In phiếu</button>
                         <a className="btn btn-outline-primary" >
                             <i class="fa-regular fa-circle-left"></i>Trở về </a>
                     </div>
@@ -289,3 +398,5 @@ export default function Retail() {
         </>
     );
 }
+
+

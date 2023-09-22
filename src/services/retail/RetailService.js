@@ -36,6 +36,7 @@ export async function deleteAllFromCart(id) {
 }
 
 export async function payWhenSell(customerUserId, employeeUserId, code, note) {
+    console.log(customerUserId);
     const res = await axios.post("http://localhost:8080/api/orders/createOrder?customerUserId=" +
         customerUserId + "&employeeUserId=" + employeeUserId + "&code=" + code + "&note=" + note);
         return res;
@@ -58,5 +59,10 @@ export async function getAllIndicationsByPrescription(id){
 
 export async function getOnePrescriptionById(id){
     const res = await axios.get("http://localhost:8080/prescription/"+id);
+    return res.data;
+}
+
+export async function getNameEmployee(id){
+    const res = await axios.get("http://localhost:8080/api/carts/getNameEmployee?appUserId="+id);
     return res.data;
 }
