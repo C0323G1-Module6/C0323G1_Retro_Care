@@ -262,28 +262,28 @@ function CustomerList() {
             <tr
               style={{ background: "#0d6efd", color: "#ffffff", height: 50 }}
             >
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 50}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 50 }}>
                 STT
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 190}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 190 }}>
                 Mã khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
                 Tên khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 150}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 150 }}>
                 Ngày sinh
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
                 Địa chỉ
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 170}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 170 }}>
                 Số điện thoại
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 250}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 250 }}>
                 Nhóm khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 180}}>
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 180 }}>
                 Ghi chú
               </th>
             </tr>
@@ -297,7 +297,7 @@ function CustomerList() {
                   } else {
                     setSeletedCustomer({ id: null, name: "" });
                   }
-                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec', height: 50 } : {height: 50}}>
+                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec', height: 50 } : { height: 50 }}>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {index + 1}
                   </td>
@@ -305,7 +305,7 @@ function CustomerList() {
                     {customer?.code}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.name}
+                    {customer?.name.length > 20 ? `${customer?.name.slice(0, 20)}...` : customer?.name}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200  text-sm">
                     {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
@@ -327,7 +327,7 @@ function CustomerList() {
             </tbody> :
             <tbody>
               <tr style={{ height: '150px' }}>
-                <td style={{ color: 'red', fontSize: '40px', textAlign: 'center' }} colSpan="8">Không có dữ
+                <td style={{ fontSize: '30px', textAlign: 'center' }} colSpan="8">Không có dữ
                   liệu
                 </td>
               </tr>
