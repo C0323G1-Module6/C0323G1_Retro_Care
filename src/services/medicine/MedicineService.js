@@ -54,7 +54,7 @@ export const searchMedicine = async (searchInMedicine, search, page, limit, cond
       `http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}&conditional=${conditional}`
     );
     console.log(result.data)
-    return result.data;
+    return result;
   } catch (error) {
     return error;
   }
