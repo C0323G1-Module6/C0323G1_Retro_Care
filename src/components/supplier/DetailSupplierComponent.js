@@ -227,7 +227,6 @@ function DetailSupplierComponent() {
                                                         </td>
                                                     </tr>
                                                     )
-
                                             })}
                                             </tbody> : <tbody>
                                             <tr style={{height: '150px'}}>
