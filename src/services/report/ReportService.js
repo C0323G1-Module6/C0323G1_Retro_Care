@@ -24,3 +24,12 @@ export const getProfit = async (startDate,endDate) => {
     console.log(result.data);
     return result.data;
 };
+
+export const getSumReport = async (startDate,endDate) => {
+
+  const result = await axios.get(
+    `http://localhost:8080/api/report/sum/?startDate=${startDate}&endDate=${endDate}`
+  );
+  console.log(result.data);
+  return result.data;
+};

@@ -17,7 +17,8 @@ function MedicineList() {
 
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
-    const [limit, setLimit] = useState(5)
+    const [limit, setLimit] = useState(5);
+    const [conditional, setConditional] = useState("");
 
 // ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
@@ -52,7 +53,7 @@ function MedicineList() {
                             text: 'Xóa thất bại!'
                         });
                     }
-                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
+                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional);
                 });
         }
     };
@@ -76,16 +77,48 @@ function MedicineList() {
         }
     }
 // ----------------------------------------- Search ---------------------------------------
-    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit) => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
-        setMedicineList(result?.content);
-        setTotalPage(result?.totalPages);
+    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
+        if (medicineList !== undefined){
+            const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+            setMedicineList(result?.content);
+            setTotalPage(result?.totalPages);
+        } else {
+            setMedicineList((pre) => []);
+            setTotalPage(0);
+            await swal.fire({
+                icon: 'warning',
+                title: 'Không tìm thấy dữ liệu cần tìm.',
+                showConfirmButton: true,
+                timer: 1500
+            })
+            setMedicineList([searchInMedicine,searchInput,page,limit,conditional]);
+            setTotalPage(0)
+        }
+
+        // try {
+        //     const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+        //     setMedicineList(result?.content);
+        //     setTotalPage(result?.totalPages);
+        //     await swal.fire({
+        //         icon: "success",
+        //         title: 'Đã tìm thấy dữ liệu.',
+        //         showConfirmButton: true,
+        //         timer: 1500
+        //     })
+        // } catch (noContent) {
+        //     swal.fire({
+        //         icon: 'warning',
+        //         title: 'Không tìm thấy dữ liệu cần tìm.',
+        //         showConfirmButton: false,
+        //         timer: 1500
+        //     })
+        // }
     }
 // select child
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
         const conditional = document.getElementById("conditional");
-        if (select === "4") {
+        if (select === "searchByPrice") {
             conditional.style.display = "inline";
         } else {
             conditional.style.display = "none";
@@ -96,23 +129,18 @@ function MedicineList() {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
     }
+
 // select father
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
 
-    // useEffect(() => {
-    //     getListMedicine(page);
-    // }, [page])
-
-    const handleReset = () => {
-        setPage(0);
-        setSearchInMedicine("");
-        setSearchInput("");
+    const handleSearchConditional = (e) => {
+        setConditional(e.target.value);
     }
 
     useEffect(() => {
-        getListSearchMedicine(searchInMedicine, searchInput, page, limit)
+        getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }, [searchInput, page, limit])
 
     if (!medicineList) {
@@ -121,7 +149,7 @@ function MedicineList() {
     return (
         <>
             <div className="container">
-                <div className="row header" >
+                <div className="row header">
                     <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>DANH SÁCH THUỐC</h1>
                 </div>
                 <div className="row row-function" style={{display: 'flex'}}>
@@ -136,19 +164,19 @@ function MedicineList() {
                             <option value="searchByNameKindOfMedicine">Nhóm thuốc</option>
                             <option value="searchByName">Tên thuốc</option>
                             <option value="searchByActiveElement">Hoạt chất</option>
-                            <option value="4">Giá bán lẻ</option>
+                            <option value="searchByPrice">Giá bán lẻ</option>
                         </select>
 
                         <select style={{width: '150px', borderRadius: '5px', color: 'blue', display: "none"}}
+                                onChange={(e) => handleSearchConditional(e)}
                                 id="conditional" className="appearance-none pl-8 pr-6 py-2">
-                            <option selected>Điều kiện</option>
-                            <option value="1">Bằng</option>
-                            <option value="2">Lớn hơn</option>
-                            <option value="3">Nhỏ hơn</option>
-                            <option value="4">Lớn hơn bằng</option>
-                            <option value="5">Nhỏ hơn bằng</option>
-                            <option value="6">Khác</option>
-                            <option value="7">Tất cả</option>
+                            <option value="">Tất cả</option>
+                            <option value="equal">Bằng</option>
+                            <option value="bigger">Lớn hơn</option>
+                            <option value="litter">Nhỏ hơn</option>
+                            <option value="greater">Lớn hơn bằng</option>
+                            <option value="small">Nhỏ hơn bằng</option>
+                            <option value="notEqual">Khác</option>
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
@@ -212,32 +240,30 @@ function MedicineList() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
-                                    medicineList.map((item, index) => (
-                                        <tr key={index} id={index} onClick={() => {
-                                            if (selectMedicine === null || selectMedicine.id !== item.id) {
-                                                setSelectMedicine({id: item.id, name: item?.name});
-                                            } else if (selectMedicine.id === item.id) {
-                                                setSelectMedicine({id: null, name: ""});
-                                            }
-
-                                        }}
-                                            style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price - (item.price / (100 + (item.vat + item.retailProfits)) * 100)}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
-                                        </tr>
-                                    ))}
+                                {medicineList ? (medicineList.map((item, index) => (
+                                    <tr key={index} id={index} onClick={() => {
+                                        if (selectMedicine === null || selectMedicine.id !== item.id) {
+                                            setSelectMedicine({id: item.id, name: item?.name});
+                                        } else if (selectMedicine.id === item.id) {
+                                            setSelectMedicine({id: null, name: ""});
+                                        }
+                                    }}
+                                        style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
+                                    </tr>
+                                ))) : (<h1>Tiếc quá! Retro Care không có dữ liệu về phần này.</h1>)}
                                 </tbody>
                             </table>
                         </div>

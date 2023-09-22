@@ -2,7 +2,7 @@ import { AiOutlineLineChart, AiOutlineRollback } from "react-icons/ai";
 import "./Report.css";
 import { Link } from "react-router-dom";
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import {
   Chart as ChartJS,
@@ -15,7 +15,11 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { getProfit, getRevenue } from "../../services/report/ReportService";
+import {
+  getProfit,
+  getRevenue,
+  getSumReport,
+} from "../../services/report/ReportService";
 import { format, parseISO } from "date-fns";
 ChartJS.register(
   CategoryScale,
@@ -27,11 +31,9 @@ ChartJS.register(
   Legend
 );
 const RevenueAndProfitChart = () => {
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
   const [revenues, setRevenue] = useState([]);
   const [profits, setProfit] = useState([]);
-  const [periodRevenue, setPeriodRevenue] = useState(0);
+  const [sumReport, setSumReport] = useState({});
   const drawChart = (revenue, profit) => {
     const options = {
       responsive: true,
@@ -75,23 +77,27 @@ const RevenueAndProfitChart = () => {
       ],
     };
     console.log(data);
+
     return <Line options={options} data={data} />;
   };
   const handleSubmit = async (values, setErrors) => {
     try {
       const revenueResult = await getRevenue(values.startDate, values.endDate);
       const profitResult = await getProfit(values.startDate, values.endDate);
+      const sumReportResult = await getSumReport(
+        values.startDate,
+        values.endDate
+      );
       setRevenue(revenueResult);
       setProfit(profitResult);
-      setStartDate(values.startDate);
-      setEndDate(values.endDate);
+      setSumReport(sumReportResult);
     } catch (err) {
       if (err.response.data) {
         setErrors(err.response.data);
       }
     }
   };
-  console.log(periodRevenue);
+
   return (
     <>
       <Formik
@@ -168,31 +174,31 @@ const RevenueAndProfitChart = () => {
                         <p>Doanh thu</p>
                       </div>
                       <div className="col-7">
-                        <p> {periodRevenue} VNĐ</p>
+                        <p> {sumReport.sumRevenue} VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Lợi nhuận</p>
                       </div>
                       <div className="col-7">
-                        <p> 17,400,000 VNĐ</p>
+                        <p> {sumReport.sumProfit} VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Doanh thu TB</p>
                       </div>
                       <div className="col-7">
-                        <p> 24,857,143 VNĐ</p>
+                        <p> {sumReport.averageRevenue} VNĐ</p>
                       </div>
                       <div className="col-5">
                         <p>Lợi nhuận TB</p>
                       </div>
                       <div className="col-7">
-                        <p> 2,485,715 VNĐ</p>
+                        <p> {sumReport.averageProfit} VNĐ</p>
                       </div>
                     </div>
                   </fieldset>
                 </div>
               </div>
-              <div className="col-8 ">
+              <div className="col-8">
                 <div className="row">
                   <fieldset
                     className="form-input shadow mx-auto my-3"
@@ -202,15 +208,15 @@ const RevenueAndProfitChart = () => {
                       <h5>Biểu đồ</h5>
                     </legend>
                     {drawChart(revenues, profits)}
-                    <Link
-                      to={"/dashboard/report"}
-                      className="btn btn-outline-primary float-end mx-3 mt-4"
-                    >
-                      <AiOutlineRollback className="mx-1" />
-                      Trở về
-                    </Link>
                   </fieldset>
                 </div>
+                <Link
+                  to={"/dashboard/report"}
+                  className="btn btn-outline-primary float-end"
+                >
+                  <AiOutlineRollback className="mx-1" />
+                  Trở về
+                </Link>
               </div>
             </div>
           </div>
