@@ -13,42 +13,75 @@ import Footer from "../layout/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "./redux/cartAction";
 import "../../css/Order.css";
-
+import { useNavigate } from "react-router-dom";
+import {
+  getIdByUserName,
+  infoAppUserByJwtToken,
+} from "../../services/user/AppUserService";
 export default function Details() {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(0); // this is to control 'active' value
   const { id } = useParams();
   console.log(id);
-
   const [medicine, setMedicine] = useState({});
   const [images, setImages] = useState([]);
-
+  const [appUserId, setAppUserId] = useState(null);
   const getMedicineDetails = async () => {
-    const data = await getMedicineForDisplay(id);
-    setMedicine(data);
-    // split string of images into el of array
-    const str = data.medicine_Images.split(",");
-    setImages(str);
-    console.log(data.medicine_Images);
-    console.log(data);
-  };
-
-  const addToCart = async (medicineId) => {
-    const quantity = document.getElementById("quantity-value").value;
-    const quantityInCart = await getQuantityInCart(1, medicineId);
-    console.log(quantityInCart);
     try {
-      const res = await checkQuantity(id, parseInt(quantity) + quantityInCart);
-      console.log(res);
-      const add = await addToCartFromHomeAndDetails(1, medicineId, quantity);
-      dispatch(getAllCarts(1));
-      toast.success("Thêm sản phẩm thành công!");
-    } catch {
-      swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+      const res = await getMedicineForDisplay(id);
+      setMedicine(res.data);
+      // split string of images into el of array
+      const str = res.data.medicine_Images.split(",");
+      setImages(str);
+      console.log(res.data.medicine_Images);
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status == 406) {
+        swal.fire("Không tìm thấy sản phẩm bạn cần tìm!", "", "error");
+        navigate("/home");
+      }
     }
   };
-
+  const addToCart = async (medicineId) => {
+    const isLoggedIn = infoAppUserByJwtToken();
+    if (!isLoggedIn) {
+      swal.fire("Vui lòng đăng nhập tài khoản!", "", "warning");
+      navigate("/login");
+    } else {
+      // extract appUserId from token
+      const id = await getIdByUserName(isLoggedIn.sub);
+      console.log("igiigigig");
+      console.log(id.data);
+      setAppUserId(id.data);
+      // Fix something
+      // do checking
+      const quantity = document.getElementById("quantity-value").value;
+      const quantityInCart = await getQuantityInCart(id.data, medicineId);
+      console.log(quantityInCart);
+      if (parseInt(quantity) <= 0) {
+        swal.fire("Vui lòng thêm ít nhất 1 sản phẩm!", "", "warning");
+      } else {
+        try {
+          const res = await checkQuantity(
+            id.data,
+            parseInt(quantity) + quantityInCart
+          );
+          console.log(res);
+          const add = await addToCartFromHomeAndDetails(
+            id.data,
+            medicineId,
+            quantity
+          );
+          dispatch(getAllCarts(id.data));
+          toast.success("Thêm sản phẩm thành công!");
+        } catch {
+          swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+        }
+      }
+    }
+  };
   function handlePlus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value < 99) {
@@ -57,7 +90,6 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
-
   function handleMinus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value > 1) {
@@ -67,17 +99,14 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
-
   const currency = (money) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(money);
-
   useEffect(() => {
     getMedicineDetails();
   }, []);
-
   return (
     <>
       <Header />
@@ -179,14 +208,12 @@ export default function Details() {
                   </p>
                 </div>
                 <p className="mt-2">{medicine.medicine_Note}</p>
-
                 {Math.floor(medicine.quantity / medicine.conversion_Rate) >
                 0 ? (
                   <h6 style={{ color: "green" }}>Còn hàng</h6>
                 ) : (
                   <h6 style={{ color: "red" }}>Hết hàng</h6>
                 )}
-
                 <div className="buttons d-flex justify-content-between align-items-center">
                   <div className="btn-input-group col d-flex justify-content-start align-items-end ">
                     <input
