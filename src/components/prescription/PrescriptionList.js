@@ -304,10 +304,8 @@ const PrescriptionList = () => {
             <FaRegTrashAlt className="mx-1" />
             Xoá
           </button>
-          <a className="btn btn-outline-primary" href="/HuyL_home.html">
-            <AiOutlineRollback className="mx-1" />
-            Trở về
-          </a>
+          
+          <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
         </div>
       </div>
     </div>
