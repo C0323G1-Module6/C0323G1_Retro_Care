@@ -13,9 +13,11 @@ import Footer from "../layout/Footer";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "./redux/cartAction";
 import "../../css/Order.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Details() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [activeIndex, setActiveIndex] = useState(0); // this is to control 'active' value
   const { id } = useParams();
@@ -25,13 +27,21 @@ export default function Details() {
   const [images, setImages] = useState([]);
 
   const getMedicineDetails = async () => {
-    const data = await getMedicineForDisplay(id);
-    setMedicine(data);
-    // split string of images into el of array
-    const str = data.medicine_Images.split(",");
-    setImages(str);
-    console.log(data.medicine_Images);
-    console.log(data);
+    try {
+      const res = await getMedicineForDisplay(id);
+      setMedicine(res.data);
+      // split string of images into el of array
+      const str = res.data.medicine_Images.split(",");
+      setImages(str);
+      console.log(res.data.medicine_Images);
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.status == 406) {
+        swal.fire("Không tìm thấy sản phẩm bạn cần tìm!", "", "error");
+        navigate("/home");
+      }
+    }
   };
 
   const addToCart = async (medicineId) => {
