@@ -6,8 +6,9 @@ import {
     AiOutlineDoubleLeft,
     AiOutlineDoubleRight,
   } from "react-icons/ai";
+import CreateInvoice from "./CreateInvoice";
 
-export function EditInvoice() {
+function EditInvoice() {
     return (
         <>
             <div>
@@ -223,3 +224,4 @@ export function EditInvoice() {
         </>
     );
 }
+export default EditInvoice;
