@@ -4,7 +4,7 @@ import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
 import { createPrescription } from "../../services/prescription/prescription";
 import * as Yup from 'yup';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
@@ -180,9 +180,8 @@ function PrescriptionCreate() {
                                                                 <datalist id="medicine-options" >
                                                                     {chooseMedicines.map((medicine, index) => (
                                                                         <>
-                                                                            <option value={medicine.id}>{medicine.name}</option>
+                                                                            <option value={medicine.name}></option>
                                                                         </>
-
                                                                     ))}
                                                                 </datalist>
 
@@ -234,7 +233,7 @@ function PrescriptionCreate() {
                                     <div className="d-flex justify-content-end w-100 gap-2">
                                         <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
                                             Thêm mới</button>
-                                        <a href="/dashboard/prescription" className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</a>
+                                            <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
                                     </div>
                                 </div>
                             </Form>
