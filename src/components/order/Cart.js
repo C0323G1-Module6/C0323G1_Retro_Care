@@ -18,9 +18,12 @@ import Footer from "../layout/Footer";
 import Header from "../layout/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "./redux/cartAction";
-import { el } from "date-fns/locale";
 import "../../css/Order.css";
-
+import {
+  getIdByUserName,
+  infoAppUserByJwtToken,
+} from "../../services/user/AppUserService";
+// Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
   const [point, setPoint] = useState(0);
@@ -28,6 +31,7 @@ export default function Cart() {
   const [quantities, setQuantities] = useState({});
   const [checkout, setCheckOut] = useState(false);
   const [showCf, setShowCf] = useState(false);
+  const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
 
@@ -37,6 +41,28 @@ export default function Cart() {
     (total, el) => total + el.medicinePrice * el.quantityInCart,
     0
   );
+
+  const getAppUserIdFirst = async () => {
+    const isLoggedIn = infoAppUserByJwtToken();
+    if (!isLoggedIn) {
+      swal.fire("Vui lòng đăng nhập tài khoản!", "", "warning");
+      navigate("/login");
+    } else {
+      const id = await getIdByUserName(isLoggedIn.sub);
+      console.log("igiigigig");
+      console.log(id.data);
+      setAppUserId(id.data);
+      console.log("im here");
+      await getLoyaltyPoint(id.data);
+      // const response = await addToCartFromHomeAndDetails(
+      //   id.data,
+      //   medicineId,
+      //   1
+      // );
+      // dispatch(getAllCarts(id.data));
+      // toast.success("Thêm sản phẩm thành công");
+    }
+  };
 
   async function handlePlus(medicineId) {
     let quantity = document.getElementById("input-quantity" + medicineId);
@@ -49,7 +75,7 @@ export default function Cart() {
       } else {
         quantity.value = 99;
       }
-      await addToCart(1, medicineId, quantity.value);
+      await addToCart(appUserId, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
@@ -89,7 +115,7 @@ export default function Cart() {
       const res = await checkQuantity(medicineId, quantity.value);
       // if enuf
 
-      await addToCart(1, medicineId, quantity.value);
+      await addToCart(appUserId, medicineId, quantity.value);
       setIsUpdated((prev) => !prev);
     } catch {
       swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
@@ -119,7 +145,7 @@ export default function Cart() {
 
   const checkQuantityBeforePayment = async () => {
     // input appuserID in replace of 2
-    const invalidQuantityObj = await checkAvailability(1);
+    const invalidQuantityObj = await checkAvailability(appUserId);
     if (Object.keys(invalidQuantityObj).length > 0) {
       setQuantities(invalidQuantityObj);
       return false;
@@ -174,7 +200,7 @@ export default function Cart() {
             console.log(point);
             const plusPoint = totalPrice / 100;
             const loyaltyPoint = point + plusPoint - discount;
-            const res = await createOrder(1, loyaltyPoint, totalPrice);
+            const res = await createOrder(appUserId, loyaltyPoint, totalPrice);
             swal.fire(
               "Thanh toán thành công!",
               "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của RetroCare!",
@@ -199,8 +225,8 @@ export default function Cart() {
       currency: "VND",
     }).format(money);
 
-  const getLoyaltyPoint = async () => {
-    const data = await getPoint(1);
+  const getLoyaltyPoint = async (appUserId) => {
+    const data = await getPoint(appUserId);
     setPoint(data);
   };
 
@@ -215,8 +241,12 @@ export default function Cart() {
         if (parseInt(inputPoint.value) <= totalPrice) {
           setDiscount(parseInt(inputPoint.value));
         } else {
-      setDiscount(0);
-      swal.fire("Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!","","warning");
+          setDiscount(0);
+          swal.fire(
+            "Sử dụng tích luỹ vượt qúa tổng tiền hoá đơn!",
+            "",
+            "warning"
+          );
         }
       } else {
         setDiscount(0);
@@ -226,11 +256,16 @@ export default function Cart() {
   };
 
   useEffect(() => {
-    dispatch(getAllCarts(1));
-  }, [isUpdated]);
-  useEffect(() => {
-    getLoyaltyPoint();
+    getAppUserIdFirst();
   }, []);
+
+  // useEffect(() => {
+  //   getLoyaltyPoint();
+  // }, []);
+
+  useEffect(() => {
+    dispatch(getAllCarts(appUserId));
+  }, [isUpdated]);
 
   return (
     <>

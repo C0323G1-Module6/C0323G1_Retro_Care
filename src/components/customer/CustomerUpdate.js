@@ -12,15 +12,60 @@ import Swal from "sweetalert2";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineRollback } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";
+import {differenceInYears, isAfter, parseISO} from "date-fns";
+import XRegExp from "xregexp";
 
 const CustomerUpdate = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [customer, setCustomer] = useState();
   const loadCustomerDetail = async (id) => {
-    const result = await getCustomerDetail(id);
-    setCustomer(result);
+    try {
+      const result = await getCustomerDetail(id);
+      if (result==null){
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'Lỗi kết nối',
+          text:'Không tìm thấy khách hàng',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        navigate("/dashboard/customer");
+      }
+      setCustomer(result);
+
+    }catch (e){
+      if (e.response.status === 406) {
+        console.log(e);
+        Swal.fire({
+          position: 'center',
+          icon: 'error',
+          title: 'Lỗi kết nối',
+          text:'Khách hàng bị null',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        navigate("/dashboard/customer");
+      }
+    }}
+
+  const validateBirth = (value) => {
+    const currentDate = new Date();
+    const birthday = parseISO(value);
+
+
+    return !isAfter(birthday, currentDate);
   };
+  const validateBirthAge = (value) => {
+    const currentDate = new Date();
+    const birthday = parseISO(value);
+
+    const age = differenceInYears(currentDate, birthday);
+
+    return age >= 18;
+
+  }
   const handleSubmit = async (value, setErrors) => {
     try {
       console.log(value);
@@ -44,41 +89,48 @@ const CustomerUpdate = () => {
 
   useEffect(() => {
     loadCustomerDetail(params.id);
+    document.title = 'RetroCare - Sửa thông tin khách hàng';
   }, [params.id]);
   if (!customer) {
     return null;
   }
   return (
     <>
-      <div className="mx-auto" style={{ width: "50%" }}>
+      <div className="mx-auto" style={{ width: "70%" }}>
         <Formik
           initialValues={{
             ...customer,
           }}
           validationSchema={Yup.object({
             name: Yup.string()
-              .max(50)
-              .min(2, "Độ dài tên quá ngắn vui lòng nhập thêm"),
+                .max(50,"Tên khách hàng tối đa 50 ký tự")
+                .min(3, "Tên khách hàng tối thiểu 3 ký tự").required("Không bỏ trống trường này").matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Nhập sai định dạng vd:Nguyen Van An "),
             birthday: Yup.string().required(
-              "Vui lòng nhập ngày sinh khách hàng"
-            ),
+                "Không bỏ trống trường này."
+            ).matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,"Nhập sai định dạng ngày sinh VD: dd/mm/yyyy").test( "birthday",
+                "Ngày sinh không được vượt quá thời gian thực tế.",
+                validateBirth).test("birthday",
+                "Cảnh báo khách hàng chưa đủ 18 tuổi.",
+                validateBirthAge),
             address: Yup.string()
-              .required("Vui lòng nhập địa chỉ cho khách hàng")
-              .max(100, "Độ dài vượt quá ký tự cho phép"),
+                .required("Không bỏ trống trường này.")
+                .max(100, "Địa chỉ tối đa 100 ký tự ").min(5,"Địa chỉ tối thiểu 5 ký tự."),
             phoneNumber: Yup.string()
-              .required("Vui lòng nhập số điện thoại cho khách hàng")
-              .max(12, "Độ dài vượt quá ký tự cho phép")
-              .min(7, "Số điện thoại quá ngắn"),
+                .required("Không bỏ trống trường này")
+                .max(11, "Số điện thoại tối đa 11 ký tự.")
+                .min(10, "Số điện tối thiểu 10 ký tự.").matches( /^(0[3|5|7|8|9])([0-9]{8})\b$/
+                    ,"Nhập sai định dạng vd: 0339779768"),
             email: Yup.string()
-              .required("Vui lòng nhập địa chỉ email cho khách hàng")
-              .matches(
-                /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
-                "Chưa đúng định dạng email"
-              ),
-            note: Yup.string().max(50, "Độ dài đang vượt quá ký tự cho phép"),
+                .required("Không bỏ trống trường này").min(12,"Email tối thiểu 12 ký tự")
+                .matches(
+                    /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+                    "Nhập sai định dạng vd:nguyenvanan@gmail.com"
+                ).max(30,"Email tối đa 30 ký tự"),
+            note: Yup.string().max(200, "Ghi chú tối đa 200 ký tự."),
           })}
           onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
         >
+          {({ isValid,dirty }) => (
           <Form>
             <fieldset className="form-input shadow">
               <legend className="float-none w-auto px-3">
@@ -229,17 +281,18 @@ const CustomerUpdate = () => {
                   >
                     <AiOutlineRollback className="mx-1" /> Trở về
                   </Link>
+                  { isValid && dirty && (
                   <button
                     className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
                     type="submit"
                   >
                     <FiEdit className="mx-1" /> Hoàn thành
-                  </button>
+                  </button>)}
                 </div>
               </div>
             </fieldset>
             <div className="form-btn"></div>
-          </Form>
+          </Form>)}
         </Formik>
       </div>
     </>

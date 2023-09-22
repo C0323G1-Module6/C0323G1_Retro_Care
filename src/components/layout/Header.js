@@ -7,6 +7,10 @@ import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "../order/redux/cartAction";
+import {
+  getIdByUserName,
+  infoAppUserByJwtToken,
+} from "../../services/user/AppUserService";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
@@ -18,7 +22,7 @@ const Header = ({ inputSearch, onInputChange }) => {
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
   useEffect(() => {
-    dispatch(getAllCarts(1));
+    getAppUserId();
   }, []);
 
   useEffect(() => {
@@ -28,6 +32,15 @@ const Header = ({ inputSearch, onInputChange }) => {
   const getUsername = async () => {
     const response = await userService.infoAppUserByJwtToken();
     setUsername(response);
+  };
+
+  const getAppUserId = async () => {
+    const isLoggedIn = infoAppUserByJwtToken();
+    if (isLoggedIn) {
+      const id = await getIdByUserName(isLoggedIn.sub);
+      console.log(id.data);
+      dispatch(getAllCarts(id.data));
+    }
   };
 
   const handleLogOut = () => {
@@ -115,7 +128,9 @@ const Header = ({ inputSearch, onInputChange }) => {
                       <span className="user-info">Đăng nhập</span>
                     </Link>
                   ) : (
-                    <span className="user-info">{userName.sub}</span>
+                    <span className="user-info" style={{ overflow: "hidden" }}>
+                      {userName.sub}
+                    </span>
                   )}
 
                   <div className="user-dropdown-list">
