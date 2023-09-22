@@ -28,8 +28,8 @@ export const infoAppUserByJwtToken = () => {
     }
 }
 
-export const getIdByUserName = (userName) => {
-    const result = axios.get(`http://localhost:8080/api/user/get-id-app-user/${userName}`);
+export const getIdByUserName = async (userName) => {
+    const result = await axios.get(`http://localhost:8080/api/user/get-id-app-user/${userName}`);
     return result;
 }
 
