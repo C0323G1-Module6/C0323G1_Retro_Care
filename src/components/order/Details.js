@@ -61,7 +61,6 @@ export default function Details() {
       console.log(id.data);
       setAppUserId(id.data);
       // Fix something
-
       // do checking
       const quantity = document.getElementById("quantity-value").value;
       const quantityInCart = await getQuantityInCart(id.data, medicineId);

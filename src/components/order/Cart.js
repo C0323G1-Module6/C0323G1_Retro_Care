@@ -42,6 +42,7 @@ export default function Cart() {
     0
   );
 
+
   const getAppUserIdFirst = async () => {
     const isLoggedIn = infoAppUserByJwtToken();
     if (!isLoggedIn) {
