@@ -445,9 +445,22 @@ function InvoiceList() {
                             </a>
                         </Link>
 
-                        <Link to={`/dashboard/invoice/edit/${idClick?.id}`}><a className="btn btn-outline-primary"
-                                                                                 title="Sửa"
-                                                                                 style={{marginLeft: '5px'}}>
+                        <Link to={`/dashboard/invoice/edit/${idClick?.id}`}>
+                            <a className="btn btn-outline-primary"
+                               title="Sửa"
+                               style={{marginLeft: '5px'}}
+                               onClick={(e) => {
+                                   if (idClick?.id == null || idClick?.id == undefined) {
+                                       e.preventDefault();
+                                       Swal.fire({
+                                           icon: 'error',
+                                           title: 'Bạn chưa chọn hóa đơn!',
+                                           showConfirmButton: false,
+                                           timer: 1500,
+                                       });
+                                       return false;
+                                   }
+                               }}>
                             <FiEdit style={{fontSize: '20px', marginBottom: '5px'}}/> Sửa
                         </a></Link>
 
