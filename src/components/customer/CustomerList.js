@@ -260,7 +260,7 @@ function CustomerList() {
         >
           <thead>
             <tr
-              style={{ background: "#0d6efd", color: "#ffffff" }}
+              style={{ background: "#0d6efd", color: "#ffffff", height: 50 }}
             >
               <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 50}}>
                 STT
@@ -297,7 +297,7 @@ function CustomerList() {
                   } else {
                     setSeletedCustomer({ id: null, name: "" });
                   }
-                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec' } : {}}>
+                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec', height: 50 } : {height: 50}}>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {index + 1}
                   </td>
