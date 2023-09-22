@@ -158,7 +158,6 @@ function SupplierListComponent() {
         }
     };
 
-
     return (
         <>
             <div id="ThanhVH">
@@ -281,7 +280,7 @@ function SupplierListComponent() {
                                                         <td className="px-2 py-3 border-b border-gray-200 text-sm">
                                                             <Link
                                                                 style={{ textDecoration: 'none' }}
-                                                                to={`/supplier/detail-supplier/${item.idSupplier}`}>
+                                                                to={`/dashboard/supplier/detail-supplier/${item.idSupplier}`}>
                                                                 <b>{item.nameSupplier}</b>
                                                             </Link>
                                                         </td>
@@ -367,7 +366,7 @@ function SupplierListComponent() {
                         <div className="function" style={{ textAlign: 'right', marginTop: '-10px' }}>
                             <Link className="btn btn-outline-primary" to={`/home`}>Trở về</Link>
                             <Link className="btn btn-outline-primary"
-                            to={`/supplier/update-supplier/${supplier.idSupplier}`}><i
+                            to={`/dashboard/supplier/update-supplier/${supplier.idSupplier}`}><i
                                     className="fa-solid fa-pen-to-square" /> Sửa
                             </Link>
                             <button type="button" title="Xóa"
@@ -375,7 +374,7 @@ function SupplierListComponent() {
                                 <i className="fa-solid fa-trash" /> Xoá
                             </button>
                             <Link className="btn btn-outline-primary"
-                                to={`/supplier/create-supplier`}><i
+                                to={`/dashboard/supplier/create-supplier`}><i
                                     className="fa-solid fa-plus" /> Thêm mới</Link>
                         </div>
                     </div>

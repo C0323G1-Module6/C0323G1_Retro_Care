@@ -81,7 +81,7 @@ function PrescriptionEdit() {
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Mã toa thuốc</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='code' />
+                                        <Field type="text" className="form-control" name='code' disabled />
                                     </div>
                                 </div>
                                 <div className="mb-3 row">
