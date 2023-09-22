@@ -265,28 +265,28 @@ function CustomerList() {
             <tr
               style={{ background: "#0d6efd", color: "#ffffff" }}
             >
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 50}}>
                 STT
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 190}}>
                 Mã khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
                 Tên khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 150}}>
                 Ngày sinh
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 270}}>
                 Địa chỉ
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 170}}>
                 Số điện thoại
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 250}}>
                 Nhóm khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-1 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{width: 180}}>
                 Ghi chú
               </th>
             </tr>
@@ -323,7 +323,7 @@ function CustomerList() {
                     {customer?.customerType}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.note.length > 15 ? `${customer?.note.slice(0, 15)}...` : customer?.note}
+                    {customer?.note.length > 9 ? `${customer?.note.slice(0, 9)}...` : customer?.note}
                   </td>
                 </tr>
               ))}
