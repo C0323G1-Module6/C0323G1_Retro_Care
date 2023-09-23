@@ -258,6 +258,7 @@ function InvoiceList() {
                             {startTime && (
                                 <button className="clear-button btn btn-outline-primary"
                                         style={{height:'2.5rem',
+                                            paddingLeft:'6px', paddingRight:'6px',
                                             border: 'solid 1px #d6d8d9',
                                             borderRadius: '3px'}}
                                         onClick={clearStartTime}>
@@ -282,6 +283,7 @@ function InvoiceList() {
                             {endTime && (
                                 <button className="clear-button btn btn-outline-primary"
                                         style={{height:'2.5rem',
+                                            paddingLeft:'6px', paddingRight:'6px',
                                             border: 'solid 1px #d6d8d9',
                                             borderRadius: '3px'}}
                                         onClick={clearEndTime}>
