@@ -74,7 +74,6 @@ function MedicineList() {
         if (result?.status === 200) {
             setMedicineList(result?.data.content);
             setTotalPage(result?.data.totalPages);
-            console.log(result?.data.content)
         } else {
             await swal.fire({
                 icon: 'warning',
@@ -142,7 +141,7 @@ function MedicineList() {
                                 style={{width: '150px', borderRadius: '5px', color: 'blue'}}
                                 id="select" className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
-                            <option value="searchByNameKindOfMedicine">Nhóm thuốc</option>
+                            <option value="searchByKindOfMedicine">Nhóm thuốc</option>
                             <option value="searchByName">Tên thuốc</option>
                             <option value="searchByActiveElement">Hoạt chất</option>
                             <option value="searchByPrice">Giá bán lẻ</option>
@@ -152,12 +151,8 @@ function MedicineList() {
                                 onChange={(e) => handleSearchConditional(e)}
                                 id="conditional" className="appearance-none pl-8 pr-6 py-2">
                             <option value="">Tất cả</option>
-                            {/*<option value="equal">Bằng</option>*/}
-                            {/*<option value="bigger">Lớn hơn</option>*/}
-                            {/*<option value="litter">Nhỏ hơn</option>*/}
                             <option value="greater">Lớn hơn bằng</option>
                             <option value="small">Nhỏ hơn bằng</option>
-                            {/*<option value="notEqual">Khác</option>*/}
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
@@ -219,7 +214,7 @@ function MedicineList() {
                                             setSelectMedicine({id: null, name: ""});
                                         }
                                     }}
-                                        style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
+                                        style={(selectMedicine.id === item?.id) ? {background: 'rgb(98, 158, 236)'} : {}}>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
