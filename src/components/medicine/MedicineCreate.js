@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import {v4} from "uuid";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../firebase/firebase";
+import {getList} from "../../services/kindOfMedicine/KindOfMedicineService";
 
 export default function MedicineCreate() {
     const [units, setUnits] = useState([]);
@@ -37,7 +38,7 @@ export default function MedicineCreate() {
 
     }
     const getListKindOfMedicines = async () => {
-        const result = await getAllKindOfMedicine();
+        const result = await getList();
         setKindOfMedicines(result);
     }
     useEffect(() => {
@@ -130,11 +131,11 @@ export default function MedicineCreate() {
                 }
 
                 validationSchema={Yup.object({
-                    name: Yup.string().required("Không được để trống.").max(50, "Tên vượt quá 50 kí tự").min(2, "Tên phải từ 2 kí tự trở lên."),
+                    name: Yup.string().matches("^[a-zA-Z0-9]$","Tên không chứa kí tự đặc biệt").required("Không được để trống.").max(50, "Tên vượt quá 50 kí tự").min(2, "Tên phải từ 2 kí tự trở lên."),
                     price: Yup.number().min(0, "Giá không được là số âm."),
                     vat: Yup.number().min(0, "Vat không được là số âm."),
-                    maker: Yup.string().max(50, "Nhà sản xuất vượt quá 50 kí tự."),
-                    activeElement: Yup.string().required("Không được để trống.").max(50, "Hoạt chất không vượt quá 50 kí tự."),
+                    maker: Yup.string().matches("^[a-zA-Z0-9]$","Nhà sản xuất không chứa kí tự đặc biệt").max(50, "Nhà sản xuất vượt quá 50 kí tự."),
+                    activeElement: Yup.string().matches("^[a-zA-Z0-9]$","Hoạt chất không chứa kí tự đặc biệt").required("Không được để trống.").max(50, "Hoạt chất không vượt quá 50 kí tự."),
                     note: Yup.string().required("Không được để trống.").max(100, "Ghi chú không vượt quá 100 kí tự."),
                     origin: Yup.string().required("Không được để trống.").max(50, "Xuất xứ vượt quá 50 kí tự."),
                     retailProfits: Yup.number().required("Không được để trống. ").min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),

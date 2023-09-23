@@ -13,6 +13,7 @@ import * as Yup from "yup";
 import {v4} from "uuid";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../firebase/firebase";
+import {getList} from "../../services/kindOfMedicine/KindOfMedicineService";
 
 
 export default function MedicineEdit() {
@@ -49,7 +50,7 @@ export default function MedicineEdit() {
         getListCountries();
     }, []);
     const getListKindOfMedicines = async () => {
-        const result = await getAllKindOfMedicine();
+        const result = await getList();
         setKindOfMedicines(result);
     }
     useEffect(() => {
@@ -222,7 +223,7 @@ export default function MedicineEdit() {
     if (!medicines) {
         Swal.fire({
             title: 'Thông báo',
-            text: 'Đối tượng không tồn tại!',
+            text: 'Sản phẩm không tồn tại!',
             icon: 'warning',
             timer: 3000, // Thời gian hiển thị thông báo (3 giây)
             showConfirmButton: false,
