@@ -2,7 +2,6 @@ import {Field, Form, Formik, ErrorMessage, isNaN} from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
-// import "./CustomerCreate.css";
 import { Link, useNavigate } from "react-router-dom";
 import {differenceInYears, isAfter, isBefore, parseISO} from "date-fns";
 import {
@@ -63,7 +62,6 @@ const CustomerCreate = () => {
   return (
     <>
       <div className="mx-auto" style={{ width: "70%" }}>
-
         <Formik
           initialValues={{
             code: customerCode,
@@ -110,7 +108,7 @@ const CustomerCreate = () => {
                 <fieldset
                     className="form-input shadow"
                     style={{
-                      width: 600,
+                      width: "80%",
                       border: "1px solid black",
                       padding: 20,
                       borderRadius: 20,

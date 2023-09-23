@@ -11,6 +11,7 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
+import { BiCog, BiLogOutCircle } from "react-icons/bi";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
@@ -90,7 +91,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <Link to={"/home"}>Trang chủ</Link>
                   </li>
                   <li>
-                    <a href="#menu">Danh mục</a>
+                    <a href="#about">Về chúng tôi</a>
+                  </li>
+                  <li>
+                    <a href="#">Danh mục</a>
                   </li>
                 </ul>
               </nav>
@@ -98,6 +102,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                 <form className="header-search-form for-des">
                   <input
                     type="search"
+                    id="form-input-home"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
                     value={inputSearch}
@@ -140,18 +145,18 @@ const Header = ({ inputSearch, onInputChange }) => {
                           to={"/dashboard/prescription"}
                           className="user-dropdown-item"
                         >
-                          <i className="bx bx-log-out-circle"></i>
+                          <BiCog className="me-3 ms-0" size={25} />
                           <div className="dropdown-text">Chức năng</div>
                         </Link>
-                        <div className="user-dropdown-item">
-                          <i className="bx bx-log-out-circle"></i>
+                        <Link className="user-dropdown-item">
+                          <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div
                             className="dropdown-text"
                             onClick={() => handleLogOut()}
                           >
                             Đăng xuất
                           </div>
-                        </div>
+                        </Link>
                       </>
                     ) : null}
                   </div>
