@@ -254,47 +254,77 @@ function InvoiceList() {
                 </div>
                 {/*                </div>*/}
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
-                    <div className="inline-block min-w-full shadow rounded-lg overflow-hidden ">
-                        <div style={{flex: "1", minHeight: "27.2rem"}}>
+                    <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                        <div style={{ flex: "1", minHeight: "27.2rem", overflowX: "auto" }}>
                             <table
-                                className="min-w-full  rounded-3 leading-normal table table-hover overflow-hidden mb-0"
+                                className="min-w-full rounded-3 leading-normal table table-hover overflow-hidden mb-0"
+                                style={{ tableLayout: "fixed" }}
                             >
-                                <thead style={{background: "#0d6efd", color: 'white'}}>
+                                <colgroup>
+                                    <col style={{ width: "40px", maxWidth: "40px" }} />
+                                    <col style={{ width: "80px", maxWidth: "80px" }} />
+                                    <col style={{ width: "80px", maxWidth: "80px" }} />
+                                    <col style={{ width: "100px", maxWidth: "100px" }} />
+                                    <col style={{ width: "80px", maxWidth: "80px" }} />
+                                    <col style={{ width: "110px", maxWidth: "110px" }} />
+                                    <col style={{ width: "110px", maxWidth: "110px" }} />
+                                    <col style={{ width: "200px", maxWidth: "200px" }} />
+                                    <col style={{ width: "300px", maxWidth: "300px" }} />
+                                </colgroup>
+                                <thead style={{ background: "#0d6efd", color: "white" }}>
                                 <tr className="table_header_employee">
-                                    <th className=" py-2  border-b-2  text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '30px', maxWidth:'30px'}}>
+                                    <th
+                                        className="py-2 border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         STT
                                     </th>
-                                    <th className="   border-b-2  text-left text-xs    tracking-wider "
-                                        style={{fontSize: '1rem', minWidth: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Mã HĐ
                                     </th>
-                                    <th className=" border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '80px', maxWidth:'80px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Số CT
                                     </th>
-                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Ngày Lập
                                     </th>
-                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '80px', maxWidth:'80px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Giờ Lập
                                     </th>
-                                    <th className=" px-0 border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="px-2 border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Tổng Tiền
                                     </th>
-                                    <th className="  px-2 border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="px-2 border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Nợ HĐ
                                     </th>
-                                    <th className="   border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', minWidth: '150px', maxWidth:'150px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Nhà Cung Cấp
                                     </th>
-                                    <th className="  border-b-2   text-left text-xs    tracking-wider"
-                                        style={{fontSize: '1rem', width: '300px', maxWidth:'300px'}}>
+                                    <th
+                                        className="border-b-2 text-left text-xs tracking-wider"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Địa Chỉ
                                     </th>
                                 </tr>
@@ -491,99 +521,7 @@ function InvoiceList() {
                     </div>
                 </div>
             </div>
-            {/*<div className="modal fade" id="exampleModal" tabIndex={-1} aria-labelledby="exampleModalLabel5"*/}
-            {/*     aria-hidden="true">*/}
-            {/*    <div className="modal-dialog">*/}
-            {/*        <div className="modal-content">*/}
-            {/*            <div className="modal-header table_header_employee">*/}
-            {/*                <h1 className="modal-title fs-5" id="exampleModalLabel5">Xóa hóa đơn</h1>*/}
-            {/*                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"/>*/}
-            {/*            </div>*/}
-            {/*            <div className="modal-body">*/}
-            {/*                <p>Bạn chắn chắn muốn xóa hóa đơn nhập kho có mã hóa đơn*/}
-            {/*                    <span style={{color: '#dfa512'}} id="nameDelete">HĐ006 </span> <span>không?</span>*/}
-            {/*                </p>*/}
-            {/*                <p className="error_red_employee">Lưu ý: hành động này không thể hoàn tác!</p>*/}
-            {/*            </div>*/}
-            {/*            <div className="modal-footer">*/}
-            {/*                <form>*/}
-            {/*                    <div className="d-flex">*/}
-            {/*                        <input type="hidden" name="idDelete" id="idDelete"/>*/}
-            {/*                        <button type="button" className="btn form_exit_employee"*/}
-            {/*                                data-bs-dismiss="modal">Thoát*/}
-            {/*                        </button>*/}
-            {/*                        <button type="submit" className="btn"*/}
-            {/*                                style={{background: '#0d6efd', color: 'white'}}>Xác Nhận*/}
-            {/*                        </button>*/}
-            {/*                    </div>*/}
-            {/*                </form>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-            {/*modal detail*/}
-            {/*{ idClick &&  (*/}
-            {/*    <div className="modal fade" id="exampleModal1" tabIndex={-1} aria-labelledby="exampleModalLabel5" aria-hidden="true">*/}
-            {/*        <div className="modal-dialog modal-dialog-centered" style={{ width: '800px' }}>*/}
-            {/*            <div className="modal-content" style={{ width: '800px', marginBottom: '300px' }}>*/}
-            {/*                <div className="modal-header table_header_employee">*/}
-            {/*                    <h1 className="modal-title fs-5" id="exampleModalLabel" style={{ color: 'white' }}>CHI TIẾT HÓA ĐƠN NHẬP THUỐC</h1>*/}
-            {/*                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />*/}
-            {/*                </div>*/}
-            {/*                <div className="modal-body">*/}
-            {/*                    <div className="d-flex">*/}
-            {/*                        <table>*/}
-            {/*                            <tr style={{ background: '#0d6efd', color: '#ffffff' }}>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    STT*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Mã thuốc*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Nhóm thuốc*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Tên thuốc*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Hoạt chất*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Số lượng*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    Giá nhập*/}
-            {/*                                </th>*/}
-            {/*                                <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">*/}
-            {/*                                    % VAT*/}
-            {/*                                </th>*/}
-            {/*                            </tr>*/}
-            {/*                            <tbody>*/}
-            {/*                            {invoiceDetail.map((ind, index) => (*/}
-            {/*                                <tr key={ind.id}>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{index + 1}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.codeMedicine}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.nameKind}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.nameMedicine}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.activeElement}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.quantity}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.price}</td>*/}
-            {/*                                    <td className="py-3 px-3 border-b border-gray-200">{ind.vat}</td>*/}
-            {/*                                </tr>*/}
-            {/*                            ))}*/}
-            {/*                            </tbody>*/}
-            {/*                        </table>*/}
-            {/*                    </div>*/}
-            {/*                </div>*/}
-            {/*                <div className="modal-footer">*/}
-            {/*                    <input type="hidden" name="idDetail" id="idDetail" />*/}
-            {/*                    <button type="button" className="btn" data-bs-dismiss="modal" style={{ background: '#6e7881' }}>Thoát</button>*/}
-            {/*                </div>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+
     <ToastContainer/>
         </div>
     );
