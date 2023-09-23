@@ -12,9 +12,6 @@ import {BiSearch} from 'react-icons/bi';
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import {FaPlus, FaRegTrashAlt, FaInfo} from "react-icons/fa";
 import {FiEdit,} from "react-icons/fi";
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import {format} from "date-fns";
 import {ToastContainer} from "react-toastify";
 
 
@@ -150,7 +147,10 @@ function InvoiceList() {
                 showConfirmButton: false,
                 timer: 2000,
             });
-
+            setStartTime("");
+            setEndTime("");
+            setStartDate("");
+            setEndDate("");
             return;
         }
 
@@ -161,7 +161,7 @@ function InvoiceList() {
         setTotalPages(data.totalPages);
         setSearchPage(searchPage);
     };
-
+    console.log(startTime)
 
     useEffect(() => {
         getListInvoice(currentPage);
@@ -171,7 +171,7 @@ function InvoiceList() {
         setCurrentPage(page);
         setSearchPage(page);
     };
-    const addressElements = document.getElementsByClassName("address-text");
+
 
 // Duyệt qua từng phần tử và xử lý
     function formatDate(dateString) {
