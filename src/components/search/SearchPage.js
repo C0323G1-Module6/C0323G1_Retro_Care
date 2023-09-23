@@ -25,7 +25,7 @@ export const SearchPage = () => {
 
   useEffect(() => {
     getMedicineList();
-  }, [currentPage]);
+  }, [currentPage, sortBy, sortDirection]);
 
   const getMedicineList = async () => {
     const response = await homeService.searchMedicines(
@@ -57,9 +57,6 @@ export const SearchPage = () => {
   const handleSortDirectionChange = (event) => {
     setSortDirection(event.target.value);
   };
-  const handleSortBtn = () => {
-    getMedicineList();
-  };
 
   const totalPages = Math.ceil(totalElements / pageSize);
 
@@ -73,37 +70,37 @@ export const SearchPage = () => {
         <div className="container min-vh-100">
           <div className="row">
             <div className="col-lg-12">
-              <div className="sec-title text-center">
+              <div className="sec-title text-center mt-4">
                 <p className="sec-sub-title">Kết quả tìm kiếm</p>
               </div>
-              <div
-                className="ms-5 fs-6 mb-1"
-                style={{ color: "rgb(27, 65, 168)" }}
-              >
-                Tìm thấy {totalElements} kết quả với từ khoá "{displayKeyword}"
+              <div className="border border-warning rounded-2 py-2 mb-4">
+                <div
+                  className="ms-5 fs-6 mb-1"
+                  style={{ color: "rgb(27, 65, 168)" }}
+                >
+                  Tìm thấy {totalElements} kết quả với từ khoá "{displayKeyword}
+                  "
+                </div>
+                <div className="d-flex ms-5 gap-3 fs-6 align-items-center">
+                  <span>Sắp xếp theo: </span>
+                  <select value={sortBy} onChange={handleSortByChange}>
+                    <option value="medicinePrice">Giá</option>
+                    <option value="medicineName">Tên thuốc</option>
+                  </select>
+
+                  <span>Cách sắp xếp: </span>
+                  <select
+                    value={sortDirection}
+                    onChange={handleSortDirectionChange}
+                  >
+                    <option value="asc">Tăng dần</option>
+                    <option value="desc">Giảm dần</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
-          <div className="d-flex ms-5 mb-5 gap-3 fs-6 align-items-center">
-            <span>Sắp xếp theo: </span>
-            <select value={sortBy} onChange={handleSortByChange}>
-              <option value="medicinePrice">Giá</option>
-              <option value="medicineName">Tên thuốc</option>
-            </select>
 
-            <span>Cách sắp xếp: </span>
-            <select value={sortDirection} onChange={handleSortDirectionChange}>
-              <option value="asc">Tăng dần</option>
-              <option value="desc">Giảm dần</option>
-            </select>
-            <button
-              className="rounded btn btn-light border-dark"
-              style={{ padding: "0px 10px 0px 10px" }}
-              onClick={handleSortBtn}
-            >
-              Sắp xếp
-            </button>
-          </div>
           <div className="row">
             {medicineList?.map((el, index) => {
               const discountPercentage = utils.getDiscount(el.medicinePrice);
@@ -181,6 +178,7 @@ export const SearchPage = () => {
                   <button
                     className="page-link"
                     onClick={() => handlePageChange(currentPage - 1)}
+                    style={{ color: "rgb(27, 65, 168)" }}
                   >
                     &laquo;
                   </button>
@@ -194,6 +192,7 @@ export const SearchPage = () => {
                   >
                     <button
                       className="page-link"
+                      style={{ color: "rgb(27, 65, 168)" }}
                       onClick={() => handlePageChange(page + 1)}
                     >
                       {page + 1}
@@ -208,6 +207,7 @@ export const SearchPage = () => {
                   <button
                     className="page-link"
                     onClick={() => handlePageChange(currentPage + 1)}
+                    style={{ color: "rgb(27, 65, 168)" }}
                   >
                     &raquo;
                   </button>
