@@ -5,6 +5,12 @@ import { getMedicineList } from "../../services/medicine/MedicineService";
 import { editPrescription, getPrescriptionById } from "../../services/prescription/prescription";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getListIndication } from "../../services/prescription/indication";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { FiEdit } from "react-icons/fi";
+import Swal from "sweetalert2";
+import {
+    AiOutlineRollback,
+} from "react-icons/ai";
 import * as Yup from 'yup';
 
 function PrescriptionEdit() {
@@ -53,8 +59,15 @@ function PrescriptionEdit() {
 
 
     const editNewPrescription = async (value) => {
-        await editPrescription(value);
-        navigate("/dashboard/prescription")
+        
+            const result = await editPrescription(value);
+            Swal.fire(
+                "Sửa thành công !",
+                "Toa thuốc " + value.name + " đã được cập nhật!",
+                "success"
+            );
+            navigate("/dashboard/prescription")
+        
     }
 
     useEffect(() => {
@@ -97,18 +110,18 @@ function PrescriptionEdit() {
                             .required('Không được để trống triệu chứng!')
                             .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Triệu chứng không được chứa ký tự đặc biệt!"),
                         duration: Yup.number()
-                            .required("Số ngày uống không được để trống!")
-                            .max(30, "Số ngày uống không được quá 30 ngày!")
-                            .min(1, "Số ngày uống không được nhỏ hơn 0!"),
+                            .required("Không được để trống!")
+                            .max(30, "Không được quá 30 ngày!")
+                            .min(1, "Không được nhỏ hơn 0!"),
                         indicationDto: Yup.array().of(
                             Yup.object().shape({
-                                medicine: Yup.string.required("Không được để trống thuốc!"),
-                                dosage: Yup.number().required("Số lần uống không được để trống!")
-                                    .max(30, "Số lần uống không được quá 30 ngày!")
-                                    .min(1, "Số lần uống không được nhỏ hơn 0!"),
-                                frequency: Yup.number().required("Số viên uống không được để trống!")
-                                    .max(30, "Số viên uống không được quá 30 ngày!")
-                                    .min(1, "Số viên uống không được nhỏ hơn 0!"),
+                                // medicine: Yup.string.required("Không được để trống thuốc!"),
+                                dosage: Yup.number().required("Không được để trống!")
+                                    .max(30, "Không được quá 30 ngày!")
+                                    .min(1, "Không được nhỏ hơn 0!"),
+                                frequency: Yup.number().required("Không được để trống!")
+                                    .max(30, "Không được quá 30 ngày!")
+                                    .min(1, "Không được nhỏ hơn 0!"),
                             })
                         )
 
@@ -167,7 +180,7 @@ function PrescriptionEdit() {
                                     <div className="col-sm-2">
                                         <Field type="number" className="form-control" name='duration' />
                                     </div>
-                                    <div style={{ height: '15px', marginLeft: '32rem' }}>
+                                    <div style={{ height: '15px', marginLeft: '25rem' }}>
                                         <ErrorMessage name="duration" component="small" style={{ color: 'red' }} />
                                     </div>
                                 </div>
@@ -210,7 +223,7 @@ function PrescriptionEdit() {
                                                                 <input type="text" className="form-control" value={totals && totals.length > 0 ? totals[index] : total[index]} disabled />
                                                             </div>
                                                             <div className="col-sm-2">
-                                                                <button type="button" className="btn btn-outline-primary" onClick={() => remove(index)}><i className="fa-solid fa-trash" />
+                                                                <button type="button" className="btn btn-outline-primary" onClick={() => remove(index)}> <FaRegTrashAlt className="mx-1" />
                                                                     Xoá
                                                                 </button>
                                                             </div>
@@ -218,18 +231,22 @@ function PrescriptionEdit() {
 
                                                         <div className="mb-3 row d-flex align-items-center justify-content-start">
                                                             <div className="col-sm-1">&nbsp;</div>
-                                                            <label className="col-sm-2 col-form-label">Ngày uống: </label>
+                                                            <label className="col-sm-2 col-form-label">Ngày : </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="text" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
-                                                                <ErrorMessage name={`indicationDto[${index}].frequency`} component="small" style={{ color: 'red' }} />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="text" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
-                                                                <ErrorMessage name={`indicationDto[${index}].dosage`} component="small" style={{ color: 'red' }} />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
+                                                            <div className="col-sm-6 text-center" style={{ marginLeft: '-0.4rem' }}>
+                                                                <ErrorMessage name={`indicationDto[${index}].frequency`} component="small" style={{ color: 'red' }} />
+                                                            </div>
+                                                            <div className="col-sm-4">
+                                                                <ErrorMessage name={`indicationDto[${index}].dosage`} component="small" style={{ color: 'red' }} />
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 ))}
@@ -249,9 +266,9 @@ function PrescriptionEdit() {
                                     </FieldArray>
                                     {/* </Formik > */}
                                     <div className="d-flex justify-content-end w-100 gap-2">
-                                        <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
+                                        <button type="submit" className=" btn btn-outline-primary" ><FiEdit className="mx-1" />
                                             Sửa</button>
-                                        <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
+                                        <Link to='/dashboard/prescription' className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
                                     </div>
                                 </div>
                             </Form>
