@@ -94,7 +94,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <a href="#about">Về chúng tôi</a>
                   </li>
                   <li>
-                    <a href="#menu">Danh mục</a>
+                    <a href="#">Danh mục</a>
                   </li>
                 </ul>
               </nav>
