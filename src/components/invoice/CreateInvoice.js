@@ -1,5 +1,7 @@
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
     AiOutlineRollback,
     AiOutlineDoubleLeft,
@@ -10,7 +12,8 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { SelectPicker } from "rsuite";
 import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
-import { useNavigate } from "react-router-dom";
+import * as ServiceUser from "../../services/user/AppUserService"
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 export function CreateInvoice() {
@@ -21,23 +24,7 @@ export function CreateInvoice() {
     const [maxCode, setMaxCode] = useState('');
     const fieldNameRef = useRef(null);
     const elementRef = useRef(null);
-
-
-    const [invoiceDetails, setInvoiceDetails] = useState(
-        [{
-            medicineId: {},
-            discount: 0,
-            medicineQuantity: 0,
-        },]
-    )
-
-    // const [unitPrice, setUnitPrice] = useState(0);
-    // const [unit, setUnit] = useState('');
-    // const [realPrice, setRealPrice] = useState(0);
-
-    // const [infoInvoiceDetail, setInfoInvoiceDetail] = useState([{
-
-    // },]);
+    const [employee, setEmployee] = useState();
 
 
 
@@ -59,15 +46,22 @@ export function CreateInvoice() {
         const result = await ServiceInvoice.getMaxCode();
         setMaxCode(result);
     }
-    const getMedicineById = async () => {
-        const result = await ServiceInvoice.getMedicine();
+
+       
+    const getEmployee = async () => {
+        const username = await ServiceUser.infoAppUserByJwtToken().sub;
+        const result = await ServiceInvoice.getEmployee(username);
+        setEmployee(result);
     }
 
+
     useEffect(() => {
+        getEmployee();
         getSupplier();
         getMedicine();
         getMaxCode();
     }, [])
+
 
 
 
@@ -110,7 +104,7 @@ export function CreateInvoice() {
         let quantity = document.getElementById(`invoiceDetailDtoSet.${index}.medicineQuantity`).value;
         let discount = document.getElementById(`invoiceDetailDtoSet.${index}.discount`).value;
         let unit = await getUnit(value.id);
-        let unitPrice = parseInt(value.price - (value.price * (value.retailProfits + value.vat) / 100));
+        let unitPrice = parseInt(value.price - (value.price * (value.retailProfits + value.vat) / 100)) || 0;
         let price = (unitPrice - (unitPrice * discount / 100)) * quantity;
         const element = document.getElementById(`${index}`);
         element.getElementsByTagName('td')[1].textContent = unit;
@@ -121,25 +115,16 @@ export function CreateInvoice() {
     }
 
 
-    // const setAvariableValue = async (value, number) => {
-    //     let objectMedicine = JSON.parse(value);
-    //     let unit = await getUnit(objectMedicine.id);
-    //     let cell = document.getElementById(number);
-    //     // console.log(unitDetail);
-    //     cell.getElementsByTagName('td')[1].innerText = unit;
-    //     cell.getElementsByTagName('td')[5].innerText = objectMedicine.vat;
-    //     let medicineQuantity = parseInt(cell.getElementsByTagName('td')[2].innerText) ? parseInt(cell.getElementsByTagName('td')[2].innerText) : 0;
-    //     let price = parseFloat(cell.getElementsByTagName('td')[3].innerText) ? parseFloat(cell.getElementsByTagName('td')[3].innerText) : 0;
-    //     let discount = parseFloat(cell.getElementsByTagName('td')[4].innerText) ? parseFloat(cell.getElementsByTagName('td')[4].innerText) : 0;
-    //     cell.getElementsByTagName('td')[6].innerText = (medicineQuantity * price) + (medicineQuantity * price) * discount / 100;
-    // }
-
     const dataSupllier = supplier.map(
         item => ({ label: item.code, value: JSON.stringify(item) })
     );
     const dataMedicine = medicine.map(
         item => ({ label: item.name, value: JSON.stringify(item) })
     );
+
+    if (!employee)
+        return null;
+
     return (
         <>
             <div className="container">
@@ -152,6 +137,7 @@ export function CreateInvoice() {
                         note: "",
                         documentNumber: null,
                         supplierId: 0,
+                        appUserId: employee.appUser.id,
                         invoiceDetailDtoSet: [{
                             medicineId: 0,
                             discount: 0,
@@ -161,9 +147,11 @@ export function CreateInvoice() {
 
                         },]
                     }}
-                    onSubmit={(invoiceValue) => {
+                    onSubmit={async (invoiceValue) => {
                         let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                        createInvoice(newInvoiceValue);
+                        await createInvoice(newInvoiceValue);
+                        toast("Đã thêm thành công");
+                        navigate("/dashboard/invoice")
                     }}
 
                     validationSchema={Yup.object({
@@ -275,7 +263,7 @@ export function CreateInvoice() {
                                                         <div className="mb-3 row">
                                                             <label htmlFor="input7" className="col-sm-4 col-form-label">Nhân viên</label>
                                                             <div className="col-sm-8">
-                                                                <input type="text" disabled className="form-control" id="input7" />
+                                                                <input type="text" defaultValue={employee.nameEmployee} disabled className="form-control" id="input7" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -422,9 +410,11 @@ export function CreateInvoice() {
                                                 <button type="button" onClick={selectedRow !== -1 ? () => { remove(selectedRow); setSelectedRow(-1) } : null} className="btn btn-outline-primary"><FaRegTrashAlt className="mx-1" />
                                                     Xoá thuốc
                                                 </button>
-                                                <button type="button" className="btn btn-outline-primary">
-                                                    <AiOutlineRollback className="mx-1" /> Trở về
-                                                </button>
+                                                <Link to={"/dashboard/invoice"}>
+                                                    <button type="button" className="btn btn-outline-primary">
+                                                        <AiOutlineRollback className="mx-1" /> Trở về
+                                                    </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
@@ -435,6 +425,7 @@ export function CreateInvoice() {
                     )}
                 </Formik >
             </div>
+
         </>
     );
 }
