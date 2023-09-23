@@ -53,7 +53,7 @@ export const searchMedicine = async (searchInMedicine, search, page, limit, cond
     const result = await axios.get(
       `http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}&conditional=${conditional}`
     );
-    console.log(result.data)
+      console.log(`http://localhost:8080/api/medicine/search?search=${search}&searchInMedicine=${searchInMedicine}&page=${page}&limit=${limit}&conditional=${conditional}`)
     return result;
   } catch (error) {
     return error;
