@@ -10,14 +10,13 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { SelectPicker } from "rsuite";
 import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
-import {Link, useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
- function EditInvoice() {
+export function EditInvoice() {
     const [supplier, setSupplier] = useState([]);
     const [invoice, setInvoice] = useState({
 
     });
-    const navigate= useNavigate();
     const param = useParams();
     useEffect(() => {
         getSupplier();
@@ -63,10 +62,10 @@ import * as Yup from "yup";
                             note: invoice.note,
                             supplierId: 0
                         }}
-                        onSubmit={async (invoiceValue) => {
+                        onSubmit={(invoiceValue) => {
                             let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                            await editInvoice(newInvoiceValue);
-                            navigate("/dashboard/invoice");
+                            alert(JSON.stringify(newInvoiceValue));
+                            editInvoice(newInvoiceValue);
                         }}
 
                         validationSchema={Yup.object({
@@ -99,9 +98,9 @@ import * as Yup from "yup";
                                                                 }
 
                                                                 }
-                                                                              defaultValue={JSON.stringify(invoice.supplierId)}
-                                                                              preventOverflow virtualized data={dataSupllier}
-                                                                              style={{ width: '90%' }}
+                                                                    defaultValue={JSON.stringify(invoice.supplierId)}
+                                                                    preventOverflow virtualized data={dataSupllier}
+                                                                    style={{ width: '90%' }}
                                                                 />
                                                                 <input id="supplierId" hidden name="supplierId" type="number" ></input>
                                                             </div>
@@ -205,37 +204,37 @@ import * as Yup from "yup";
                                             <div className="table-responsive">
                                                 <table id="editableTable" className="table table-hover rounded-3 overflow-hidden">
                                                     <thead className="text-light " style={{ backgroundColor: '#0d6efd' }}>
-                                                    <tr>
-                                                        <th scope="col">Tên thuốc</th>
-                                                        <th scope="col">Đơn vị tính</th>
-                                                        <th scope="col">Số lượng</th>
-                                                        <th scope="col">Đơn giá</th>
-                                                        <th scope="col">%CK</th>
-                                                        <th scope="col">VAT</th>
-                                                        <th scope="col">Thành tiền</th>
-                                                        <th scope="col">Số lô</th>
-                                                        <th scope="col">Hạn dùng</th>
-                                                    </tr>
+                                                        <tr>
+                                                            <th scope="col">Tên thuốc</th>
+                                                            <th scope="col">Đơn vị tính</th>
+                                                            <th scope="col">Số lượng</th>
+                                                            <th scope="col">Đơn giá</th>
+                                                            <th scope="col">%CK</th>
+                                                            <th scope="col">VAT</th>
+                                                            <th scope="col">Thành tiền</th>
+                                                            <th scope="col">Số lô</th>
+                                                            <th scope="col">Hạn dùng</th>
+                                                        </tr>
                                                     </thead>
                                                     <tbody id="editableBody">
-                                                    {invoice?.invoiceDetailSet.map(item => (
-                                                        <tr>
-                                                            <td>{item.medicineId.name}</td>
-                                                            <td >HOP</td>
-                                                            <td>{item.quantity}</td>
-                                                            <td>29700</td>
-                                                            <td>0</td>
-                                                            <td>{item.discount}</td>
-                                                            <td>311850</td>
-                                                            <td>{item.lot}</td>
-                                                            <td>
-                                                                {
-                                                                    item.expiry.split('T')[0]
-                                                                }
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                    }
+                                                        {invoice?.invoiceDetailSet.map(item => (
+                                                            <tr>
+                                                                <td>{item.medicineId.name}</td>
+                                                                <td >HOP</td>
+                                                                <td>{item.quantity}</td>
+                                                                <td>29700</td>
+                                                                <td>0</td>
+                                                                <td>{item.discount}</td>
+                                                                <td>311850</td>
+                                                                <td>{item.lot}</td>
+                                                                <td>
+                                                                    {
+                                                                        item.expiry.split('T')[0]
+                                                                    }
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                        }
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -244,11 +243,11 @@ import * as Yup from "yup";
                                     <div className="d-flex justify-content-end gap-3 my-3">
                                         <button type="submit" className="btn btn-outline-primary"><FiEdit className="mx-1" /> Sửa
                                         </button>
-                                        <Link to={"/dashboard/invoice"}>
+                                        <a href="/prototype/warehouse/HuyHD_Warehouse.html">
                                             <button type="button" className="btn btn-outline-primary">
                                                 <AiOutlineRollback className="mx-1" /> Trở về
                                             </button>
-                                        </Link>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
