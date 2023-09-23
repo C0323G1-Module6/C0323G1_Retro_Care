@@ -71,7 +71,7 @@ function MedicineList() {
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
         const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
         console.log(result)
-        if (result?.status === 200) {
+        if (result !== null) {
             setMedicineList(result?.data.content);
             setTotalPage(result?.data.totalPages);
         } else {
