@@ -12,6 +12,10 @@ import {BiSearch} from 'react-icons/bi';
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import {FaPlus, FaRegTrashAlt, FaInfo} from "react-icons/fa";
 import {FiEdit,} from "react-icons/fi";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import {format} from "date-fns";
+import {ToastContainer} from "react-toastify";
 
 
 /**
@@ -170,6 +174,10 @@ function InvoiceList() {
     const addressElements = document.getElementsByClassName("address-text");
 
 // Duyệt qua từng phần tử và xử lý
+    function formatDate(dateString) {
+        const [year, month, day] = dateString.split('-');
+        return `${day}/${month}/${year}`;
+    }
 
 
     return (
@@ -181,17 +189,19 @@ function InvoiceList() {
             <div className="container mx-auto px-4 sm:px-8">
                 <div>
                     <h1 className=" font-semibold leading-tight"
-                        style={{textAlign: 'center', marginBottom: '20px', color: 'blue'}}>
+                        style={{textAlign: 'center', marginBottom: '20px', color: '#0d6efd'}}>
                         DANH SÁCH HÓA ĐƠN NHẬP KHO</h1>
                 </div>
                 <div className="row">
                     {/*                <div class="row text-center" style="border: 2px solid #5f8ef3; border-radius: 10px; padding: 10px">*/}
                     <div className="col">
-                        <label style={{marginLeft: '1.5px'}}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem', marginLeft: '1.5px', height: '40px'}} type="date"
-                               id="start-date"
-
-                               onChange={(e) => setStartDate(e.target.value)}/>
+                        <label style={{ marginLeft: '1.5px' }}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
+                        <input
+                            style={{ width: '9rem', marginLeft: '1.5px', height: '40px' }}
+                            type="date"
+                            id="start-date"
+                            onChange={(e) => setStartDate(e.target.value)}
+                        />
                     </div>
                     <div className="col">
                         <label style={{marginLeft: '3px'}}>Đến ngày:</label>
@@ -296,7 +306,7 @@ function InvoiceList() {
                                             background: idClick && idClick.id === i.id ? "#629eec" : "transparent",
                                         }}>
                                         <td className="  py-3 px-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
+                                            <p className="text-gray-900 whitespace-no-wrap">{(currentPage * 5)+ index + 1}</p>
                                         </td>
                                         <td className="  py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap"
@@ -320,10 +330,14 @@ function InvoiceList() {
                                                 {i.creationTime}</p>
                                         </td>
                                         <td className="py-3 border-b border-gray-200 text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{i.total.toLocaleString()} VND</p>
+                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                {i.total.toLocaleString('vi-VN')} VNĐ
+                                            </p>
                                         </td>
                                         <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{i.billOwed.toLocaleString()} VND</p>
+                                            <p className="text-gray-900 whitespace-no-wrap">
+                                                {i.billOwed.toLocaleString('vi-VN')} VNĐ
+                                            </p>
                                         </td>
 
                                         <td className=" py-3 border-b border-gray-200  text-sm">
@@ -422,14 +436,14 @@ function InvoiceList() {
                                                         style={{marginLeft: '5px'}}>
                             <FaPlus style={{marginBottom: '5px'}}/> Thêm mới</a></Link>
 
-                        <Link to={`/dashboard/invoice/detail/${idClick?.id}`}>
+                        <Link to={`/dashboard/invoice/detail/${idClick.id}`}>
                             <a
                                 className="btn btn-outline-primary"
                                 href="#"
                                 title="Chi tiết"
                                 style={{ marginLeft: '5px' }}
                                 onClick={(e) => {
-                                    if (idClick?.id == null || idClick?.id == undefined) {
+                                    if (idClick.id == null || idClick.id == undefined) {
                                         e.preventDefault();
                                         Swal.fire({
                                             icon: 'error',
@@ -440,17 +454,17 @@ function InvoiceList() {
                                         return false;
                                     }
                                 }}
-                            >
+                            ><FaInfo style={{fontSize: '20px', marginBottom: '5px'}}/>
                                 Chi tiết
                             </a>
                         </Link>
 
-                        <Link to={`/dashboard/invoice/edit/${idClick?.id}`}>
+                        <Link to={`/dashboard/invoice/edit/${idClick.id}`}>
                             <a className="btn btn-outline-primary"
                                title="Sửa"
                                style={{marginLeft: '5px'}}
                                onClick={(e) => {
-                                   if (idClick?.id == null || idClick?.id == undefined) {
+                                   if (idClick.id == null || idClick.id == undefined) {
                                        e.preventDefault();
                                        Swal.fire({
                                            icon: 'error',
@@ -467,7 +481,7 @@ function InvoiceList() {
                         <a style={{marginLeft: '5px'}}
                            title="Xóa"
                            className="btn btn-outline-primary" onClick={() => {
-                            handleDeleteEmployee(`${idClick?.id}`, `${idClick?.code}`);
+                            handleDeleteEmployee(`${idClick.id}`, `${idClick.code}`);
                         }}>
                             <FaRegTrashAlt style={{fontSize: '20px', marginBottom: '5px'}}/> Xóa
                         </a>
@@ -570,7 +584,7 @@ function InvoiceList() {
             {/*        </div>*/}
             {/*    </div>*/}
             {/*)}*/}
-
+    <ToastContainer/>
         </div>
     );
 
