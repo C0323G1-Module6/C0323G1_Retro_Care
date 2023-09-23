@@ -16,24 +16,25 @@ function MedicineList() {
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
     const [limit, setLimit] = useState(5);
-    const [conditional, setConditional] = useState("");
+    const [conditional, setConditional] = useState("greater");
 
     const handleDelete = async () => {
         if (selectMedicine.id == null) {
             swal.fire({
                 icon: "error",
                 title: "Rất tiếc...",
-                text: "Vui lòng chọn khách hàng trước khi thực hiện thao tác này!",
+                text: "Vui lòng chọn thuốc trước khi thực hiện thao tác này!",
             })
         } else {
             swal.fire({
-                title: "Bạn có muốn xoá sản phẩm này?",
+                title: "Bạn có muốn xoá sản phẩm này " + selectMedicine.name + "?" ,
                 text: selectMedicine.name,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085D6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Đồng ý!",
+                cancelButtonText: "Hủy"
             })
                 .then(async (willDelete) => {
                     if (willDelete.isConfirmed) {
@@ -69,9 +70,11 @@ function MedicineList() {
 
     const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
         const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+        console.log(result)
         if (result?.status === 200) {
             setMedicineList(result?.data.content);
             setTotalPage(result?.data.totalPages);
+            console.log(result?.data.content)
         } else {
             await swal.fire({
                 icon: 'warning',
@@ -86,7 +89,7 @@ function MedicineList() {
         const handleResetList = () => {
             setSearchInMedicine("searchByCode");
             setSearchInput("");
-            setConditional("");
+            setConditional("greater");
         }
 
     const handleShowCondition = () => {
@@ -99,20 +102,25 @@ function MedicineList() {
         }
     }
 
-    const handleSearch = async () => {
+    const handleSearch = () => {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
+        getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }
 
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
 
-    const handleSearchConditional = (e) => {
-        setConditional(e.target.value);
+    console.log(searchInMedicine)
+
+    const handleSearchConditional = async (e) => {
+        await setConditional(e.target.value);
+        console.log(conditional)
     }
 
     useEffect(() => {
+        console.log("get list")
         getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }, [searchInput, page, limit])
 
@@ -144,12 +152,12 @@ function MedicineList() {
                                 onChange={(e) => handleSearchConditional(e)}
                                 id="conditional" className="appearance-none pl-8 pr-6 py-2">
                             <option value="">Tất cả</option>
-                            <option value="equal">Bằng</option>
-                            <option value="bigger">Lớn hơn</option>
-                            <option value="litter">Nhỏ hơn</option>
+                            {/*<option value="equal">Bằng</option>*/}
+                            {/*<option value="bigger">Lớn hơn</option>*/}
+                            {/*<option value="litter">Nhỏ hơn</option>*/}
                             <option value="greater">Lớn hơn bằng</option>
                             <option value="small">Nhỏ hơn bằng</option>
-                            <option value="notEqual">Khác</option>
+                            {/*<option value="notEqual">Khác</option>*/}
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
@@ -157,13 +165,12 @@ function MedicineList() {
                                id={'search'}/>
                         <button className="btn btn-outline-primary"
                                 style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}
-                                onClick={() => handleSearch()} value="searchInMedicine">
+                                onClick={() => handleSearch()}>
                             <i className="fa-solid fa-magnifying-glass"></i>
                             Tìm kiếm
                         </button>
                     </div>
                 </div>
-
 
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
