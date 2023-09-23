@@ -2,7 +2,7 @@ import {Field, Form, Formik, ErrorMessage, isNaN} from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
-import "./CustomerCreate.css";
+// import "./CustomerCreate.css";
 import { Link, useNavigate } from "react-router-dom";
 import {differenceInYears, isAfter, isBefore, parseISO} from "date-fns";
 import {
@@ -18,6 +18,7 @@ const CustomerCreate = () => {
   const [customerCode, setCustomerCode] = useState("");
   useEffect(() => {
     getCode();
+    document.title = 'RetroCare - Thêm mới khách hàng';
   }, []);
   const getCode = async () => {
     const result = await getCustomerCode();
@@ -79,7 +80,7 @@ const CustomerCreate = () => {
               .min(3, "Tên khách hàng tối thiểu 3 ký tự").required("Không bỏ trống trường này").matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Nhập sai định dạng vd:Nguyen Van An "),
             birthday: Yup.string().required(
               "Không bỏ trống trường này."
-            ).test( "birthday",
+            ).matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,"Không đúng định dạng vd:12-02-2000").test( "birthday",
                 "Ngày sinh không được vượt quá thời gian thực tế.",
                 validateBirth).test("birthday",
                 "Cảnh báo khách hàng chưa đủ 18 tuổi.",
@@ -106,8 +107,18 @@ const CustomerCreate = () => {
           {({ isValid,dirty }) => (
               <Form>
 
-            <fieldset className="form-input shadow">
-              <legend className="float-none w-auto px-3">
+                <fieldset
+                    className="form-input shadow"
+                    style={{
+                      width: 600,
+                      border: "1px solid black",
+                      padding: 20,
+                      borderRadius: 20,
+                      height: "auto"
+                    }}
+                >
+
+                <legend className="float-none w-auto px-3">
                 <h4>Thêm thông tin khách hàng</h4>
               </legend>
               <div className="row p-2">
