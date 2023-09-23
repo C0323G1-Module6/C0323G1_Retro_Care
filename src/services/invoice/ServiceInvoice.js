@@ -29,7 +29,7 @@ export async function getMedicineList() {
 }
 export async function getUnitDetail(id) {
     try {
-        const result = await axios.get(`http://localhost:8080/api/medicine/${id}`);
+        const result = await axios.get(`http://localhost:8080/api/medicine/get-unitDetail/${id}`);
         return result.data.unit.name;
     } catch (e) {
         console.log(e);
@@ -58,6 +58,15 @@ export async function editInvoice(invoice) {
 export async function getInvoice(invoiceId) {
     try {
         const result = await axios.get(`http://localhost:8080/api/invoice/${invoiceId}`);
+        return result.data;
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+export async function getMedicine(medicineId) {
+    try {
+        const result = await axios.get(`http://localhost:8080/api/medicine/get-medicine/${medicineId}`);
         return result.data;
     } catch (e) {
         console.log(e);
