@@ -174,11 +174,19 @@ function InvoiceList() {
 
 
 // Duyệt qua từng phần tử và xử lý
-    function formatDate(dateString) {
-        const [year, month, day] = dateString.split('-');
-        return `${day}/${month}/${year}`;
-    }
+    const clearStartTime = () => {
+        setStartTime("");
+    };
+    const clearEndTime = () => {
+        setEndTime("");
+    };
+    const clearStartDate = () => {
+        setStartDate("");
+    };
 
+    const clearEndDate = () => {
+        setEndDate("");
+    };
 
     return (
         <div>
@@ -197,31 +205,98 @@ function InvoiceList() {
                     <div className="col">
                         <label style={{ marginLeft: '1.5px' }}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
                         <input
-                            style={{ width: '9rem', marginLeft: '1.5px', height: '40px' }}
+                            style={{ width: '9rem', marginLeft: '', height: '40px' }}
                             type="date"
                             id="start-date"
+                            value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
                         />
+                        {startDate && (
+                            <button className="clear-button btn btn-outline-primary"
+                                    style={{height:'2.5rem',
+                                        border: 'solid 1px #d6d8d9',
+                                        paddingLeft:'6px', paddingRight:'6px',
+                                        borderRadius: '3px'}}
+                                    onClick={clearStartDate}>
+                                Xóa
+                            </button>
+                        )}
                     </div>
                     <div className="col">
-                        <label style={{marginLeft: '3px'}}>Đến ngày:</label>
-                        <input style={{width: '9rem', marginLeft: '3px', height: '40px'}} type="date" id="end-date"
-                               onChange={(e) => setEndDate(e.target.value)}/>
+                        <label style={{ marginLeft: '3px' }}>Đến ngày:</label>
+                        <input
+                            style={{ width: '9rem', marginLeft: '', height: '40px' }}
+                            type="date"
+                            id="end-date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                        />
+                        {endDate && (
+                            <button className="clear-button btn btn-outline-primary"
+                                    style={{height:'2.5rem',
+                                        border: 'solid 1px #d6d8d9',
+                                        paddingLeft:'6px', paddingRight:'6px',
+                                        borderRadius: '3px'}}
+                                    onClick={clearEndDate}>
+                                Xóa
+                            </button>
+                        )}
                     </div>
                     <div className="col">
                         <label>Từ giờ:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem', height: '40px'}} type="time" id="end-time"
-                               className="filter-input_huyhd" step="1"
-                               min="00:00:00" max="23:59:59"
-                               onChange={(e) => setStartTime(e.target.value)}/>
+                        <div style={{ display: "flex" }}>
+                            <input
+                                style={{ width: "9rem", height: "40px" }}
+                                type="time"
+                                id="start-time"
+                                step="1"
+                                min="00:00:00"
+                                max="23:59:59"
+                                value={startTime}
+                                onChange={(e) => setStartTime(e.target.value)}
+                            />
+                            {startTime && (
+                                <button className="clear-button btn btn-outline-primary"
+                                        style={{height:'2.5rem',
+                                            border: 'solid 1px #d6d8d9',
+                                            borderRadius: '3px'}}
+                                        onClick={clearStartTime}>
+                                    Xóa
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="col">
                         <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <input style={{width: '9rem', marginLeft: '2px', height: '40px'}} type="time" id="end-time"
-                               className="filter-input_huyhd" step="1"
-                               min="00:00:00" max="23:59:59"
-                               onChange={(e) => setEndTime(e.target.value)}/>
+                        <div style={{ display: "flex" }}>
+                            <input
+                                style={{ width: "9rem", height: "40px" }}
+                                type="time"
+                                id="end-time"
+                                step="1"
+                                min="00:00:00"
+                                max="23:59:59"
+                                value={endTime}
+                                onChange={(e) => setEndTime(e.target.value)}
+                            />
+                            {endTime && (
+                                <button className="clear-button btn btn-outline-primary"
+                                        style={{height:'2.5rem',
+                                            border: 'solid 1px #d6d8d9',
+                                            borderRadius: '3px'}}
+                                        onClick={clearEndTime}>
+                                    Xóa
+                                </button>
+                            )}
+                        </div>
                     </div>
+                    {/*<div className="col">*/}
+                    {/*    <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>*/}
+                    {/*    <input style={{width: '9rem', marginLeft: '2px', height: '40px'}} type="time" id="end-time"*/}
+                    {/*           className="filter-input_huyhd" step="1"*/}
+                    {/*           min="00:00:00" max="23:59:59"*/}
+                    {/*           onChange={(e) => setEndTime(e.target.value)}/>*/}
+                    {/*</div>*/}
                     <div className="col">
                         <label>Sắp xếp theo: </label>
                         <select style={{
