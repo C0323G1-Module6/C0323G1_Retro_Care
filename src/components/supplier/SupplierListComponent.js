@@ -49,7 +49,6 @@ function SupplierListComponent() {
                 timer: 1500
             })
             setSearchInput('')
-            setOptionSearch('')
             setAddress('')
             setName('')
             setCode('')
@@ -209,7 +208,7 @@ function SupplierListComponent() {
                                         <span style={{ color: 'black', marginTop: '10px' }}>Lọc theo</span>
                                         <select name='optionSearch' onChange={handleOptionSearch}
                                             className="form-select m-1" style={{ width: 200, height: '40px' }}>
-                                            <option>Chọn trường</option>
+                                            <option value={''}>Chọn trường</option>
                                             <option value={'code'}> Mã nhà cung cấp</option>
                                             <option value={'name'}>Tên nhà cung cấp</option>
                                             <option value={'address'}>Địa chỉ</option>
@@ -251,9 +250,9 @@ function SupplierListComponent() {
                                 <div className="col-4 col-function" style={{ float: 'right' }}>
                                     <div className="btn-group" style={{ marginTop: '20px', float: 'right' }}>
                                         <span style={{ marginTop: '13px' }}>Sắp xếp</span>
-                                        <select name='optionSearch' onChange={handleSortOption} value={sortBy}
+                                        <select name='optionSort' onChange={handleSortOption}
                                             className="form-select m-1" style={{ width: 200, height: '40px' }}>
-                                            <option>Chọn trường</option>
+                                            <option value={''}>Chọn trường</option>
                                             <option value={'code'}> Mã nhà cung cấp</option>
                                             <option value={'name'}>Tên nhà cung cấp</option>
                                             <option value={'address'}>Địa chỉ</option>
