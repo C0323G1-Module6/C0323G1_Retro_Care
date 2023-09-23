@@ -53,7 +53,25 @@ const RevenueAndProfitChart = () => {
         },
       },
       scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Thời gian",
+
+            font: {
+              size: 20,
+            },
+          },
+        },
         y: {
+          title: {
+            display: true,
+            text: "Số tiền (VNĐ)",
+
+            font: {
+              size: 20,
+            },
+          },
           beginAtZero: true,
         },
       },
@@ -170,20 +188,27 @@ const RevenueAndProfitChart = () => {
                       <legend className="float-none w-auto px-3">
                         <h5>Thời gian xuất báo cáo</h5>
                       </legend>
-                      <label htmlFor="startDate">Từ ngày</label>
+                      <label htmlFor="startDate" className="my-2">
+                        Từ ngày
+                      </label>
                       <Field
-                        className="form-control"
+                        className="form-control my-2"
                         type="date"
                         placeholder="Chọn ngày bắt đầu"
                         id="startDate"
                         name="startDate"
                       />
-                      <ErrorMessage
-                        className="text-danger"
-                        name="startDate"
-                        component="small"
-                      />
-                      <label htmlFor="endDate">Đến ngày</label>
+                      <div className="my-2" style={{ height: "16px" }}>
+                        <ErrorMessage
+                          className="text-danger"
+                          name="startDate"
+                          component="small"
+                        />
+                      </div>
+
+                      <label htmlFor="endDate" className="my-2">
+                        Đến ngày
+                      </label>
                       <Field
                         className="form-control "
                         type="date"
@@ -191,11 +216,14 @@ const RevenueAndProfitChart = () => {
                         id="endDate"
                         name="endDate"
                       />
-                      <ErrorMessage
-                        className="text-danger"
-                        name="endDate"
-                        component="small"
-                      />
+                      <div className="my-2" style={{ height: "16px" }}>
+                        <ErrorMessage
+                          className="text-danger"
+                          name="endDate"
+                          component="small"
+                        />
+                      </div>
+
                       <div className="d-flex justify-content-center">
                         <button
                           type="submit"
@@ -210,36 +238,55 @@ const RevenueAndProfitChart = () => {
                 </Form>
                 <div className="row">
                   <fieldset
-                    className="form-input shadow mx-auto"
+                    className="form-input shadow mx-auto "
                     style={{ width: "97%", height: "60%" }}
                   >
                     <legend className="float-none w-auto px-3">
                       <h5>Báo cáo chi tiết</h5>
                     </legend>
                     <div className="row">
-                      <div className="col-5">
-                        <p>Doanh thu</p>
+                      <div className="d-flex justify-content-between ">
+                        <p>Doanh thu :</p>
+                    
+                        <p className="">
+                          {" "}
+                          {sumReport.sumRevenue?new Intl.NumberFormat("vi-VN").format(
+                            sumReport.sumRevenue
+                          ):"0"}{" "}
+                          VNĐ
+                        </p>
                       </div>
-                      <div className="col-7">
-                        <p> {sumReport.sumRevenue} VNĐ</p>
+                      <div className="d-flex justify-content-between ">
+                        <p>Lợi nhuận :</p>
+                     
+                        <p className="float-end">
+                          
+                          {sumReport.sumProfit?new Intl.NumberFormat("vi-VN").format(
+                            sumReport.sumProfit
+                          ):"0"}{" "}
+                          VNĐ
+                        </p>
                       </div>
-                      <div className="col-5">
-                        <p>Lợi nhuận</p>
+                      <div className="d-flex justify-content-between ">
+                        <p>Doanh thu TB :</p>
+                 
+                        <p className="float-end">
+                          {sumReport.averageRevenue?
+                          new Intl.NumberFormat("vi-VN").format(
+                            sumReport.averageRevenue
+                          ):"0"}{" "}
+                          VNĐ
+                        </p>
                       </div>
-                      <div className="col-7">
-                        <p> {sumReport.sumProfit} VNĐ</p>
-                      </div>
-                      <div className="col-5">
-                        <p>Doanh thu TB</p>
-                      </div>
-                      <div className="col-7">
-                        <p> {sumReport.averageRevenue} VNĐ</p>
-                      </div>
-                      <div className="col-5">
-                        <p>Lợi nhuận TB</p>
-                      </div>
-                      <div className="col-7">
-                        <p> {sumReport.averageProfit} VNĐ</p>
+                      <div className="d-flex justify-content-between ">
+                        <p>Lợi nhuận TB: </p>
+                      
+                        <p className="float-end">
+                          {sumReport.averageProfit? new Intl.NumberFormat("vi-VN").format(
+                            sumReport.averageProfit
+                          ):"0"}{" "}
+                          VNĐ
+                        </p>
                       </div>
                     </div>
                   </fieldset>

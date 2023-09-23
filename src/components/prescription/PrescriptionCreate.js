@@ -1,5 +1,5 @@
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
 import { createPrescription } from "../../services/prescription/prescription";
@@ -9,36 +9,43 @@ import Swal from "sweetalert2";
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
     const [chooseMedicines, setChooseMedicines] = useState([]);
+    const [indications, setIndications] = useState([]);
+    const [number, setNumber] = useState([]);
     const navigate = useNavigate();
 
     const findAllPatient = async () => {
         const res = await getAllPatient();
         setPatients(res)
     };
+    console.log(indications);
+
+    const total = indications.indicationDto?.map((i) => (
+        indications.duration * i.frequency * i.dosage
+    ))
+
 
     const findAllMedicine = async () => {
         const res = await getMedicineList();
         setChooseMedicines(res);
     }
 
-    const createNewPrescription = async (value,setErrors) => {
-        
+    const createNewPrescription = async (value, setErrors) => {
         console.log(value);
-        
+
         try {
             const result = await createPrescription(value);
             Swal.fire(
-              "Thêm mới thành công !",
-              "khách hàng" + value.name + "đã được thêm mới!",
-              "success"
+                "Thêm mới thành công !",
+                "khách hàng" + value.name + "đã được thêm mới!",
+                "success"
             );
             navigate("/dashboard/prescription")
-          } catch (err) {
+        } catch (err) {
             console.log(err);
             if (err.response.data) {
-              setErrors(err.response.data);
+                setErrors(err.response.data);
             }
-          }
+        }
     }
 
     useEffect(() => {
@@ -81,20 +88,23 @@ function PrescriptionCreate() {
                             .required("Số ngày uống không được để trống!")
                             .max(30, "Số ngày uống không được quá 30 ngày!")
                             .min(1, "Số ngày uống không được nhỏ hơn 0!"),
-                        // indicationDto: Yup.object().shape({
-                        //     dosage: Yup.number().required("Số lần uống không được để trống!")
-                        //         .max(30, "Số lần uống không được quá 30 ngày!")
-                        //         .min(1, "Số lần uống không được nhỏ hơn 0!"),
-                        //     frequency: Yup.number().required("Số viên uống không được để trống!")
-                        //         .max(30, "Số viên uống không được quá 30 ngày!")
-                        //         .min(1, "Số viên uống không được nhỏ hơn 0!"),
-                        // })
+                        indicationDto: Yup.array().of(
+                            Yup.object().shape({
+                                medicine: Yup.string().required("Không được để trống!"),
+                                dosage: Yup.number().required("Số lần uống không được để trống!")
+                                    .max(30, "Số lần uống không được quá 30 ngày!")
+                                    .min(1, "Số lần uống không được nhỏ hơn 0!"),
+                                frequency: Yup.number().required("Số viên uống không được để trống!")
+                                    .max(30, "Số viên uống không được quá 30 ngày!")
+                                    .min(1, "Số viên uống không được nhỏ hơn 0!"),
+                            })
+                        )
 
                     })}
 
-                    onSubmit={(values, {setErrors}) => {
+                    onSubmit={(values, { setErrors }) => {
                         console.log(values, setErrors);
-                        createNewPrescription(values,setErrors);
+                        createNewPrescription(values, setErrors);
                     }}
                 >
                     {({ values }) => (
@@ -105,8 +115,8 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Mã toa thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='code' placeholder="Nhập mã toa thuốc..." />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="code" component="small" style={{ color: 'red' }} />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="code" component="small" style={{ color: 'red' }} />
                                         </div>
                                     </div>
                                 </div>
@@ -115,8 +125,8 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Tên đơn thuốc</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='name' placeholder="Nhập tên toa thuốc..." />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="name" component="small" style={{ color: 'red' }} />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="name" component="small" style={{ color: 'red' }} />
                                         </div>
                                     </div>
                                 </div>
@@ -124,12 +134,12 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input">Triệu chứng</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" placeholder="Nhập triệu chứng..." name='symptoms' />
-                                        <div style={{height: '15px'}}>
-                                        <ErrorMessage name="symptoms" component="small" style={{ color: 'red' }} />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="symptoms" component="small" style={{ color: 'red' }} />
                                         </div>
                                     </div>
 
-                                    
+
                                 </div>
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input">Đối tượng</label>
@@ -144,12 +154,12 @@ function PrescriptionCreate() {
                                     </div>
                                     <label className="col-sm-3 col-form-label" id="label-input" >Số ngày uống </label>
                                     <div className="col-sm-2">
-                                        <Field type="number" className="form-control" name='duration' placeholder="..."  />
-                                        
+                                        <Field type="number" className="form-control" name='duration' placeholder="..." />
+
                                     </div>
-                                    <div style={{height: '15px', marginLeft: '32rem'}}>
+                                    <div style={{ height: '15px', marginLeft: '32rem' }}>
                                         <ErrorMessage name="duration" component="small" style={{ color: 'red' }} />
-                                        </div>
+                                    </div>
 
                                 </div>
                                 <div className="mb-3 row">
@@ -184,11 +194,12 @@ function PrescriptionCreate() {
                                                                         </>
                                                                     ))}
                                                                 </datalist>
+                                                                <div><ErrorMessage name={`indicationDto[${index}].medicine`} component="small" style={{ color: 'red' }} /></div>
 
                                                             </div>
                                                             <label className="col-sm-3 col-form-label">Số viên:</label>
                                                             <div className="col-sm-2">
-                                                                <input type="text" className="form-control" placeholder="..." />
+                                                                <input type="text" className="form-control" value={total && total.length > 0 ? total[index] : ''} disabled />
                                                             </div>
                                                             <div className="col-sm-2">
                                                                 <button type="button" className="btn btn-outline-primary" onClick={() => remove(index)}><i className="fa-solid fa-trash" />
@@ -202,14 +213,14 @@ function PrescriptionCreate() {
                                                             <label className="col-sm-2 col-form-label">Ngày uống: </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
-                                                                <ErrorMessage name={`indicationDto[${index}].frequency`} component="" style={{ color: 'red' }} />
+                                                                <div><ErrorMessage name={`indicationDto[${index}].frequency`} component="small" style={{ color: 'red' }} /></div>
+                                                                
                                                             </div>
-
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
                                                                 <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
-                                                                <ErrorMessage name={`indicationDto[${index}].dosage`} component="div" style={{ color: 'red' }} />
+                                                                <div><ErrorMessage name={`indicationDto[${index}].dosage`} component="small" style={{ color: 'red' }} /></div>
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                         </div>
@@ -220,6 +231,7 @@ function PrescriptionCreate() {
                                                     <button
                                                         className="btn btn-outline-primary"
                                                         onClick={() => {
+                                                            setIndications(values)
                                                             push({ medicine: '', dosage: '', frequency: '' });
                                                         }}
                                                         type="button"
@@ -233,7 +245,7 @@ function PrescriptionCreate() {
                                     <div className="d-flex justify-content-end w-100 gap-2">
                                         <button type="submit" className=" btn btn-outline-primary" ><i className="fa-solid fa-plus" />
                                             Thêm mới</button>
-                                            <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
+                                        <Link to='/dashboard/prescription' className="btn btn-outline-primary"><i className="fa-regular fa-circle-left" />Trở về</Link>
                                     </div>
                                 </div>
                             </Form>
