@@ -161,7 +161,7 @@ function InvoiceList() {
         setTotalPages(data.totalPages);
         setSearchPage(searchPage);
     };
-    console.log(startTime)
+
 
     useEffect(() => {
         getListInvoice(currentPage);
@@ -171,7 +171,11 @@ function InvoiceList() {
         setCurrentPage(page);
         setSearchPage(page);
     };
-
+    useEffect(() => {
+        if (sortColumn) {
+            handleFilter();
+        }
+    }, [sortColumn]);
 
 // Duyệt qua từng phần tử và xử lý
     const clearStartTime = () => {
