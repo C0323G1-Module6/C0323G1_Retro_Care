@@ -107,7 +107,7 @@ const CustomerUpdate = () => {
                 .min(3, "Tên khách hàng tối thiểu 3 ký tự").required("Không bỏ trống trường này").matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Nhập sai định dạng vd:Nguyen Van An "),
             birthday: Yup.string().required(
                 "Không bỏ trống trường này."
-            ).test( "birthday",
+            ).matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,"Nhập sai định dạng ngày sinh VD: dd/mm/yyyy").test( "birthday",
                 "Ngày sinh không được vượt quá thời gian thực tế.",
                 validateBirth).test("birthday",
                 "Cảnh báo khách hàng chưa đủ 18 tuổi.",
