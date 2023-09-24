@@ -3,15 +3,26 @@ import {Link} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
 import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
 import swal from "sweetalert2";
+import "./MedicineList.css"
 
 function MedicineList() {
-    const [medicineList, setMedicineList] = useState([])
+    const [showContent,setShowContent]= useState(false);
+    const [medicineList, setMedicineList] = useState([]);
+    const [medicine, setMedicine] = useState("");
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [selectMedicine, setSelectMedicine] = useState({
         id: null,
         name: ""
     });
+
+    const handleMouseEnter = (medicine) => {
+        setShowContent(true);
+        setMedicine(medicine);
+    };
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
 
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
@@ -118,7 +129,9 @@ function MedicineList() {
     useEffect(() => {
         console.log("get list")
         getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
-    }, [searchInput, page, limit])
+    }, [searchInput, page, limit]);
+
+    const quantity = 20 ;
 
     if (!medicineList) {
         return null;
@@ -166,7 +179,7 @@ function MedicineList() {
 
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
-                        <div className="table table-container ">
+                        <div className="table table-container1 ">
                             <table className="table  w-100 leading-normal overflow-hidden rounded-3 table-hover ">
                                 <thead>
                                 <tr style={{background: '#0d6efd', color: '#ffffff'}}>
@@ -215,8 +228,19 @@ function MedicineList() {
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide "
+                                            onMouseEnter={()=>{handleMouseEnter(item.name)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.name.length > quantity ? `${item.name.slice(0,quantity)}...`:item.name}
+                                            {showContent && medicine === item.name &&
+                                                <div>{item.name}</div>}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide"
+                                            onMouseEnter={()=>{handleMouseEnter(item.activeElement)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.activeElement.length > quantity ? `${item.activeElement.slice(0,quantity)}...`:item.activeElement}
+                                            {showContent && medicine === item.activeElement &&
+                                                <div>{item.activeElement}</div>}
+                                        </td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
