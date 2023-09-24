@@ -18,6 +18,7 @@ const Header = ({ inputSearch, onInputChange }) => {
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
   const [keyword, setKeyword] = useState(" ");
+  const [userId, setUserId] = useState("");
 
   // replace 2 with userId
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const Header = ({ inputSearch, onInputChange }) => {
     if (isLoggedIn) {
       const id = await getIdByUserName(isLoggedIn.sub);
       console.log(id.data);
+      setUserId(id.data);
       dispatch(getAllCarts(id.data));
     }
   };
@@ -141,7 +143,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                   <div className="user-dropdown-list">
                     {JwtToken ? (
                       <>
-                        <Link to={"/user-infor"} className="user-dropdown-item">
+                        <Link
+                          to={`/user-infor/${userId}`}
+                          className="user-dropdown-item"
+                        >
                           <BiUserCircle className="me-3 ms-0" size={25} />
                           <div className="dropdown-text">Thông tin</div>
                         </Link>
