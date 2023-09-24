@@ -107,7 +107,6 @@ const RevenueAndProfitChart = () => {
         } else {
           profitData.push(0); // Hoặc có thể sử dụng 0 nếu biểu đồ yêu cầu
         }
-        console.log(revenueObj);
       });
     } else {
       mes = "Không có dữ liệu";
@@ -120,21 +119,18 @@ const RevenueAndProfitChart = () => {
       datasets: [
         {
           label: "Doanh thu",
-          // data: revenue.map((item) => item.total),
           data: revenueData,
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
         },
         {
           label: "Lợi nhuận",
-          // data: profit.map((item) => item.total),
           data: profitData,
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
         },
       ],
     };
-    console.log(data);
 
     return <Line options={options} data={data} />;
   };
@@ -153,7 +149,6 @@ const RevenueAndProfitChart = () => {
       setStartDate(values.startDate);
       setEndDate(values.endDate);
     } catch (err) {
-      console.log(err);
       if (err.response.data) {
         setErrors(err.response.data);
       }
@@ -247,44 +242,50 @@ const RevenueAndProfitChart = () => {
                     <div className="row">
                       <div className="d-flex justify-content-between ">
                         <p>Doanh thu :</p>
-                    
+
                         <p className="">
                           {" "}
-                          {sumReport.sumRevenue?new Intl.NumberFormat("vi-VN").format(
-                            sumReport.sumRevenue
-                          ):"0"}{" "}
+                          {sumReport.sumRevenue
+                            ? new Intl.NumberFormat("vi-VN").format(
+                                sumReport.sumRevenue
+                              )
+                            : "0"}{" "}
                           VNĐ
                         </p>
                       </div>
                       <div className="d-flex justify-content-between ">
                         <p>Lợi nhuận :</p>
-                     
+
                         <p className="float-end">
-                          
-                          {sumReport.sumProfit?new Intl.NumberFormat("vi-VN").format(
-                            sumReport.sumProfit
-                          ):"0"}{" "}
+                          {sumReport.sumProfit
+                            ? new Intl.NumberFormat("vi-VN").format(
+                                sumReport.sumProfit
+                              )
+                            : "0"}{" "}
                           VNĐ
                         </p>
                       </div>
                       <div className="d-flex justify-content-between ">
                         <p>Doanh thu TB :</p>
-                 
+
                         <p className="float-end">
-                          {sumReport.averageRevenue?
-                          new Intl.NumberFormat("vi-VN").format(
-                            sumReport.averageRevenue
-                          ):"0"}{" "}
+                          {sumReport.averageRevenue
+                            ? new Intl.NumberFormat("vi-VN").format(
+                                sumReport.averageRevenue
+                              )
+                            : "0"}{" "}
                           VNĐ
                         </p>
                       </div>
                       <div className="d-flex justify-content-between ">
                         <p>Lợi nhuận TB: </p>
-                      
+
                         <p className="float-end">
-                          {sumReport.averageProfit? new Intl.NumberFormat("vi-VN").format(
-                            sumReport.averageProfit
-                          ):"0"}{" "}
+                          {sumReport.averageProfit
+                            ? new Intl.NumberFormat("vi-VN").format(
+                                sumReport.averageProfit
+                              )
+                            : "0"}{" "}
                           VNĐ
                         </p>
                       </div>
