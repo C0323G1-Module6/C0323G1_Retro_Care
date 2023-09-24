@@ -123,7 +123,7 @@ export default function Details() {
   return (
     <>
       <Header />
-      <div id="hannah">
+      <div id="hannah" className="pb-5">
         <div className="mb-5">
           {medicine.id && (
             <div
@@ -283,23 +283,25 @@ export default function Details() {
                   </div>
                   <hr />
                   <p>
-                    Mã:{" "}
-                    <span style={{ color: "blue", fontSize: 14 }}>
-                      {medicine.medicine_Code}
-                    </span>
+                    <span className=" fw-bold">Mã sản phẩm: </span>
+                    <span>{medicine.medicine_Code}</span>
                   </p>
                   <hr />
                   <p>
-                    Danh mục:{" "}
-                    <span style={{ color: "blue", fontSize: 14 }}>
-                      {medicine.kind_Of_Medicine_Name}
-                    </span>
+                    <span className=" fw-bold">Danh mục: </span>
+                    <span>{medicine.kind_Of_Medicine_Name}</span>
                   </p>
                   <hr />
                   <p>
-                    Từ khoá:{" "}
-                    <span style={{ color: "blue", fontSize: 14 }}>
-                      Men vi sinh lợi khuẩn
+                    <span className=" fw-bold">Nhà sản xuất: </span>
+                    <span> {medicine.maker}</span>
+                  </p>
+                  <p>
+                    <span className=" fw-bold">Thành phần hoạt chất: </span>
+
+                    <span className=" d-inline-block ">
+                      {" "}
+                      {medicine.activeElement}
                     </span>
                   </p>
                 </div>
