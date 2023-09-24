@@ -2,7 +2,6 @@ import {Field, Form, Formik, ErrorMessage, isNaN} from "formik";
 import { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
-// import "./CustomerCreate.css";
 import { Link, useNavigate } from "react-router-dom";
 import {differenceInYears, isAfter, isBefore, parseISO} from "date-fns";
 import {
@@ -27,9 +26,10 @@ const CustomerCreate = () => {
   const validateBirth = (value) => {
     const currentDate = new Date();
     const birthday = parseISO(value);
-
-
       return !isAfter(birthday, currentDate);
+  };
+  const comeBackPagePrev = () => {
+    navigate(-1);
   };
   const validateBirthAge = (value) => {
     const currentDate = new Date();
@@ -51,7 +51,6 @@ const CustomerCreate = () => {
       );
       navigate("/dashboard/customer");
     } catch (err) {
-      console.log(err);
       if (err.response.data) {
         setErrors(err.response.data);
       }
@@ -63,7 +62,6 @@ const CustomerCreate = () => {
   return (
     <>
       <div className="mx-auto" style={{ width: "70%" }}>
-
         <Formik
           initialValues={{
             code: customerCode,
@@ -106,11 +104,10 @@ const CustomerCreate = () => {
         >
           {({ isValid,dirty }) => (
               <Form>
-
                 <fieldset
                     className="form-input shadow"
                     style={{
-                      width: 600,
+                      width: "80%",
                       border: "1px solid black",
                       padding: 20,
                       borderRadius: 20,
@@ -260,12 +257,13 @@ const CustomerCreate = () => {
                   </div>
                 </div>
                 <div className="col-8 mt-3">
-                  <Link
-                    to="/dashboard/customer"
+                  <button
+                      onClick={comeBackPagePrev}
+                      type="button"
                     className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
                   >
                     <AiOutlineRollback className="mx-1" /> Trở về
-                  </Link>
+                  </button>
                   { isValid && dirty && (
                       <button
                           className="btn btn-outline-primary float-end mx-1 mt-2 shadow"

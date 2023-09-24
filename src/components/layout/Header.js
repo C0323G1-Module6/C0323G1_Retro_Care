@@ -11,12 +11,14 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
+import { BiCog, BiLogOutCircle, BiUserCircle } from "react-icons/bi";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
   const [keyword, setKeyword] = useState(" ");
+  const [userId, setUserId] = useState("");
 
   // replace 2 with userId
   const dispatch = useDispatch();
@@ -39,6 +41,7 @@ const Header = ({ inputSearch, onInputChange }) => {
     if (isLoggedIn) {
       const id = await getIdByUserName(isLoggedIn.sub);
       console.log(id.data);
+      setUserId(id.data);
       dispatch(getAllCarts(id.data));
     }
   };
@@ -90,7 +93,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <Link to={"/home"}>Trang chủ</Link>
                   </li>
                   <li>
-                    <a href="#menu">Danh mục</a>
+                    <a href="#about">Về chúng tôi</a>
+                  </li>
+                  <li>
+                    <a href="#">Danh mục</a>
                   </li>
                 </ul>
               </nav>
@@ -98,6 +104,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                 <form className="header-search-form for-des">
                   <input
                     type="search"
+                    id="form-input-home"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
                     value={inputSearch}
@@ -137,21 +144,28 @@ const Header = ({ inputSearch, onInputChange }) => {
                     {JwtToken ? (
                       <>
                         <Link
+                          to={`/user-infor/${userId}`}
+                          className="user-dropdown-item"
+                        >
+                          <BiUserCircle className="me-3 ms-0" size={25} />
+                          <div className="dropdown-text">Thông tin</div>
+                        </Link>
+                        <Link
                           to={"/dashboard/prescription"}
                           className="user-dropdown-item"
                         >
-                          <i className="bx bx-log-out-circle"></i>
+                          <BiCog className="me-3 ms-0" size={25} />
                           <div className="dropdown-text">Chức năng</div>
                         </Link>
-                        <div className="user-dropdown-item">
-                          <i className="bx bx-log-out-circle"></i>
+                        <Link className="user-dropdown-item">
+                          <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div
                             className="dropdown-text"
                             onClick={() => handleLogOut()}
                           >
                             Đăng xuất
                           </div>
-                        </div>
+                        </Link>
                       </>
                     ) : null}
                   </div>

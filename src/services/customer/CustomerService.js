@@ -19,8 +19,14 @@ export const getCustomerDetail = async (id) => {
   } catch (e) {
     console.log(e);
   }
-
-
+}
+export const getCustomerDetailByUserId = async (id) => {
+  try {
+    const result = await axios.get(`http://localhost:8080/customers/api/user/${id}`);
+    return result.data;
+  } catch (e) {
+    console.log(e);
+  }
 }
 export const getCodeCustomer = async () => {
   try {

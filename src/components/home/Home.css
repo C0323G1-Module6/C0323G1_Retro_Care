@@ -27,7 +27,7 @@ img {
 
 .site-header {
   position: fixed;
-  padding: 30px 0;
+  padding: 1.5rem 0;
   display: flex;
   align-items: center;
   top: 0;
@@ -179,18 +179,18 @@ ul {
   opacity: 0.5;
 }
 
-.header-search-form .form-input {
+.header-search-form #form-input-home {
   font-size: 14px;
   padding-right: 40px;
-  width: 200px;
+  width: 300px;
   height: 40px;
 }
 
-.form-input::placeholder {
+#form-input-home::placeholder {
   color: rgba(70 69 71 / 0.7);
 }
 
-.form-input {
+#form-input-home {
   width: 100%;
   height: 50px;
   outline: none !important;
@@ -269,7 +269,7 @@ ul {
   text-transform: capitalize;
   font-weight: 500;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding-left: 1rem;
+  padding-left: 0.5rem;
 }
 
 .user-dropdown-item .bx {
@@ -332,8 +332,14 @@ ul {
     padding: 4px 15px;
     font-size: 15px;
   }
-  .header-search-form .form-input {
+  .header-search-form #form-input-home {
     width: 170px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .header-search-form #form-input-home {
+    width: 200px;
   }
 }
 
@@ -523,7 +529,7 @@ ul {
 }
 
 .main-banner {
-  padding: 10rem 0 5rem;
+  padding: 10rem 0 2rem;
   position: relative;
 }
 
@@ -676,11 +682,12 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .brands-box:hover {
-  filter: brightness(0.3);
   opacity: 0.9;
+  transform: scale(1.2);
 }
 
 .brand-title .h5-title {
@@ -706,7 +713,8 @@ p {
   padding: 3px 20px;
   border-radius: 60px;
   color: #ff8243;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .h2-title {
@@ -935,6 +943,15 @@ p {
   width: 30px;
 }
 
+/* Swiper Bottom Wrapper */
+
+.book-table-img {
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 /* *************** */
 
 .social-icon {
@@ -1137,7 +1154,7 @@ p {
 }
 
 .product-container {
-  padding: 0 10vw;
+  padding: 0 5vw;
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -1150,14 +1167,14 @@ p {
 .product-card {
   flex: 0 0 auto;
   width: 250px;
-  height: 450px;
+  height: 370px;
   /* margin-right: 40px; */
 }
 
 .product-image {
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 250px;
   overflow: hidden;
   border-radius: 5px;
   background: linear-gradient(145deg, #e6e6e6, #ffffff);
@@ -1250,7 +1267,7 @@ p {
 .pre-btn,
 .nxt-btn {
   border: none;
-  width: 10vw;
+  width: 5vw;
   height: 100%;
   position: absolute;
   top: 0;

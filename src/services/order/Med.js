@@ -1,4 +1,5 @@
 import axios from "axios";
+import {getIdByUserName, infoAppUserByJwtToken} from '../user/AppUserService'
 
 export async function getAllProducts() {
   const res = await axios.get("http://localhost:8080/medicine/api/medicine");
@@ -11,4 +12,8 @@ export async function updateCustomer(customer) {
     customer
   );
   return res;
+}
+
+export async function checkAndReturnAppUserIDIfExists(){
+  
 }
