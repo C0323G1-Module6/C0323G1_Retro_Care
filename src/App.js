@@ -34,96 +34,120 @@ import CreateInvoice from "./components/invoice/CreateInvoice";
 import UserCustomer from "./components/customer/UserCustomer";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "./components/home/ScrollToTop";
+import Authentication from "./components/user/Authentication";
+import AuthorOfCustomer from "./components/user/AuthorOfCustomer";
+import AuthorOfEmployee from "./components/user/AuthorOfEmployee";
+import { EnumAppUserRole } from "./components/user/EnumAppUserRole";
 function App() {
   return (
     <>
       <ScrollToTop />
       <Routes>
         <Route path="/home" element={<Home />}></Route>
-        <Route path="/user-infor/:id" element={<UserCustomer />} />
+        <Route path="/home/search/:keyword" element={<SearchPage />} />
+        <Route path="/home/search/" element={<SearchPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/invoice" element={<InvoiceList />} />
-        <Route path="/home/search/:keyword" element={<SearchPage />} />
-        <Route path="/dashboard" element={<Dashboard />}>
-          <Route
-            path="/dashboard/prescription"
-            element={<PrescriptionList />}
-          />
-          <Route
-            path="/dashboard/prescription/create"
-            element={<PrescriptionCreate />}
-          />
-          <Route
-            path="/dashboard/prescription/edit/:id"
-            element={<PrescriptionEdit />}
-          />
-          <Route path="/dashboard/medicine" element={<MedicineList />} />
-          <Route
-            path="/dashboard/kind-of-medicine"
-            element={<KindOfMedicineList />}
-          />
-          <Route path="/dashboard/customer" element={<CustomerList />} />
-          <Route
-            path="/dashboard/customer/create"
-            element={<CustomerCreate />}
-          />
-          <Route
-            path="/dashboard/customer/update/:id"
-            element={<CustomerUpdate />}
-          />
-          <Route path="/dashboard/employee" element={<ListEmployee />} />
-          <Route
-            path="/dashboard/employee/create"
-            element={<CreateEmployee />}
-          />
-          <Route
-            path="/dashboard/employee/update/:id"
-            element={<UpdationEmployee />}
-          />
-          <Route
-            path="/dashboard/supplier"
-            element={<SupplierListComponent />}
-          />
-          <Route
-            path="/dashboard/supplier/create-supplier"
-            element={<CreateSupplierComponent />}
-          />
-          <Route
-            path="/dashboard/supplier/detail-supplier/:idSupplier"
-            element={<DetailSupplierComponent />}
-          />
-          <Route
-            path="/dashboard/supplier/update-supplier/:idSupplier"
-            element={<UpdateSupplierComponent />}
-          />
-          <Route path="/dashboard/invoice" element={<InvoiceList />} />
-          <Route path="/dashboard/retail" element={<Retail />} />
-          <Route
-            path="/dashboard/retail/prescription-list"
-            element={<RetailListPrescriptionList />}
-          />
-          <Route
-            path="/dashboard/retail/prescription-information/:id"
-            element={<RetailPrescriptionInformation />}
-          />
-          <Route path="/dashboard/report" element={<GeneralReport />} />
-          <Route
-            path="/dashboard/report/chart"
-            element={<RevenueAndProfitChart />}
-          />
-          <Route
-            path="/dashboard/medicine/create"
-            element={<MedicineCreate />}
-          />
-          <Route
-            path="/dashboard/medicine/update/:id"
-            element={<MedicineEdit />}
-          />
-          <Route path="/dashboard/invoice/create" element={<CreateInvoice />} />
-        </Route>
-        <Route path="/cart" element={<Cart />}></Route>
         <Route path="/details/:id" element={<Details />}></Route>
+        <Route path="/user-infor/:id" element={<UserCustomer />} />
+        <Route
+          element={
+            <Authentication
+              allowedRoles={[
+                EnumAppUserRole.ROLE_ADMIN,
+                EnumAppUserRole.ROLE_MANAGER,
+                EnumAppUserRole.ROLE_EMPLOYEE,
+                EnumAppUserRole.ROLE_CUSTOMER,
+              ]}
+            />
+          }
+        >
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route element={<AuthorOfCustomer />}>
+              <Route path="/dashboard/retail" element={<Retail />} />
+              <Route
+                path="/dashboard/retail/prescription-list"
+                element={<RetailListPrescriptionList />}
+              />
+              <Route
+                path="/dashboard/retail/prescription-information/:id"
+                element={<RetailPrescriptionInformation />}
+              />
+              <Route element={<AuthorOfEmployee />}>
+                <Route
+                  path="/dashboard/prescription"
+                  element={<PrescriptionList />}
+                />
+                <Route
+                  path="/dashboard/prescription/create"
+                  element={<PrescriptionCreate />}
+                />
+                <Route
+                  path="/dashboard/prescription/edit/:id"
+                  element={<PrescriptionEdit />}
+                />
+                <Route path="/dashboard/medicine" element={<MedicineList />} />
+                <Route
+                  path="/dashboard/kind-of-medicine"
+                  element={<KindOfMedicineList />}
+                />
+                <Route path="/dashboard/customer" element={<CustomerList />} />
+                <Route
+                  path="/dashboard/customer/create"
+                  element={<CustomerCreate />}
+                />
+                <Route
+                  path="/dashboard/customer/update/:id"
+                  element={<CustomerUpdate />}
+                />
+                <Route path="/dashboard/employee" element={<ListEmployee />} />
+                <Route
+                  path="/dashboard/employee/create"
+                  element={<CreateEmployee />}
+                />
+                <Route
+                  path="/dashboard/employee/update/:id"
+                  element={<UpdationEmployee />}
+                />
+                <Route
+                  path="/dashboard/supplier"
+                  element={<SupplierListComponent />}
+                />
+                <Route
+                  path="/dashboard/supplier/create-supplier"
+                  element={<CreateSupplierComponent />}
+                />
+                <Route
+                  path="/dashboard/supplier/detail-supplier/:idSupplier"
+                  element={<DetailSupplierComponent />}
+                />
+                <Route
+                  path="/dashboard/supplier/update-supplier/:idSupplier"
+                  element={<UpdateSupplierComponent />}
+                />
+                <Route path="/dashboard/invoice" element={<InvoiceList />} />
+
+                <Route path="/dashboard/report" element={<GeneralReport />} />
+                <Route
+                  path="/dashboard/report/chart"
+                  element={<RevenueAndProfitChart />}
+                />
+                <Route
+                  path="/dashboard/medicine/create"
+                  element={<MedicineCreate />}
+                />
+                <Route
+                  path="/dashboard/medicine/update/:id"
+                  element={<MedicineEdit />}
+                />
+                <Route
+                  path="/dashboard/invoice/create"
+                  element={<CreateInvoice />}
+                />
+              </Route>
+            </Route>
+          </Route>
+        </Route>
       </Routes>
     </>
   );

@@ -29,3 +29,12 @@ export async function getOrderDetails(orderId) {
   );
   return res.data;
 }
+
+export async function createVNPayPayment(price) {
+  const res = await axios.get("http://localhost:8080/payment", {
+    params: {
+      price: price,
+    },
+  });
+  return res.data;
+}
