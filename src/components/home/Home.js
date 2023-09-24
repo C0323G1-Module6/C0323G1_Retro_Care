@@ -86,7 +86,7 @@ const Home = () => {
                     chăm sóc sức khoẻ lớn nhất
                   </h5>
                   <div className="banner-btn mt-4">
-                    <a href="#menu" className="sec-btn">
+                    <a href="#" className="sec-btn">
                       Về chúng tôi
                     </a>
                   </div>

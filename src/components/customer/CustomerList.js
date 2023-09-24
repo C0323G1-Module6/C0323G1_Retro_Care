@@ -134,7 +134,8 @@ function CustomerList() {
         text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "OK",
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Không",
         icon: "question",
       }).then(async (result) => {
         if (result.isConfirmed) {
@@ -217,7 +218,7 @@ function CustomerList() {
             padding: 5,
             border: "1px black solid"
           }}
-            placeholder="Tìm kiếm khách hàng"
+            placeholder={(optionSearch === 2) ? "Nhập tên tìm kiếm..." : "Tìm kiếm khách hàng"}
             className="bg-white align-middle appearance-none m-1"
             aria-describedby="button-addon"
             id="search" onKeyDown={handleKeyDown}

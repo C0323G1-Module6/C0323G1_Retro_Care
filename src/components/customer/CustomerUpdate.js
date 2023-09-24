@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineRollback } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";
+import "./CustomerCreate.css";
 import {differenceInYears, isAfter, parseISO} from "date-fns";
 import XRegExp from "xregexp";
 
@@ -132,8 +133,16 @@ const CustomerUpdate = () => {
         >
           {({ isValid,dirty }) => (
           <Form>
-            <fieldset className="form-input shadow">
-              <legend className="float-none w-auto px-3">
+            <fieldset
+                className="form-input shadow"
+                style={{
+                  width: "80%",
+                  border: "1px solid black",
+                  padding: 20,
+                  borderRadius: 20,
+                  height: "auto"
+                }}
+            >              <legend className="float-none w-auto px-3">
                 <h2>Sửa thông tin khách hàng</h2>
               </legend>
               <div className="row p-2">
