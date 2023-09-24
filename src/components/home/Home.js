@@ -27,6 +27,7 @@ import {
   getIdByUserName,
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
+import Sliders from "./Sliders";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -152,7 +153,9 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="our-menu bg-light repeat-img pt-5 pb-5" id="menu">
+      <Sliders />
+
+      <section className="bg-light repeat-img pt-5 pb-5" id="menu">
         <div className="sec-wp">
           <div className="row">
             <div className="col-lg-12">
@@ -250,7 +253,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="our-menu bg-light repeat-img pt-5 pb-5" id="menu">
+      <section className="bg-light repeat-img pt-5 pb-5" id="menu">
         <div className="sec-wp">
           <div className="row">
             <div className="col-lg-12">
