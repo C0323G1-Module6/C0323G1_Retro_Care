@@ -8,7 +8,10 @@ import {
   checkAvailability,
   deleteMultiProduct,
 } from "../../services/order/CartService";
-import { createOrder } from "../../services/order/OrderService";
+import {
+  createOrder,
+  createVNPayPayment,
+} from "../../services/order/OrderService";
 import swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage, Field } from "formik";
@@ -23,6 +26,7 @@ import {
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
 import Billing from "./Billing";
+import { set } from "date-fns";
 // Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
@@ -34,6 +38,7 @@ export default function Cart() {
   const [appUserId, setAppUserId] = useState(null);
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [customerToPay, setCustomerToPay] = useState({});
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
   const navigate = useNavigate();
@@ -262,13 +267,6 @@ export default function Cart() {
               deletedCartIDs,
               customer
             );
-            // console.log("orderid");
-            // console.log(res);
-            // swal.fire(
-            //   "Thanh toán thành công!",
-            //   "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của RetroCare!",
-            //   "success"
-            // );
             navigate("/success", {
               state: {
                 orderId: res.data,
@@ -322,6 +320,28 @@ export default function Cart() {
       }
     }
   };
+
+  const handleVNPAY = async () => {
+    let finalPrice = totalPrice - discount;
+    const plusPoint = totalPrice / 100;
+    const loyaltyPoint = point + plusPoint - discount;
+    let deletedCartIDs = [];
+    selectedMedicines.forEach((med) => deletedCartIDs.push(med.cartId));
+    const tempOrder = {
+      appUserId: appUserId,
+      loyaltyPoint: loyaltyPoint,
+      totalPrice: finalPrice,
+      customerToPay: customerToPay,
+      deletedCartIDs: deletedCartIDs,
+      totalPriceBeforeDiscount: totalPrice,
+      discount: discount,
+    };
+    localStorage.setItem("tempOrder", JSON.stringify(tempOrder));
+
+    const res = await createVNPayPayment(finalPrice);
+    window.location.href = res;
+  };
+
   useEffect(() => {
     document.title = "RetroCare - Giỏ Hàng";
   }, []);
@@ -335,6 +355,7 @@ export default function Cart() {
       (total, el) => total + el.medicinePrice * el.quantityInCart,
       0
     );
+
     setTotalPrice(newTotalPrice);
   }, [selectedMedicines]);
 
@@ -528,6 +549,7 @@ export default function Cart() {
                           note: yup.string().max(255),
                         })}
                         onSubmit={async (values, { setErrors }) => {
+                          setCustomerToPay(values);
                           try {
                             swal.fire(
                               "Cập nhật thông tin thành công!",
@@ -641,7 +663,23 @@ export default function Cart() {
                         </Form>
                       </Formik>
                     </div>
+                    <div className=" w-100 d-flex justify-content-center">
+                      <button
+                        className="btn fw-bold w-50"
+                        style={{
+                          marginBottom: "20px",
+                          color: "black",
+                          backgroundColor: "#119cd4",
+                          border: "1px #119cd4 solid ",
+                          display: checkout ? "block" : "none",
+                        }}
+                        onClick={handleVNPAY}
+                      >
+                        THANH TOÁN VỚI VNPAY
+                      </button>
+                    </div>
                     <div id="paypal-button-container" className="w-50"></div>
+
                     <Link to="/home" className="btn btn-outline-primary mb-5">
                       ← Tiếp tục xem sản phẩm
                     </Link>
