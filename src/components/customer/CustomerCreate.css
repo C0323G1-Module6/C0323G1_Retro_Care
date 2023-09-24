@@ -1,13 +1,13 @@
 .image-with-text {
-    background-image: url('https://thuthuatnhanh.com/wp-content/uploads/2023/06/hinh-nen-may-tinh-4k-don-gian-ma-dep-chill-800x450.jpg');
-    background-size: cover;
+    background-image: url('https://thuthuatnhanh.com/wp-content/uploads/2022/06/Hinh-anh-Vien-Thuoc.jpg');
+    background-size:  cover;
     background-repeat: no-repeat;
-    padding: 20px;
-    /*text-align: center;*/
+    padding: 4%;
+    color: #ffffff;
     border-radius: 20px;
     clip-path: polygon(0% 0%, 97% 0%, 97% 100%, 0% 100%, 0% 97%);
 }
 
-.image-with-body {
-    background-color: whitesmoke;
+.image-with-body{
+    background-color:  whitesmoke;
 }
