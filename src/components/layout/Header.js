@@ -40,7 +40,6 @@ const Header = ({ inputSearch, onInputChange }) => {
     const isLoggedIn = infoAppUserByJwtToken();
     if (isLoggedIn) {
       const id = await getIdByUserName(isLoggedIn.sub);
-      console.log(id.data);
       setUserId(id.data);
       dispatch(getAllCarts(id.data));
     }
@@ -62,7 +61,8 @@ const Header = ({ inputSearch, onInputChange }) => {
   };
 
   const searchMedicines = (keyword) => {
-    navigate(`/home/search/${keyword}`);
+    const trimKeyword = keyword.trim();
+    navigate(`/home/search/${trimKeyword}`);
   };
 
   const handleSearch = (event) => {

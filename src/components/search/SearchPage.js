@@ -23,6 +23,7 @@ export const SearchPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log(params.keyword);
     setCurrentPage(1);
     getMedicineList();
   }, [params.keyword]);
@@ -34,11 +35,12 @@ export const SearchPage = () => {
   const getMedicineList = async () => {
     setLoading(true);
     setIsNoContent(false);
+    const trimKeyword = keyword.trim();
     try {
       const response = await homeService.searchMedicines(
         currentPage - 1,
         pageSize,
-        keyword,
+        trimKeyword,
         type,
         sortBy,
         sortDirection
@@ -46,6 +48,7 @@ export const SearchPage = () => {
       console.log(response);
       if (response.status === 204) {
         setIsNoContent(true);
+        setKeyword("");
       } else {
         setMedicineList(response.data.content);
         setTotalElements(response.data.totalElements);
