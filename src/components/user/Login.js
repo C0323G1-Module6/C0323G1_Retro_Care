@@ -33,7 +33,6 @@ const Login = () => {
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             navigate(-1);
         } catch (e) {
-            console.log(e);
             Swal.fire({
                 icon: 'error',
                 title: e.response.data,
