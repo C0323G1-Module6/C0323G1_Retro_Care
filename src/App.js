@@ -31,11 +31,13 @@ import Cart from "./components/order/Cart";
 import Details from "./components/order/Details";
 import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
 import CreateInvoice from "./components/invoice/CreateInvoice";
+import UserCustomer from "./components/customer/UserCustomer";
 import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <Routes>
       <Route path="/home" element={<Home />}></Route>
+      <Route path="/user-info/:id" element={<UserCustomer />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/invoice" element={<InvoiceList />} />
