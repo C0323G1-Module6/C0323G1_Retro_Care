@@ -16,6 +16,9 @@ const UpdationEmployee = () => {
     const imgPreviewRef = useRef(null)
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
+    useEffect(() => {
+        document.title = 'RetroCare - Chỉnh sửa thông tin nhân viên'
+    }, []);
     const updateEmployees = async (employeeUpdate,setErrors) => {
         if (imageUpload != null) {
             const fileName = `images/${imageUpload.name + v4()}`
@@ -331,8 +334,6 @@ const UpdationEmployee = () => {
                 </div>
             </Form>
         </Formik>
-
-
     )
 }
 

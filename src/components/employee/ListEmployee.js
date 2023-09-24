@@ -7,10 +7,10 @@ import {FiEdit} from "react-icons/fi";
 import {
     AiOutlineRollback,
     AiOutlineDoubleLeft,
-    AiOutlineDoubleRight,
+    AiOutlineDoubleRight
 } from "react-icons/ai";
 import {Field, Form, Formik} from "formik";
-import {deleteEmployees, getListEmployee} from "../../services/employee/EmployeeService";
+import {deleteEmployees, getListEmployee, getListEmployee1} from "../../services/employee/EmployeeService";
 import Swal from "sweetalert2";
 import {Link} from "react-router-dom";
 import * as Yup from "yup";
@@ -23,7 +23,10 @@ export default function ListEmployee() {
     const [pageList, setPageList] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const limit = 5;
-    const [sort, setSort] = useState("code_employee");
+    const [sort, setSort] = useState({
+        sortEmployee: "code_employee",
+        ways: "ASC"
+    });
     const [searchEmployee, setSearchEmployee] = useState("");
     const [deleteEmployee, setDeleteEmployee] = useState("");
     const [message, setMessage] = useState("");
@@ -32,13 +35,27 @@ export default function ListEmployee() {
         setShowContent(true);
         setNameEmployee(nameEmployee);
     };
-
     const handleMouseLeave = () => {
         setShowContent(false);
     };
+
     const getList = async () => {
         try {
-            const data = await getListEmployee(pageList, limit, sort, searchEmployee);
+            const data = await getListEmployee(pageList, limit, sort.sortEmployee, searchEmployee);
+            setMessage('')
+            setEmployee(data.content);
+            setPageList(data.pageable.pageNumber);
+            setTotalPage(data.totalPages);
+        } catch (noContent) {
+            setMessage('Không có dữ liệu trên hệ thống')
+            setEmployee([]);
+            setPageList(0);
+            setTotalPage(0);
+        }
+    };
+    const getList1 = async () => {
+        try {
+            const data = await getListEmployee1(pageList, limit, sort.sortEmployee, searchEmployee);
             setMessage('')
             setEmployee(data.content);
             setPageList(data.pageable.pageNumber);
@@ -51,26 +68,46 @@ export default function ListEmployee() {
         }
     };
     useEffect(() => {
-        document.title = 'Retro Care - Danh sách nhân viên'
-    },[])
+        document.title = 'RetroCare - Danh sách nhân viên'
+    }, []);
     useEffect(() => {
-        getList().then();
+        if (sort.ways === "ASC") {
+            getList().then();
+        } else if (sort.ways === "DESC") {
+            getList1().then();
+        }
     }, [pageList, sort]);
+
     const checkSearch = async (nameEmployee) => {
         setSearchEmployee(nameEmployee);
         setPageList(0);
         try {
-            const data = await getListEmployee(pageList, limit, sort, nameEmployee);
-            setMessage('')
-            setEmployee(data.content);
-            setPageList(data.pageable.pageNumber);
-            setTotalPage(data.totalPages);
-            await Swal.fire({
-                icon: 'success',
-                title: 'Đã tìm thấy dữ liệu.',
-                showConfirmButton: false,
-                timer: 1500
-            })
+            if (sort.ways === "ASC") {
+                const data = await getListEmployee(pageList, limit, sort.sortEmployee, nameEmployee);
+                setMessage('')
+                setEmployee(data.content);
+                setPageList(data.pageable.pageNumber);
+                setTotalPage(data.totalPages);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Đã tìm thấy dữ liệu.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } else {
+                const data = await getListEmployee1(pageList, limit, sort.sortEmployee, nameEmployee);
+                setMessage('')
+                setEmployee(data.content);
+                setPageList(data.pageable.pageNumber);
+                setTotalPage(data.totalPages);
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Đã tìm thấy dữ liệu.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+
         } catch (noContent) {
             Swal.fire({
                 icon: 'warning',
@@ -83,8 +120,7 @@ export default function ListEmployee() {
             setPageList(0);
             setTotalPage(0);
         }
-
-    }
+    };
 
     const checkDelete = async () => {
         if (deleteEmployee !== "") {
@@ -161,8 +197,7 @@ export default function ListEmployee() {
                                 })}
                                 onSubmit={(values) => {
                                     checkSearch(values.nameEmployee).then();
-                                }}
-                            >
+                                }}>
                                 <Form>
                                     <span>Lọc theo:</span>
                                     <Field
@@ -182,17 +217,28 @@ export default function ListEmployee() {
                             </Formik>
                         </div>
                         <div className="ms-4">
-                            <Formik initialValues={{sort: ""}}>
+                            <Formik initialValues={{sortEmployee: ""}}>
                                 <Form>
                                     <span>Sắp xếp: </span>
                                     <Field
                                         as="select"
-                                        value={sort}
+                                        value={JSON.stringify({sortEmployee: sort.sortEmployee, ways: sort.ways})}
                                         className="input-search"
-                                        onChange={(event) => setSort(event.target.value)}
+                                        onChange={(event) => setSort(JSON.parse(event.target.value))}
                                     >
-                                        <option value="code_employee">Mã nhân viên</option>
-                                        <option value="name_employee">Tên nhân viên</option>
+                                        <option value={JSON.stringify({sortEmployee: "code_employee", ways: "ASC"})}>Mã
+                                            nhân viên <span style={{color:""}}>&#9650;</span>
+                                        </option>
+                                        <option value={JSON.stringify({sortEmployee: "code_employee", ways: "DESC"})}>Mã
+                                            nhân viên  <span>&#9660;</span>
+                                        </option>
+                                        <option value={JSON.stringify({sortEmployee: "name_employee", ways: "ASC"})}>Tên
+                                            nhân viên <span>&#9650;</span>
+                                        </option>
+                                        <option
+                                            value={JSON.stringify({sortEmployee: "name_employee", ways: "DESC"})}>Tên
+                                            nhân viên <span>&#9660;</span>
+                                        </option>
                                     </Field>
                                 </Form>
                             </Formik>
@@ -225,7 +271,7 @@ export default function ListEmployee() {
                                         </tr>)
                                     }
 
-                                    { employees.map((employee, index) => (
+                                    {employees.map((employee, index) => (
                                         <tr className={`tr-employee ${deleteEmployee && deleteEmployee.id === employee.id ? 'check-delete-employee' : ''}`}
                                             key={index}
                                             onClick={() => {
