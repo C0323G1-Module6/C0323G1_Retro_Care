@@ -18,6 +18,9 @@ const CreationEmployee = () => {
   const imgPreviewRef = useRef(null);
   const inputFileRef = useRef(null);
   const [imageUpload, setImageUpload] = useState(null);
+  useEffect(() => {
+    document.title = 'RetroCare - Thêm mới thông tin nhân viên'
+  }, []);
   const saveEmployee = async (employee, setErrors) => {
     const fileName = `images/${imageUpload.name + v4()}`;
     const imageRef = ref(storage, fileName);

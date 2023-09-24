@@ -69,7 +69,7 @@ export default function ListEmployee() {
     };
     useEffect(() => {
         document.title = 'RetroCare - Danh sách nhân viên'
-    }, [])
+    }, []);
     useEffect(() => {
         if (sort.ways === "ASC") {
             getList().then();
