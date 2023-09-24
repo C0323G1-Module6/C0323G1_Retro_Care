@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { deleteSupplierById, getListSupplier, getSupplierById } from "../../services/supplier/SupplierService";
+import { deleteSupplierById, getListSupplier } from "../../services/supplier/SupplierService";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import '../../css/supplier/ThanhVh_ListSupplier.css'
@@ -15,9 +15,7 @@ import { FiEdit } from "react-icons/fi";
 
 function SupplierListComponent() {
     const [suppliers, setSuppliers] = useState([]);
-    const [supplier, setSupplier] = useState({
-
-    });
+    const [supplier, setSupplier] = useState({});
     let [page, setPage] = useState(0)
     let [sortBy, setSortBy] = useState('')
     let [code, setCode] = useState('');
@@ -26,6 +24,7 @@ function SupplierListComponent() {
     let [address, setAddress] = useState('');
     let [optionSearch, setOptionSearch] = useState("");
     let [searchInput, setSearchInput] = useState('');
+    const quantity = 20;
 
     // ----------------List ----------------------
     const getSupplier = (item) => {
@@ -137,7 +136,7 @@ function SupplierListComponent() {
                 title: 'Vui lòng chọn nhà cung cấp',
                 icon: 'warning',
                 showCancelButton: false,
-                showConfirmButton:false,
+                showConfirmButton: false,
                 timer: 1000
             })
         } else {
@@ -218,9 +217,9 @@ function SupplierListComponent() {
                                             height: '39px'
                                         }} placeholder={
                                             optionSearch === 'code' ? 'Tìm kiếm theo mã cung cấp' :
-                                            optionSearch === 'name' ? 'Tìm kiếm theo tên nhà cung cấp' :
-                                            optionSearch === 'address' ? 'Tìm kiếm theo địa chỉ' :
-                                            optionSearch === 'phone_number' ? 'Tìm kiếm theo số điện thoại' :
+                                                optionSearch === 'name' ? 'Tìm kiếm theo tên nhà cung cấp' :
+                                                    optionSearch === 'address' ? 'Tìm kiếm theo địa chỉ' :
+                                                        optionSearch === 'phone_number' ? 'Tìm kiếm theo số điện thoại' :
                                                             'Chọn trường'
                                         }
                                         className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none" />
@@ -254,18 +253,134 @@ function SupplierListComponent() {
                             <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                                 <div className="inline-block min-w-full shadow rounded-lg overflow-hidden"
                                     style={{ borderRadius: '10px' }}>
-                                    <div style={{ minHeight: "27.2rem" }}>
-                                        <table className="min-w-full leading-normal table table-hover " id="myTable" style={{ tableLayout: "fixed" }}>
-                                            <colgroup>
-                                                <col style={{ width: "40px" }} />
-                                                <col style={{ width: "80px" }} />
-                                                <col style={{ width: "135px" }} />
-                                                <col style={{ width: "161px" }} />
-                                                <col style={{ width: "80px" }} />
-                                                <col style={{ width: "80px" }} />
-                                                <col style={{ width: "80px" }} />
+                                    {suppliers.content && suppliers.content.length !== 0 ?
+                                        <div>
+                                            <div style={{ minHeight: "27.2rem" }}>
+                                                <table className="min-w-full leading-normal table table-hover " id="myTable" style={{ tableLayout: "fixed" }}>
+                                                    <colgroup>
+                                                        <col style={{ width: "25px" }} />
+                                                        <col style={{ width: "70px" }} />
+                                                        <col style={{ width: "107px" }} />
+                                                        <col style={{ width: "106px" }} />
+                                                        <col style={{ width: "80px" }} />
+                                                        <col style={{ width: "67px" }} />
+                                                        <col style={{ width: "80px" }} />
 
-                                            </colgroup>
+                                                    </colgroup>
+                                                    <thead>
+                                                        <tr style={{ background: '#0d6efd', color: '#ffffff', borderRadius: '10px' }}>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Mã cung cấp
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Tên nhà cung cấp
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Địa chỉ
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Số điện thoại
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Công nợ
+                                                            </th>
+                                                            <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
+                                                                Ghi chú
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {suppliers.content.map((item, index) => (
+                                                            <tr key={`ctm_${item.idSupplier}`} onClick={() => getSupplier(item)}
+                                                                className={supplier === item ? 'gray' : ''}>
+                                                                <td className="px-3 py-3 border-b border-gray-200  text-sm">
+                                                                    <div className="flex items-center">
+                                                                        <div className="ml-3">
+                                                                            <p>
+                                                                                {(page * 5) + (index + 1)}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200 text-sm">
+                                                                    <p >
+                                                                        {item.codeSupplier.length > quantity ? `${item.codeSupplier.slice(0, quantity)}...` : item.codeSupplier}
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200 text-sm">
+                                                                    <Link
+                                                                        style={{ textDecoration: 'none' }}
+                                                                        to={`/dashboard/supplier/detail-supplier/${item.idSupplier}`}>
+                                                                        <b>{item.nameSupplier.length > quantity ? `${item.nameSupplier.slice(0, quantity)}...` : item.nameSupplier}</b>
+                                                                    </Link>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200 text-sm">
+                                                                    <p >
+                                                                        {item.address.length > quantity ? `${item.address.slice(0, quantity)}...` : item.address}
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200 text-sm">
+                                                                    <p >
+                                                                        {item.phoneNumber}
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200 text-sm">
+                                                                    <p >
+                                                                        {changePrice(item.debt)} VNĐ
+                                                                    </p>
+                                                                </td>
+                                                                <td className="px-2 py-3 border-b border-gray-200  text-sm">
+                                                                    <p>
+                                                                        {item.note.length > quantity ? `${item.note.slice(0, quantity)}...` : item.note}
+                                                                    </p>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                             
+                                            </div>
+                                            <div className="justify-content-center d-flex rounded-bottom shadow m-3">
+                                                    {page !== 0 ?
+                                                        <button className="btn btn-primary" style={{ margin: '5px' }}
+                                                            onClick={async () => {
+
+                                                                await previousPage()
+                                                            }}>
+                                                            <AiOutlineDoubleLeft />
+                                                        </button> :
+                                                        <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
+
+                                                            <AiOutlineDoubleLeft />
+                                                        </button>
+                                                    }
+
+                                                    <div className="text-sm py-2 px-4" style={{
+                                                        background: '#0d6efd',
+                                                        color: '#ffffff',
+                                                        margin: '5px',
+                                                        borderRadius: '5px'
+                                                    }}>
+                                                        {page + 1}/{suppliers.totalPages}
+                                                    </div>
+                                                    {page !== suppliers.totalPages - 1 ?
+                                                        <button className="btn btn-primary" style={{ margin: '5px' }}
+                                                            onClick={async () => {
+
+                                                                await nextPage();
+                                                            }}>
+                                                            <AiOutlineDoubleRight />
+                                                        </button> :
+                                                        <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
+                                                            <AiOutlineDoubleRight />
+                                                        </button>
+                                                    }
+                                                </div>  
+                                        </div>
+                                        :
+                                        <table className="min-w-full leading-normal table table-hover " id="myTable">
                                             <thead>
                                                 <tr style={{ background: '#0d6efd', color: '#ffffff', borderRadius: '10px' }}>
                                                     <th className="px-2 py-3 border-b-2   text-left text-xs   uppercase tracking-wider">
@@ -290,102 +405,17 @@ function SupplierListComponent() {
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            {suppliers.content && suppliers.content.length !== 0 ?
-                                                <tbody>
-                                                    {suppliers.content.map((item, index) => (
-                                                        <tr key={`ctm_${item.idSupplier}`} onClick={() => getSupplier(item)}
-                                                            className={supplier === item ? 'gray' : ''}>
-                                                            <td className="px-3 py-3 border-b border-gray-200  text-sm">
-                                                                <div className="flex items-center">
-                                                                    <div className="ml-3">
-                                                                        <p>
-                                                                            {(page * 5) + (index + 1)}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                                                <p >
-                                                                    {item.codeSupplier}
-                                                                </p>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                                                <Link
-                                                                    style={{ textDecoration: 'none' }}
-                                                                    to={`/dashboard/supplier/detail-supplier/${item.idSupplier}`}>
-                                                                    <b>{item.nameSupplier}</b>
-                                                                </Link>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                                                <p >
-                                                                    {item.address}
-                                                                </p>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                                                <p >
-                                                                    {item.phoneNumber}
-                                                                </p>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200 text-sm">
-                                                                <p >
-                                                                    {changePrice(item.debt)} VNĐ
-                                                                </p>
-                                                            </td>
-                                                            <td className="px-2 py-3 border-b border-gray-200  text-sm">
-                                                                <p>
-                                                                    {item.note}
-                                                                </p>
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody> :
-                                                <tbody>
-                                                    <tr style={{ height: '150px' }}>
-                                                        <td style={{ color: 'red', fontSize: '50px', textAlign: 'center' }} colSpan="9">Không có dữ
-                                                            liệu
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            }
-
+                                            <tbody>
+                                                <tr style={{ height: '150px' }}>
+                                                    <td style={{ color: 'red', fontSize: '50px', textAlign: 'center' }} colSpan="9">Không có dữ
+                                                        liệu
+                                                    </td>
+                                                </tr>
+                                            </tbody>
                                         </table>
-                                    </div>
-                                    <div className="justify-content-center d-flex rounded-bottom shadow m-3">
-                                        {page !== 0 ?
-                                            <button className="btn btn-primary" style={{ margin: '5px' }}
-                                                onClick={async () => {
+                                    }
 
-                                                    await previousPage()
-                                                }}>
-                                                <AiOutlineDoubleLeft />
-                                            </button> :
-                                            <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
 
-                                                <AiOutlineDoubleLeft />
-                                            </button>
-                                        }
-
-                                        <div className="text-sm py-2 px-4" style={{
-                                            background: '#0d6efd',
-                                            color: '#ffffff',
-                                            margin: '5px',
-                                            borderRadius: '5px'
-                                        }}>
-                                            {page + 1}/{suppliers.totalPages}
-                                        </div>
-                                        {page !== suppliers.totalPages - 1 ?
-                                            <button className="btn btn-primary" style={{ margin: '5px' }}
-                                                onClick={async () => {
-
-                                                    await nextPage();
-                                                }}>
-                                                <AiOutlineDoubleRight />
-                                            </button> :
-                                            <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
-                                                <AiOutlineDoubleRight />
-                                            </button>
-                                        }
-                                    </div>
                                 </div>
                             </div>
                         </div>
