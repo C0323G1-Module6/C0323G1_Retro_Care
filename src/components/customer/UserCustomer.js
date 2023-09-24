@@ -28,7 +28,7 @@ const UserCustomer = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                navigate("/home");
+                navigate(-1);
             }
             setCustomer(result);
 
@@ -43,7 +43,7 @@ const UserCustomer = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
-                navigate("/dashboard/customer");
+                navigate(-1);
             }
         }
     }
@@ -64,6 +64,9 @@ const UserCustomer = () => {
         return age >= 18;
 
     }
+    const comeBackPagePrev = () => {
+        navigate(-1);
+    }
     const handleSubmit = async (value, setErrors) => {
         try {
             console.log(value);
@@ -73,13 +76,12 @@ const UserCustomer = () => {
                 "khách hàng " + value.name + " đã được cập nhật!",
                 "success"
             );
-            navigate("/dashboard/customer");
+            navigate(-1);
         } catch (err) {
             if (err.response.data) {
                 setErrors(err.response.data);
             }
             if (err.response.status === 406) {
-                console.log(err);
                 setErrors(err.response.data);
             }
         }
@@ -124,36 +126,38 @@ const UserCustomer = () => {
                             "Nhập sai định dạng vd:nguyenvanan@gmail.com"
                         ).max(30, "Email tối đa 30 ký tự")
                 })}
+                onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
             >
-                <div   className="row shadow mx-auto image-with-body"
+                {({ isValid,dirty }) => (
+                    <div   className="row shadow mx-auto image-with-body"
                        style={{width: "80%", marginTop: "2%", borderRadius: 20, marginLeft: "2%"}}>
                 <div className="col-5 image-with-text">
                     <div style={{marginTop: "8%"}}>
-                        <h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Bạn đã cập nhật ?</h5>
-                        <p style={{color: "whitesmoke", fontWeight: "bold"}}>
-                            Để xem các sản phẩm, giá cả và ưu đãi mới nhất, bạn cần phải đăng ký.
-                            Vui lòng nhập thông tin của bạn để chúng tôi có thể liên hệ với bạn và
-                            gửi cho bạn liên kết đến tất cả các sản phẩm.
-                        </p>
+                        {/*<h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Bạn đã cập nhật ?</h5>*/}
+                        {/*<p style={{color: "whitesmoke", fontWeight: "bold"}}>*/}
+                        {/*    Để xem các sản phẩm, giá cả và ưu đãi mới nhất, bạn cần phải đăng ký.*/}
+                        {/*    Vui lòng nhập thông tin của bạn để chúng tôi có thể liên hệ với bạn và*/}
+                        {/*    gửi cho bạn liên kết đến tất cả các sản phẩm.*/}
+                        {/*</p>*/}
                     </div>
                     <div className=" mt-5">
-                        <h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Bạn đã cập nhật trước khi ?</h5>
-                        <p style={{color: "whitesmoke", fontWeight: "bold"}}>
-                            Nếu bạn đã đăng ký trước đó nhưng quên hoặc không tìm thấy liên kết
-                            chúng tôi đã gửi cho bạn, vui lòng gọi cho chúng tôi hoặc gửi email cho
-                            chúng tôi. Bạn có thể đăng ký lại nếu muốn, nhưng không cần thiết nếu
-                            bạn đã đăng ký rồi.
-                        </p>
+                        {/*<h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Bạn đã cập nhật trước khi ?</h5>*/}
+                        {/*<p style={{color: "whitesmoke", fontWeight: "bold"}}>*/}
+                        {/*    Nếu bạn đã đăng ký trước đó nhưng quên hoặc không tìm thấy liên kết*/}
+                        {/*    chúng tôi đã gửi cho bạn, vui lòng gọi cho chúng tôi hoặc gửi email cho*/}
+                        {/*    chúng tôi. Bạn có thể đăng ký lại nếu muốn, nhưng không cần thiết nếu*/}
+                        {/*    bạn đã đăng ký rồi.*/}
+                        {/*</p>*/}
                     </div>
                     <div className="mt-5">
-                        <h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Làm sao để cập nhật thông tin ?</h5>
-                        <p style={{color: "whitesmoke", fontWeight: "bold"}}>
-                            Vui lòng điền đầy đủ thông tin để được cập nhật, sau đó hãy bấm nút cập
-                            nhật để kết thúc thao tác.
-                        </p>
+                        {/*<h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Làm sao để cập nhật thông tin ?</h5>*/}
+                        {/*<p style={{color: "whitesmoke", fontWeight: "bold"}}>*/}
+                        {/*    Vui lòng điền đầy đủ thông tin để được cập nhật, sau đó hãy bấm nút cập*/}
+                        {/*    nhật để kết thúc thao tác.*/}
+                        {/*</p>*/}
                     </div>
                 </div>
-                    <Form className="col-7 px-3 pt-3" style={{borderRadius: 20}}>
+                        <Form className="col-7 px-3 pt-3" style={{borderRadius: 20}}>
                         <h2 style={{color: "#6C757D", marginLeft: "2rem"}}>
                             Hồ sơ thông tin cá nhân
                         </h2>
@@ -255,21 +259,30 @@ const UserCustomer = () => {
                                 </div>
                             </div>
                             <div className="mb-3 row">
-                                <div className="col-9" style={{float: "start"}}>
+                                <div className="col-7" style={{float: "start"}}>
                                     <small className="text-danger">(*)</small> Thông tin cần thiết để mua
                                     hàng
                                 </div>
                                 <div className="col-3">
+                                    { isValid && dirty && (
                                         <button
                                             className="btn btn-success float-end mx-1 mt-2 shadow"
                                             type="submit"
                                         >Cập nhật
-                                        </button>
+                                        </button>)}
+                                </div>
+                                <div className="col-2">
+                                    <button
+                                        onClick={comeBackPagePrev}
+                                        className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
+                                    >
+                                        Trở về
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                    </Form>
-                </div></Formik>
+                        </Form>
+                </div>)}</Formik>
 
         </>
     );

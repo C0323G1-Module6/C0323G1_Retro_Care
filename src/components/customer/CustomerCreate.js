@@ -26,9 +26,10 @@ const CustomerCreate = () => {
   const validateBirth = (value) => {
     const currentDate = new Date();
     const birthday = parseISO(value);
-
-
       return !isAfter(birthday, currentDate);
+  };
+  const comeBackPagePrev = () => {
+    navigate(-1);
   };
   const validateBirthAge = (value) => {
     const currentDate = new Date();
@@ -50,7 +51,6 @@ const CustomerCreate = () => {
       );
       navigate("/dashboard/customer");
     } catch (err) {
-      console.log(err);
       if (err.response.data) {
         setErrors(err.response.data);
       }
@@ -257,12 +257,12 @@ const CustomerCreate = () => {
                   </div>
                 </div>
                 <div className="col-8 mt-3">
-                  <Link
-                    to="/dashboard/customer"
+                  <button
+                      onClick={comeBackPagePrev}
                     className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
                   >
                     <AiOutlineRollback className="mx-1" /> Trở về
-                  </Link>
+                  </button>
                   { isValid && dirty && (
                       <button
                           className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
