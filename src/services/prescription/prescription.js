@@ -15,7 +15,6 @@ export const createPrescription = async (newPrescription) => {
 }
 
 export const editPrescription = async (prescription) => {
-    console.log(prescription);
     await axios.patch(`http://localhost:8080/prescription/edit`,prescription)
 }
 

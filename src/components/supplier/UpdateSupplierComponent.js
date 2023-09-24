@@ -54,7 +54,6 @@ function UpdateSupplierComponent() {
     getSupplier()
   }, [idSupplier])
 
-  console.log(supplier.code);
   return (
     <>
       {supplier.id &&

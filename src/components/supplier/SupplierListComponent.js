@@ -41,7 +41,6 @@ function SupplierListComponent() {
             const supplierData = await getListSupplier(pageable, code, name, phoneNumber, address, sortBy);
             setSuppliers(supplierData);
         } catch (error) {
-            console.log(error);
             Swal.fire({
                 icon: 'error',
                 title: 'Không tìm thấy nhà cung cấp',
@@ -105,16 +104,16 @@ function SupplierListComponent() {
     const handleClickSearch = () => {
         switch (optionSearch) {
             case 'code':
-                setCode(searchInput);
+                setCode(searchInput.trim());
                 break;
             case 'name':
-                setName(searchInput);
+                setName(searchInput.trim());
                 break;
             case 'address':
-                setAddress(searchInput);
+                setAddress(searchInput.trim());
                 break;
             case 'phone_number':
-                setPhoneNumber(searchInput);
+                setPhoneNumber(searchInput.trim());
                 break;
         }
         resetInputSearch();
@@ -123,11 +122,6 @@ function SupplierListComponent() {
         const value = event.target.value;
         getList(page, code, name, phoneNumber, address, value)
     }
-    console.log(code);
-    console.log(name);
-    console.log(phoneNumber);
-    console.log(address);
-    console.log(sortBy);
     const resetInputSearch = () => {
         setSearchInput("");
     }
@@ -135,19 +129,16 @@ function SupplierListComponent() {
     const changePrice = (price) => {
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     }
-
-    console.log(supplier);
-
     // -------------- Xoá ---------------------
 
     const handleDelete = () => {
-        console.log(supplier.id);
         if (supplier.idSupplier === null || supplier.idSupplier === undefined) {
             Swal.fire({
-                title: 'Vui lòng chọn nhà cung cấp trước',
+                title: 'Vui lòng chọn nhà cung cấp',
                 icon: 'warning',
                 showCancelButton: false,
-                timer: 2000
+                showConfirmButton:false,
+                timer: 1000
             })
         } else {
             Swal.fire({
@@ -183,7 +174,6 @@ function SupplierListComponent() {
             })
         }
     };
-    console.log(code);
 
 
     return (
@@ -412,7 +402,7 @@ function SupplierListComponent() {
                                                 icon: "warning",
                                                 title: "Vui lòng chọn nhà cung cấp",
                                                 showConfirmButton: false,
-                                                timer: 1500,
+                                                timer: 1000,
 
                                             })
                                         }}

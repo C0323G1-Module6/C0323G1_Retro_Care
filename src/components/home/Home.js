@@ -7,12 +7,7 @@ import arrow from "../../img/arrow.png";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import {
-  Pagination,
-  Navigation,
-  Autoplay,
-  EffectCoverflow,
-} from "swiper/modules";
+import { Navigation, Autoplay, EffectCoverflow } from "swiper/modules";
 import * as homeService from "../../services/home/HomeService";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
@@ -36,6 +31,10 @@ const Home = () => {
   const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
+
+  useEffect(() => {
+    document.title = "RetroCare - Trang chủ";
+  }, []);
 
   useEffect(() => {
     getMedicineList();
