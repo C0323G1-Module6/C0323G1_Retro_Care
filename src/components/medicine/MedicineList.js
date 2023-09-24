@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
-import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import swal from "sweetalert2";
 import "./MedicineList.css"
+import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
+import {FiEdit} from "react-icons/fi";
 
 function MedicineList() {
     const [showContent,setShowContent]= useState(false);
@@ -288,24 +290,24 @@ function MedicineList() {
                     <div className="d-flex align-items-center justify-content-end gap-3 mt-3">
 
                         <Link to={'/dashboard/medicine/create'} className="btn btn-outline-primary">
-                            <i className="fa-solid fa-plus"></i>
+                            <FaPlus className="mx-1" />
                             Thêm mới
                         </Link>
                         <Link
                             to={`/dashboard/medicine/update/${selectMedicine.id}`}
                             className="btn btn-outline-primary">
-                            <i className="fa-regular fa-pen-to-square"></i>
+                            <FiEdit className="mx-1" />
                             Sửa
                         </Link>
                         <button
                             type="button"
                             onClick={() => handleDelete()}
                             className="btn btn-outline-primary">
-                            <i className="fa-solid fa-trash"></i>
+                            <FaRegTrashAlt className="mx-1" />
                             Xoá
                         </button>
                         <Link to={`/home`} className="btn btn-outline-primary">
-                            <i className="fa-solid fa-rotate-left"></i>
+                            <AiOutlineRollback className="mx-1" />
                             Trở về
                         </Link>
                     </div>

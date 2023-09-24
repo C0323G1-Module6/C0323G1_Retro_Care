@@ -12,5 +12,6 @@
     border-radius: 5px;
     box-sizing: border-box;
     width: 700px;
-    height: 500px;
+    height: auto;
+    z-index: 99;
 }
