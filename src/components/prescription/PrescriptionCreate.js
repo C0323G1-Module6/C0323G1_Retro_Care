@@ -8,8 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import {
-  AiOutlineRollback,
- 
+    AiOutlineRollback,
+
 } from "react-icons/ai";
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
@@ -46,10 +46,10 @@ function PrescriptionCreate() {
             navigate("/dashboard/prescription")
         } catch (err) {
             console.log(err.response.data);
-            
-                if (err.response.data) {
-                    setErrors(err.response.data);
-                }
+
+            if (err.response.data) {
+                setErrors(err.response.data);
+            }
         }
     }
 
@@ -93,6 +93,7 @@ function PrescriptionCreate() {
                             .required("Không được để trống!")
                             .max(30, "Không được quá 30 ngày!")
                             .min(1, "Không được nhỏ hơn 0!"),
+                        note: Yup.string(50, "Không được quá 50 ký tự!"),
                         indicationDto: Yup.array().of(
                             Yup.object().shape({
                                 medicine: Yup.string().required("Không được để trống!"),
@@ -108,7 +109,7 @@ function PrescriptionCreate() {
                     })}
 
                     onSubmit={(values, { setErrors }) => {
-                        console.log(values, setErrors);
+                        console.log(values);
                         createNewPrescription(values, setErrors);
                     }}
                 >
@@ -170,6 +171,9 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Ghi chú</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='note' placeholder="Nhập ghi chú..." />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="note" component="small" style={{ color: 'red' }} />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -183,7 +187,7 @@ function PrescriptionCreate() {
                                                         <div className="mb-3 row d-flex align-items-center justify-content-start">
                                                             <label className="col-sm-1 col-form-label">{index + 1}.</label>
                                                             <div className="col-sm-4">
-                                                                <Field
+                                                                {/* <Field
                                                                     type="text"
                                                                     className="form-control"
                                                                     placeholder="Tìm thuốc..."
@@ -197,7 +201,14 @@ function PrescriptionCreate() {
                                                                             <option value={medicine.name}></option>
                                                                         </>
                                                                     ))}
-                                                                </datalist>
+                                                                </datalist> */}
+                                                                <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
+                                                                    {
+                                                                        chooseMedicines.map((t) => (
+                                                                            <option value={t.name}>{t.name}</option>
+                                                                        ))
+                                                                    }
+                                                                </Field>
                                                                 <div className="col-sm-10"><ErrorMessage name={`indicationDto[${index}].medicine`} component="small" style={{ color: 'red' }} /></div>
 
                                                             </div>
