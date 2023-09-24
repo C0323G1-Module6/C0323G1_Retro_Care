@@ -230,17 +230,34 @@ export default function MedicineEdit() {
                     }
                     }
                     validationSchema={Yup.object({
-                        name: Yup.string().required("Không được để trống.").max(50, "Tên vượt quá 50 kí tự").min(2, "Tên phải từ 2 kí tự trở lên."),
-                        price: Yup.number().min(0, "Giá không được là số âm."),
-                        vat: Yup.number().min(0, "Vat không được là số âm."),
-                        maker: Yup.string().max(50, "Nhà sản xuất vượt quá 50 kí tự."),
-                        activeElement: Yup.string().required("Không được để trống.").max(50, "Hoạt chất không vượt quá 50 kí tự."),
-                        note: Yup.string().max(100, "Ghi chú không vượt quá 100 kí tự."),
-                        origin: Yup.string().required("Không được để trống.").max(50, "Xuất xứ vượt quá 50 kí tự."),
-                        retailProfits: Yup.number().required("Không được để trống. ").min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),
-                        kindOfMedicineDto: Yup.string().required("Không được để trống."),
-                        conversionRate: Yup.number().required("Không được để trống.").min(0, "Tỷ lệ quy đổi không được bé hơn 0."),
-                        conversionUnit: Yup.string().required("Không được để trống."),
+                        name: Yup.string()
+                            .required("Không được để trống.")
+                            .max(50, "Tên vượt quá 50 kí tự")
+                            .min(2, "Tên phải từ 2 kí tự trở lên."),
+                        price: Yup.number()
+                            .min(0, "Giá không được là số âm."),
+                        vat: Yup.number()
+                            .min(0, "Vat không được là số âm."),
+                        maker: Yup.string()
+                            .max(50, "Nhà sản xuất vượt quá 50 kí tự."),
+                        activeElement: Yup.string()
+                            .required("Không được để trống.")
+                            .max(50, "Hoạt chất không vượt quá 50 kí tự."),
+                        note: Yup.string()
+                            .max(100, "Ghi chú không vượt quá 100 kí tự."),
+                        origin: Yup.string()
+                            .required("Không được để trống.")
+                            .max(50, "Xuất xứ vượt quá 50 kí tự."),
+                        retailProfits: Yup.number()
+                            .required("Không được để trống. ")
+                            .min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),
+                        kindOfMedicineDto: Yup.string()
+                            .required("Không được để trống."),
+                        conversionRate: Yup.number()
+                            .required("Không được để trống.")
+                            .min(0, "Tỷ lệ quy đổi không được bé hơn 0."),
+                        conversionUnit: Yup.string()
+                            .required("Không được để trống."),
                         unit: Yup.number().required("Không được để trống."),
                     })}
                     onSubmit={(values, {setErrors}) => {
