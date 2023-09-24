@@ -1,0 +1,35 @@
+#ThanhVH .form-input {
+    width: 700px;
+    border: 1px solid black;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+#ThanhVH .form-btn {
+    width: 600px;
+}
+
+body {
+    padding: 20px;
+}
+
+#ThanhVH .form-input {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    height: 670px;
+}
+
+#ThanhVH .form-input label {
+    font-weight: bold;
+}
+
+#ThanhVH .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+#ThanhVH .form-btn {
+    text-align: right;
+}
