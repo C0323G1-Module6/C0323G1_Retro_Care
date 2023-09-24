@@ -18,7 +18,7 @@ const Login = () => {
            
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate(-1);
+            navigate("/home");
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -31,7 +31,7 @@ const Login = () => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate(-1);
+            navigate("/home");
         } catch (e) {
             Swal.fire({
                 icon: 'error',
