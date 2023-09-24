@@ -22,7 +22,7 @@ export async function getMedicineForDisplay(medicineId) {
   const res = await axios.get(
     `http://localhost:8080/api/carts/get-details?medicineId=${medicineId}`
   );
-  return res.data;
+  return res;
 }
 
 export async function getCarts(appUserId) {
@@ -65,4 +65,11 @@ export async function checkAvailability(appUserId) {
     `http://localhost:8080/api/carts/check-availability?appUserId=${appUserId}`
   );
   return res.data;
+}
+
+export async function deleteMultiProduct(deleledCartIDs) {
+  const res = await axios.post(
+    "http://localhost:8080/api/carts/delete-multi",
+    deleledCartIDs
+  );
 }

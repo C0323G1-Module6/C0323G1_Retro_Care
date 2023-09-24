@@ -11,6 +11,15 @@ export async function getListEmployee(page, limit, sort, nameEmployee) {
     });
     return res.data;
 }
+export async function getListEmployee1(page, limit, sort, nameEmployee) {
+    const res = await axios.get("/api/employees/list1/" + page + "/" + limit + "/" + sort, {
+        params: {
+            name: nameEmployee
+        }
+
+    });
+    return res.data;
+}
 
 export async function deleteEmployees(idEmployee) {
    const res = await axios.delete("/api/employees/delete-employee", {params: {id: idEmployee}});
