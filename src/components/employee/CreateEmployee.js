@@ -102,6 +102,7 @@ const CreationEmployee = () => {
   };
 
   useEffect(() => {
+    document.title = "RetroCare - Thêm mới nhân viên";
     loadNewEmployee();
   }, []);
 

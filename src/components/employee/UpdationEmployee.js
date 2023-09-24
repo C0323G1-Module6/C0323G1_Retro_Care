@@ -97,6 +97,7 @@ const UpdationEmployee = () => {
     };
 
     useEffect(() => {
+        document.title = "RetroCare - Chỉnh sửa thông tin nhân viên";
         loadEmployee(param.id);
     }, [param.id])
 

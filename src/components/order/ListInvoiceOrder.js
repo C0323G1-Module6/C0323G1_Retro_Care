@@ -52,6 +52,7 @@ const ListInvoiceOrder = () => {
         setOptionSort(value);
     }
     useEffect(() => {
+        document.title = "RetroCare - Danh sách bán hàng";
         loadAllInvoice(page, dateTimeOrder, optionSort);
     }, [page, dateTimeOrder, optionSort])
 
