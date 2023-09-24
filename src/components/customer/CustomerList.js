@@ -315,7 +315,7 @@ function CustomerList() {
                     {customer?.address.length > 20 ? `${customer?.address.slice(0, 20)}...` : customer?.address}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.phoneNumber}
+                    {customer?.phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3')}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {customer?.customerType}
