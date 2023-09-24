@@ -6,7 +6,9 @@ import Swal from "sweetalert2";
 import { addMedicineToCart, getAllIndicationsByPrescription, getOnePrescriptionById } from "../../services/retail/RetailService";
 import jsPDF from "jspdf";
 import diacriticless from "diacriticless";
-
+import { addJwtTokenToLocalStorage, getIdByUserName, infoAppUserByJwtToken } from "../../services/user/AppUserService";
+import { AiOutlineRollback } from "react-icons/ai";
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa"
 
 export default function RetailPrescriptionInfomation() {
 
@@ -14,14 +16,31 @@ export default function RetailPrescriptionInfomation() {
     const [duration, setDuration] = useState(0);
     const { id } = useParams();
     const [indications, setIndications] = useState([]);
+    const [appUserId, setAppUserId] = useState(0);
+    const [user, setUser] = useState({});
     const navigate = useNavigate();
-    const appUserId = 16;
+
 
 
     useEffect(() => {
         getPrescription();
         getIndications();
+        getUser();
+        document.title="RetroCare - chi tiết toa";
     }, []);
+
+    const getUser = async () => {
+        const data = await infoAppUserByJwtToken(); // Sử dụng await để đợi hàm không đồng bộ hoàn thàn
+        try {
+            await getAppUserId(data.sub)
+        } catch (e) {
+        }
+    }
+
+    const getAppUserId = async (name) => {
+        const id = await getIdByUserName(name);
+        setAppUserId((pre) => id.data);
+    }
 
     const backToList = () => {
         navigate("/dashboard/retail/prescription-list");
@@ -34,8 +53,23 @@ export default function RetailPrescriptionInfomation() {
     }
 
     const addToCart = () => {
-        addPrescriptionToCart();
-        navigate("/dashboard/retail");
+        if (indications.length === 0) {
+            navigate("/dashboard/retail");
+            Swal.fire({
+                text: "Không có gì để thêm",
+                icon: "Warning",
+                timer: 1000,
+            });
+        } else {
+            addPrescriptionToCart();
+            navigate("/dashboard/retail");
+            Swal.fire({
+                text: "Thêm thành công",
+                icon: "Success",
+                timer: 1000,
+            });
+        }
+
     }
 
 
@@ -87,10 +121,17 @@ export default function RetailPrescriptionInfomation() {
     };
 
     const handleGeneratePDF = async () => {
-        // Tạo đối tượng jsPDF
-        const doc = new jsPDF();
+        if (indications.length === 0) {
+            Swal.fire({
+                text: "Không có gì để in",
+                icon: "Warning",
+                timer: 1000,
+            });
+        } else {
+            // Tạo đối tượng jsPDF
+            const doc = new jsPDF();
 
-        const billContent = `
+            const billContent = `
         Ten toa thuoc: ${diacriticless(prescription.name)}
         -----------------------------
         Doi tuong: ${diacriticless(prescription.patient.name)}
@@ -100,59 +141,60 @@ export default function RetailPrescriptionInfomation() {
         
         `
 
-        // Định dạng và vẽ nội dung hóa đơn
-        doc.setFont('Arial', 'bold');
-        doc.setFontSize(16);
-        doc.text(billContent, 10, 10);
+            // Định dạng và vẽ nội dung hóa đơn
+            doc.setFont('Arial', 'bold');
+            doc.setFontSize(16);
+            doc.text(billContent, 10, 10);
 
-        // Vẽ tiêu đề bảng
-        const tableHeader = ['STT', 'Ten thuoc', 'So lan/ ngay', 'So vien/ lan uong'];
-        const tableHeaderX = 30;
-        const tableHeaderY = 70;
-        const tableHeaderFontSize = 12;
+            // Vẽ tiêu đề bảng
+            const tableHeader = ['STT', 'Ten thuoc', 'So lan/ ngay', 'So vien/ lan uong'];
+            const tableHeaderX = 30;
+            const tableHeaderY = 70;
+            const tableHeaderFontSize = 12;
 
-        doc.setFont('Arial', 'bold');
-        doc.setFontSize(tableHeaderFontSize);
-        doc.text(tableHeader.join('                      '), tableHeaderX, tableHeaderY);
+            doc.setFont('Arial', 'bold');
+            doc.setFontSize(tableHeaderFontSize);
+            doc.text(tableHeader.join('                      '), tableHeaderX, tableHeaderY);
 
-        // Vẽ dữ liệu sản phẩm
-        const tableDataX = 30;
-        const tableDataY = 80;
-        const tableDataFontSize = 12;
+            // Vẽ dữ liệu sản phẩm
+            const tableDataX = 30;
+            const tableDataY = 80;
+            const tableDataFontSize = 12;
 
-        doc.setFont('Arial', 'normal');
-        doc.setFontSize(tableDataFontSize);
-        indications.forEach((indication, index) => {
-            const { dosage, frequency, name } = indication;
-            const rowData = [
-                index + 1,
-                diacriticless(name),
-                frequency,
-                dosage
-            ];
-            const rowY = tableDataY + index * 10;
-            rowData.forEach((data, columnIndex) => {
-                const columnX = tableDataX + columnIndex * 40;
-                doc.text(data.toString(), columnX, rowY);
+            doc.setFont('Arial', 'normal');
+            doc.setFontSize(tableDataFontSize);
+            indications.forEach((indication, index) => {
+                const { dosage, frequency, name } = indication;
+                const rowData = [
+                    index + 1,
+                    diacriticless(name),
+                    frequency,
+                    dosage
+                ];
+                const rowY = tableDataY + index * 10;
+                rowData.forEach((data, columnIndex) => {
+                    const columnX = tableDataX + columnIndex * 40;
+                    doc.text(data.toString(), columnX, rowY);
+                });
             });
-        });
 
-        // Vẽ tổng giá trị hóa đơn
-        const sumX = 30;
-        const sumY = tableDataY + indications.length * 10 + 10;
+            // Vẽ tổng giá trị hóa đơn
+            const sumX = 30;
+            const sumY = tableDataY + indications.length * 10 + 10;
 
-        doc.setFont('Arial', 'bold');
+            doc.setFont('Arial', 'bold');
 
 
-        // Vẽ ghi chú
-        const noteX = 30;
-        const noteY = sumY + 10;
+            // Vẽ ghi chú
+            const noteX = 30;
+            const noteY = sumY + 10;
 
-        doc.setFont('Arial', 'normal');
-        doc.text(diacriticless(prescription.note), noteX, noteY);
+            doc.setFont('Arial', 'normal');
+            doc.text(diacriticless(prescription.note), noteX, noteY);
 
-        // Lưu tài liệu PDF
-        doc.save('example.pdf');
+            // Lưu tài liệu PDF
+            doc.save('example.pdf');
+        }
     };
 
     return (
@@ -215,7 +257,7 @@ export default function RetailPrescriptionInfomation() {
                                                         className="btn btn-outline-primary"
                                                         onClick={() => openSwal(indication.id)}
                                                     >
-                                                        <i className="fa-solid fa-trash"></i> Xoá
+                                                        <FaRegTrashAlt /> Xoá
                                                     </a>
                                                 </div>
                                             </div>
@@ -244,7 +286,7 @@ export default function RetailPrescriptionInfomation() {
                                 <a className="btn btn-outline-primary" onClick={() => handleGeneratePDF()}>In toa</a>
                                 <a className="btn btn-outline-primary"
                                     onClick={() => backToList()}
-                                ><i className="fa-regular fa-circle-left"></i>Huỷ</a>
+                                ><AiOutlineRollback />Huỷ</a>
                             </div>
                         </fieldset>
                     </div>
