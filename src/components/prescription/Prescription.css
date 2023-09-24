@@ -1,0 +1,15 @@
+.prescription-hide{
+    position: relative;
+}
+
+.prescription-hide div{
+    position: absolute;
+    /*background-color: rgba(201, 201, 201, 0.66);*/
+    background-color: white;
+    color: blue;
+    top: -5%;
+    left: 30%;
+    border-radius: 5px;
+    box-sizing: border-box;
+    z-index: 99;
+}

@@ -9,12 +9,14 @@ import {
 import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
+import "./Prescription.css"
 
 const PrescriptionList = () => {
+  const [showContent, setShowcontent] = useState(false);
+  const [notes, setNotes ] = useState("");
   const [prescriptions, setPrescriptions] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
-  const [prescription, setPrescription] = useState();
   const [seletedPrescription, setSelecdPrescription] = useState({
     id: null,
     code: ""
@@ -41,6 +43,17 @@ const PrescriptionList = () => {
       setPage((prev) => prev - 1)
     }
   }
+
+  const handleMouseEnter = (notes) => {
+    setShowcontent(true);
+    setNotes(notes);
+  }
+
+  const handleMouseLeave = () => {
+    setShowcontent(false);
+  }
+
+  const quantity = 15 ;
 
   const handleSearchOption = (e) => {
     setSearchInMedicine(e.target.value);
@@ -177,7 +190,7 @@ const PrescriptionList = () => {
         </div>
         <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
           <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
-            <table className="w-100 leading-normal overflow-hidden rounded-3 table table-hover m-0">
+            <table className="w-100 leading-normal overflow-hidden rounded-3 table table-hover m-0" style={{ tableLayout: "fixed" }}>
               <thead>
                 <tr style={{ background: "#0d6efd", color: "#ffffff" }}>
                   <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">STT</th> 
@@ -228,14 +241,22 @@ const PrescriptionList = () => {
                       <td className="px-3 py-3 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">{p.patient.name}</p>
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {p.symptoms}
-                        </p>
+                      <td className="px-3 py-3 border-b border-gray-200 text-sm prescription-hide"
+                      onMouseEnter={() => handleMouseEnter(p.symptoms)} 
+                      onMouseLeave={handleMouseLeave}>
+                        {/* <p className="text-gray-900 whitespace-no-wrap"> */}
+                          {p.symptoms.length>quantity? `${p.symptoms.slice(0,quantity)} ...`: p.symptoms}
+                          {showContent&& notes===p.symptoms&& <div>{p.symptoms}</div>}
+                        {/* </p> */}
                       </td>
-                      <td className="px-3 py-3 border-b border-gray-200text-sm">
+                      <td className="px-3 py-3 border-b border-gray-200text-sm prescription-hide"
+                      onMouseEnter={() => handleMouseEnter(p.note)} 
+                      onMouseLeave={handleMouseLeave}
+                      >
                         <p className="text-gray-900 whitespace-no-wrap">
-                          {p.note}
+                        {p.note.length>quantity? `${p.note.slice(0,quantity)} ...`: p.note}
+                          {showContent&& notes===p.note&& <div>{p.note}</div>}
+                          
                         </p>
                       </td>
                     </tr>
