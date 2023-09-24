@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import { FaPlus, } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
     AiOutlineRollback,
@@ -10,7 +10,6 @@ import { add, deleteKindOfMedicine, edit, getListById, pagination } from '../../
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { da } from 'date-fns/locale';
 import XRegExp from 'xregexp'
 import localStorage from 'redux-persist/es/storage';
 
@@ -23,7 +22,6 @@ function KindOfMedicineList(props) {
     const [choseRow, setChoseRow] = useState([]);
     const [dataId, setDataId] = useState({});
     const [editKindOfMedicine, setEditKindOfMedicine] = useState()
-    const formRef = useRef(null);
 
 
     // edit
@@ -31,11 +29,32 @@ function KindOfMedicineList(props) {
         const data = await getListById(id);
         setEditKindOfMedicine(data)
     }
+    const handleEdit = () => {
+        console.log(55);
+        if (choseRow.length < 1) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
+    // Create
+    const handleCreate = () => {
+        if (choseRow.length > 0) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy bỏ chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
     // choseRow
     const choseDelete = (kindOfMedicine) => {
         const checkExists = choseRow.some(choice => choice === kindOfMedicine.id);
         if (checkExists) {
-            formRef.current.reset();
             const choseRowNew = choseRow.filter(choice => choice !== kindOfMedicine.id);
             setDataId({ id: undefined, code: undefined, name: undefined })
             setChoseRow(choseRowNew);
@@ -54,21 +73,25 @@ function KindOfMedicineList(props) {
     }
     //delete
     const handleDelete = async () => {
-        if (dataId !== '') {
+        if ( dataId.id !== undefined) {
+            console.log(1);
             Swal.fire({
-                title: "Delete Confirmation",
-                text: "Do you want to delete: " + dataId.name,
+                title: " Xác nhận xoá",
+                text: "Bạn có muốn xoá: " + dataId.name,
                 showCancelButton: true,
+                cancelButtonText: "Hoàn tác",
                 showConfirmButton: true,
-                confirmButtonText: "Yes, delete it",
+                confirmButtonText: "Vâng, xoá",
                 icon: "question",
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                    console.log(2);
                     const response = await deleteKindOfMedicine(dataId.id);
+                    setDataId({ id: undefined, code: undefined, name: undefined })
                     await showList();
 
                     Swal.fire({
-                        text: "Delete successfully ",
+                        text: " Xoá thành công ",
                         icon: "success",
                         timer: 1500,
                     });
@@ -80,7 +103,7 @@ function KindOfMedicineList(props) {
                     })
                 } else {
                     Swal.fire({
-                        text: "You choose cancel ",
+                        text: "Bạn chọn hoàn tác ",
                         icon: "warning",
                         timer: 1500,
                     });
@@ -106,7 +129,6 @@ function KindOfMedicineList(props) {
         try {
             const data = await pagination(page, searchCodes, searchNames);
             setKindOfMedicine(data);
-
             setKindOfMedicine(data?.content);
             setTotalPage(data?.totalPages)
         } catch (error) {
@@ -120,8 +142,6 @@ function KindOfMedicineList(props) {
             setSearchName(document.getElementById('medicineName').value = "");
         }
     }
-    console.log(searchCodes);
-    console.log(searchNames);
 
     // search
     const handleButtonSearch = () => {
@@ -272,8 +292,8 @@ function KindOfMedicineList(props) {
                         onSubmit={async (value) => {
                             console.log(choseRow);
                             if (choseRow.length > 0) {
-
                                 await edit(value)
+                                console.log(33);
                                 await showList()
                                 setEditKindOfMedicine({
                                     id: "",
@@ -286,6 +306,7 @@ function KindOfMedicineList(props) {
                                     timer: 1500,
                                 });
                             } else {
+
                                 console.log(15);
                                 await add(value);
                                 await showList();
@@ -304,7 +325,7 @@ function KindOfMedicineList(props) {
 
                         }}
                     >
-                        <Form ref={formRef}>
+                        <Form>
                             <div className="row justify-content-center m-3 h-10">
                                 <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
 
@@ -353,12 +374,12 @@ function KindOfMedicineList(props) {
                             {/* action */}
                             <div className="d-flex align-items-center justify-content-end gap-3">
                                 {/* add */}
-                                <button className="btn btn-outline-primary" type='submit'>
+                                <button className="btn btn-outline-primary" type='submit' onClick={handleCreate} disabled={choseRow.length >0}>
                                     <FaPlus className="mx-1" />
                                     Thêm mới
                                 </button>
                                 {/* edit */}
-                                <button className="btn btn-outline-primary" type='submit'>
+                                <button className="btn btn-outline-primary" type='submit' onClick={handleEdit}>
                                     <FiEdit className="mx-1" />
                                     Sửa
                                 </button>
