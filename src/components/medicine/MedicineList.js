@@ -102,15 +102,13 @@ function MedicineList() {
     }
 
     const handleSearch = () => {
-        setSearchInput(document.getElementById("search").value);
+        setSearchInput(document.getElementById("search").value.trim());
         setPage(0);
     }
 
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
-
-    console.log(searchInMedicine)
 
     const handleSearchConditional = async (e) => {
         await setConditional(e.target.value);
