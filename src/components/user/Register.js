@@ -1,15 +1,17 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as appUserService from '../../services/user/AppUserService';
 import * as Yup from 'yup';
-
+import Swal from "sweetalert2";
 
 
 
 const Register = () => {
     const navigate = useNavigate();
-    // Register AppUser
+    useEffect(() => {
+        document.title = 'RetroCare - Đăng ký'
+    }, [])
     const registerAppUser = async (appUser, setErrors) => {
 
         const cloneAppUser = {
@@ -17,7 +19,10 @@ const Register = () => {
         }
         try {
             const result = await appUserService.registerAppUser(cloneAppUser);
-            alert(result.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Quay về trang dăng nhập',
+            })
             navigate("/login");
         } catch (e) {
             if (e.response.status === 406) {
@@ -114,7 +119,7 @@ const Register = () => {
                         {/* Button submit */}
                         <div className="d-grid mt-3">
                             <button className="btn btn-primary" type="submit">
-                                Đăng ký
+                               Tiếp tục
                             </button>
                         </div>
 
