@@ -2,7 +2,6 @@ import {ErrorMessage, Field, Form, Formik} from "formik";
 import {useNavigate, useParams} from "react-router-dom";
 import {
     editMedicine,
-    getAllKindOfMedicine,
     getAllUnit, getCountries,
     getMedicineById
 } from "../../services/medicine/MedicineService";
@@ -38,7 +37,6 @@ export default function MedicineEdit() {
     })
     const getMedicine = async () => {
         const result = await getMedicineById(id);
-        // console.log(result);
         await setMedicines(result);
     }
     const getListCountries = async () => {
@@ -109,7 +107,6 @@ export default function MedicineEdit() {
                         initialValues.imageMedicineDto.imagePath = url;
                     }
 // Sử dụng đối tượng initialValues có các thuộc tính đã được gán giá trị
-//         console.log(initialValues);
                     try {
                         await editMedicine(id, initialValues);
                         await Swal.fire(
@@ -117,17 +114,11 @@ export default function MedicineEdit() {
                             'Thuốc ' + medicine.name + ' đã được cập nhật !',
                             'success'
                         );
-                        // console.log(initialValues)
                         await navigate("/dashboard/medicine");
                     } catch (err) {
-                        // console.log(err);
                         if (err.response.data) {
                             setErrors(err.response.data);
                         }
-                        // if (err.response.status === 406) {
-                        //   console.log(err);
-                        //   setErrors(err.response.data);
-                        // }
                     }
                 });
             });
@@ -174,7 +165,6 @@ export default function MedicineEdit() {
             initialValues.unitDetailDto.unit = document.getElementById("unit").value;
             initialValues.imageMedicineDto.imagePath = medicines?.imageMedicineDto?.imagePath;
 // Sử dụng đối tượng initialValues có các thuộc tính đã được gán giá trị
-//         console.log(initialValues);
             try {
                 await editMedicine(id, initialValues);
                 await Swal.fire(
@@ -182,17 +172,11 @@ export default function MedicineEdit() {
                     'Thuốc ' + medicine.name + ' đã được cập nhật !',
                     'success'
                 );
-                // console.log(initialValues)
                 await navigate("/dashboard/medicine");
             } catch (err) {
-                // console.log(err);
                 if (err.response.data) {
                     setErrors(err.response.data);
                 }
-                // if (err.response.status === 406) {
-                //   console.log(err);
-                //   setErrors(err.response.data);
-                // }
             }
         }
     }
@@ -239,11 +223,9 @@ export default function MedicineEdit() {
                         ...medicines,
                         kindOfMedicineDto: JSON.stringify(medicines?.kindOfMedicineDto),
                         unitDetailDto: JSON.stringify(medicines?.unitDetailDto),
-                        // unitDetailDto: JSON.stringify(medicines?.unitDetailDto)?JSON.stringify(medicines?.unitDetailDto):{unit:","},
                         conversionRate: JSON.stringify(medicines?.unitDetailDto?.conversionRate),
                         conversionUnit: JSON.stringify(medicines?.unitDetailDto?.conversionUnit),
                         unit: JSON.stringify(medicines?.unitDetailDto?.unit),
-                        // imagePath: JSON.stringify(medicines?.imageMedicineDto?.imagePath),
                         imagePath: "",
                     }
                     }
@@ -253,18 +235,15 @@ export default function MedicineEdit() {
                         vat: Yup.number().min(0, "Vat không được là số âm."),
                         maker: Yup.string().max(50, "Nhà sản xuất vượt quá 50 kí tự."),
                         activeElement: Yup.string().required("Không được để trống.").max(50, "Hoạt chất không vượt quá 50 kí tự."),
-                        note: Yup.string().required("Không được để trống.").max(100, "Ghi chú không vượt quá 100 kí tự."),
+                        note: Yup.string().max(100, "Ghi chú không vượt quá 100 kí tự."),
                         origin: Yup.string().required("Không được để trống.").max(50, "Xuất xứ vượt quá 50 kí tự."),
                         retailProfits: Yup.number().required("Không được để trống. ").min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),
                         kindOfMedicineDto: Yup.string().required("Không được để trống."),
-                        // unitDetailDto: Yup.object().shape({
                         conversionRate: Yup.number().required("Không được để trống.").min(0, "Tỷ lệ quy đổi không được bé hơn 0."),
                         conversionUnit: Yup.string().required("Không được để trống."),
                         unit: Yup.number().required("Không được để trống."),
-                        // }),
                     })}
                     onSubmit={(values, {setErrors}) => {
-                        // console.log(values)
                         edit(values, setErrors)
                     }
                     }>
@@ -312,7 +291,7 @@ export default function MedicineEdit() {
                                                          style={{
                                                              height: "0.6rem",
                                                              marginLeft: "68%",
-                                                             marginBottom: "0.6rem"
+                                                             marginBottom: "1.3rem"
                                                          }}>
                                                         <ErrorMessage className="text-danger" name="name"
                                                                       component="small"/>
@@ -353,7 +332,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="activeElement"
                                                                       component="small"/>
@@ -363,7 +342,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="kindOfMedicineDto"
                                                                       component="small"/>
@@ -403,7 +382,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="unitDetailDto.unit"
                                                                       component="small"/>
@@ -413,7 +392,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger"
                                                                       name="unitDetailDto.conversionUnit"
@@ -451,7 +430,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="price"
                                                                       component="small"/>
@@ -461,7 +440,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="retailProfits"
                                                                       component="small"/>
@@ -493,7 +472,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger"
                                                                       name="unitDetailDto.conversionRate"
@@ -504,7 +483,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="vat"
                                                                       component="small"/>
@@ -535,7 +514,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="maker"
                                                                       component="small"/>
@@ -545,7 +524,7 @@ export default function MedicineEdit() {
                                                     <div style={{
                                                         height: "0.6rem",
                                                         marginLeft: "34%",
-                                                        marginBottom: "0.6rem"
+                                                        marginBottom: "1.3rem"
                                                     }}>
                                                         <ErrorMessage className="text-danger" name="origin"
                                                                       component="small"/>
