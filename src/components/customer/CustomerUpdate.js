@@ -288,6 +288,7 @@ const CustomerUpdate = () => {
                                     </div>
                                     <div className="col-8 mt-3">
                                         <button
+                                            type="button"
                                             onClick={comeBackPagePrev}
                                             className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
                                         >

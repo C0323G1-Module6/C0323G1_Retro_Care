@@ -259,6 +259,7 @@ const CustomerCreate = () => {
                 <div className="col-8 mt-3">
                   <button
                       onClick={comeBackPagePrev}
+                      type="button"
                     className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
                   >
                     <AiOutlineRollback className="mx-1" /> Trở về
