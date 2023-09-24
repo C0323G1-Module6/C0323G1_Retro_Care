@@ -344,11 +344,8 @@ export default function Cart() {
   return (
     <>
       <Header />
-      <div id="hannah">
-        <div
-          className="container-fluid p-1 position-relative"
-          style={{ top: "5rem", height: "100vh" }}
-        >
+      <div id="hannah" className="pb-5 pt-5">
+        <div className="container-fluid p-1 position-relative">
           <h1 className="text-center my-5 mx-auto">Giỏ Hàng</h1>
 
           {carts.length > 0 ? (
@@ -746,6 +743,7 @@ export default function Cart() {
           )}
         </div>
       </div>
+      <Footer />
     </>
   );
 }
