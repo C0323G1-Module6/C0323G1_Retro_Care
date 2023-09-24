@@ -186,6 +186,12 @@ ul {
   height: 40px;
 }
 
+#form-input-home::-webkit-search-cancel-button {
+  position: relative;
+  right: 5px;
+  cursor: pointer;
+}
+
 #form-input-home::placeholder {
   color: rgba(70 69 71 / 0.7);
 }

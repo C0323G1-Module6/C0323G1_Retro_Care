@@ -43,6 +43,7 @@ export const SearchPage = () => {
   };
 
   const handleInputChange = async (event) => {
+    event.preventDefault();
     setKeyword(event.target.value);
   };
 
