@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import { da } from 'date-fns/locale';
 import XRegExp from 'xregexp'
+import localStorage from 'redux-persist/es/storage';
 
 function KindOfMedicineList(props) {
     const [kindOfMedicines, setKindOfMedicine] = useState([]);
@@ -64,16 +65,14 @@ function KindOfMedicineList(props) {
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const response = await deleteKindOfMedicine(dataId.id);
-                    const data = await pagination(page, searchCodes, searchNames);
-                    setKindOfMedicine(data.content);
-                    if (response?.status === 200) {
-                        Swal.fire({
-                            text: "Delete successfully ",
-                            icon: "success",
-                            timer: 1500,
-                        });
-                    }
                     await showList();
+
+                    Swal.fire({
+                        text: "Delete successfully ",
+                        icon: "success",
+                        timer: 1500,
+                    });
+
                     setEditKindOfMedicine({
                         id: "",
                         code: "",
@@ -97,25 +96,32 @@ function KindOfMedicineList(props) {
 
     };
     // List
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleButtonSearch()
+        }
+    }
     const showList = async () => {
-        const data = await pagination(page, searchCodes, searchNames);
-        if (data !== null) {
+        try {
+            const data = await pagination(page, searchCodes, searchNames);
+            setKindOfMedicine(data);
+
             setKindOfMedicine(data?.content);
             setTotalPage(data?.totalPages)
-        } else {
+        } catch (error) {
+            console.log(error);
             await Swal.fire({
                 text: "Không tìm thấy dữ liệu cần tìm ",
                 icon: "warning",
                 timer: 1500,
             })
-            handleReset();
+            setSearchCode(document.getElementById('medicineCode').value = "");
+            setSearchName(document.getElementById('medicineName').value = "");
         }
     }
-
-    const handleReset = () => {
-        setSearchCode("");
-        setSearchName("")
-    }
+    console.log(searchCodes);
+    console.log(searchNames);
 
     // search
     const handleButtonSearch = () => {
@@ -139,7 +145,7 @@ function KindOfMedicineList(props) {
 
 
     useEffect(() => {
-        showList()
+        showList(page, searchCodes, searchNames)
     }, [page, searchCodes, searchNames, dataId.id]);
 
     useEffect(() => {
@@ -170,11 +176,13 @@ function KindOfMedicineList(props) {
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control"
                                 placeholder='Mã nhóm Thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <input id='medicineName'
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control" nhómThuốc
                                 placeholder='Tên nhóm thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <button className="btn btn-outline-primary" style={{ width: 120 }} type="submit" onClick={handleButtonSearch} >
                                 <i className="fa-solid fa-magnifying-glass" />
@@ -264,10 +272,14 @@ function KindOfMedicineList(props) {
                         onSubmit={async (value) => {
                             console.log(choseRow);
                             if (choseRow.length > 0) {
-                         
+
                                 await edit(value)
                                 await showList()
-                                setEditKindOfMedicine("")
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                                 Swal.fire({
                                     text: "Update successfully ",
                                     icon: "success",
@@ -282,7 +294,11 @@ function KindOfMedicineList(props) {
                                     icon: "success",
                                     timer: 1500,
                                 });
-                                setEditKindOfMedicine("")
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                             }
                             // formRef.current.reset();
 
