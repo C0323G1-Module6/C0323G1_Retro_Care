@@ -23,10 +23,46 @@ const GeneralReport = () => {
   const [expireMedicine, setExpireMedicine] = useState([]);
   const [medicineNeedMore, setMedicineNeedMore] = useState([]);
   const [saleDiary, setSaleDiary] = useState([]);
+  const [message, setMessage] = useState("");
 
   const exportExcel = (dataArray, sheetName, fileName) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet(sheetName);
+
+    // Tạo Title
+    let titleName = "";
+    switch (sheetName) {
+      case "revenue":
+        titleName = "BÁO CÁO TỔNG HỢP DOANH THU";
+
+        break;
+      case "profit":
+        titleName = "BÁO CÁO TỔNG HỢP LỢI NHUẬN";
+        break;
+      case "bestSellerMedicine":
+        titleName = "BÁO CÁO TỔNG HỢP SẢN PHẨM BÁN CHẠY NHẤT";
+        break;
+      case "debt":
+        titleName = "BÁO CÁO TỔNG HỢP CÔNG NỢ VỚI NHÀ CUNG CẤP";
+        break;
+      case "expireMedicine":
+        titleName = "BÁO CÁO TỔNG HỢP CÁC LOẠI THUỐC GẦN HẾT HẠN SỬ DỤNG";
+        break;
+      case "medicineNeedMore":
+        titleName = "BÁO CÁO TỔNG HỢP CÁC LOẠI THUỐC CẦN NHẬP THÊM";
+        break;
+      case "saleDiary":
+        titleName = "BÁO CÁO TỔNG HỢP NHẬT KÍ BÁN HÀNG";
+        break;
+      default:
+        break;
+    }
+
+    const titleRow = worksheet.addRow([titleName]);
+    worksheet.mergeCells(1, 1, 1, 4);
+    titleRow.font = { bold: true, size: 16 };
+    titleRow.alignment = { horizontal: "center" };
+    worksheet.addRow();
 
     // Tạo header
     const headers = Object.keys(dataArray[0]).map((header) =>
@@ -95,17 +131,18 @@ const GeneralReport = () => {
   };
 
   const handleSubmit = async (values, setErrors) => {
-    console.log(values);
     try {
       const result = await getReport(
         values.startDate,
         values.endDate,
         values.reportName
       );
-
-      exportExcel(result, "report", "report.xlsx");
+      setMessage("");
+      setReportName(values.reportName);
+      exportExcel(result, reportName, "report.xlsx");
     } catch (err) {
-      if (err.response.data) {
+      setMessage("Không có dữ liệu để hiển thị");
+      if (err) {
         setErrors(err.response.data);
       }
     }
@@ -183,6 +220,9 @@ const GeneralReport = () => {
                           </button>
                         </div>
                       </div>
+                    </div>
+                    <div className="row justify-content-center py-3 text-danger" style={{height:"14px"}}>
+                      {message}
                     </div>
                     <div className=" col-12 my-5  justify-content-center">
                       <h5>Loại báo cáo</h5>
