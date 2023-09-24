@@ -1,23 +1,59 @@
-
 import {
     AiOutlineRollback,
     AiOutlineDoubleLeft,
     AiOutlineDoubleRight,
 } from "react-icons/ai";
-import {useEffect, useState} from "react";
-import {getAllInvoiceOrder, getInvoiceByTime} from "../../services/order/OrderInvoice";
-import {Formik,Form,Field} from "formik";
+import React, {useEffect, useState} from "react";
+import {getAllInvoiceOrder} from "../../services/order/OrderInvoice";
+import {Formik, Form, Field} from "formik";
 import * as Yup from "yup";
+import {Link} from "react-router-dom";
+import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
+import {format, parseISO} from "date-fns";
+import Swal from "sweetalert2";
 
 const ListInvoiceOrder = () => {
-    const [invoices,setInvoices] = useState([]);
-    const loadAllInvoice =async () => {
-        const tmpInvoice = await getAllInvoiceOrder();
-        setInvoices(tmpInvoice.data.content);
+    const [invoices, setInvoices] = useState([]);
+    const [dateTimeOrder, setDateTimeOrder] = useState({
+        startDateTime: "",
+        endDateTime: ""
+    });
+    const [page, setPage] = useState(0);
+    const [totalPage, setTotalPage] = useState(0)
+    const [optionSort, setOptionSort] = useState("");
+    const loadAllInvoice = async (pageList, dateTime, sortBy) => {
+        try {
+            const tmpInvoice = await getAllInvoiceOrder(pageList, dateTime, sortBy);
+            setInvoices(tmpInvoice.data.content);
+            setPage(tmpInvoice.data.pageable.pageNumber);
+            setTotalPage(tmpInvoice.data.totalPages);
+        }catch (err){
+            console.log(err);
+            if (err.response.data.startDateTime){
+                Swal.fire({
+                    icon: 'error',
+                    text: err.response.data.startDateTime,
+                })
+            }
+            if (err.response.data.endDateTime){
+                Swal.fire({
+                    icon: 'error',
+                    text: err.response.data.endDateTime,
+                })
+            }
+        }
+    }
+    const currency = (money) =>
+        new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(money);
+    const handleSelectSort = (value) => {
+        setOptionSort(value);
     }
     useEffect(() => {
-        loadAllInvoice();
-    },[])
+        loadAllInvoice(page, dateTimeOrder, optionSort);
+    }, [page, dateTimeOrder, optionSort])
 
     return (
         <>
@@ -25,51 +61,54 @@ const ListInvoiceOrder = () => {
                 <h1 className="title-employee">Quản lý bán hàng</h1>
             </div>
 
-            <div className="mx-auto container">
+            <div className="mx-auto container ">
 
-                <fieldset className="border border-dark rounded-3 p-3 h-100 shadow-sm" style={{ backgroundColor: '#f8f9fa' }}>
+                <fieldset className="border border-dark rounded-3 p-3 h-100 shadow-sm "
+                          style={{backgroundColor: '#f8f9fa'}}>
                     <legend className="float-none w-auto px-3">Thông tin hóa đơn</legend>
                     <Formik
                         initialValues={{
-                            startDateTime:"",
-                            endDateTime:""
+                            startDateTime: "",
+                            endDateTime: ""
                         }}
                         validationSchema={Yup.object({
-                            startDateTime:Yup.string().required("Vui long nhập ngày bắt đầu"),
-                            endDateTime:Yup.string().required("Vui long nhập ngày bắt đầu")
-                            })}
-                        onSubmit={async (values)=>{
+                            startDateTime: Yup.string().required("Vui long nhập ngày bắt đầu"),
+                            endDateTime: Yup.string().required("Vui long nhập ngày bắt đầu")
+                        })}
+                        onSubmit={async (values) => {
                             console.log(values)
-                            const res = await getInvoiceByTime(values.startDateTime,values.endDateTime);
-                            console.log(res)
+                            setPage(0);
+                            setDateTimeOrder((pre) => values);
                         }}
                     >
                         <Form>
-                    <div className="row">
-                        <div className="d-flex col-3">
-                    <label className="me-2 p-2">Từ ngày</label>
-                    <Field name="startDateTime" type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
-                        </div>
-                        <div className="d-flex col-3">
-                    <label className="me-2 p-2">Đến ngày</label>
-                    <Field name="endDateTime" type={"datetime-local"} className={"form-control"} style={{width:"200px"}}/>
-                        </div>
-                        <div className="d-flex col-4">
-                            <label className="me-2 p-2">Sắp xếp theo</label>
-                            <select className={"form-select"} style={{width:"200px"}}>
-                                <option>Mã hoá đơn</option>
-                                <option>Tên khách hàng</option>
-                                <option>Ngày lập giờ lập</option>
-                                <option>Người lập</option>
-                                <option>Tổng tiền</option>
-                            </select>
-                        </div>
-                        <div className="col-2">
-                            <button type="submit" className="btn btn-outline-primary">Tìm kiếm</button>
-                        </div>
-                    </div>
+                            <div className="row">
+                                <div className="d-flex col-9">
+                                    <label className="me-2 p-2">Từ ngày</label>
+                                    <Field name="startDateTime" type={"datetime-local"} className={"form-control"}
+                                           style={{width: "240px"}}/>
+                                    <label className="mx-2 p-2">Đến ngày</label>
+                                    <Field name="endDateTime" type={"datetime-local"} className={"form-control"}
+                                           style={{width: "240px"}}/>
+                                    <button type="submit" className="btn btn-outline-primary mx-2"><i className="fa-solid fa-magnifying-glass" />Tìm kiếm </button>
+                                </div>
+                                <div className="d-flex col-3 ">
+                                    <label className="me-2 p-2">Sắp xếp theo</label>
+                                    <select onChange={(event) => handleSelectSort(event.target.value)}
+                                            className={"form-select"} style={{width: "180px"}}>
+                                        <option value={"code"}>Mã hoá đơn</option>
+                                        <option value={"nameCustomer"}>Tên khách hàng</option>
+                                        <option value={"dateTimeAsc"}>Ngày lập tăng dần</option>
+                                        <option value={"dateTimeDes"}>Ngày lập giảm dần</option>
+                                        <option value={"nameEmployee"}>Người lập</option>
+                                        <option value={"orderDetailsPriceAsc"}>Tổng tiền tăng dần</option>
+                                        <option value={"orderDetailsPriceDes"}>Tổng tiền giảm dần</option>
+                                    </select>
+                                </div>
+                            </div>
                         </Form>
                     </Formik>
+
                 </fieldset>
 
                 <div className="pt-2">
@@ -78,17 +117,17 @@ const ListInvoiceOrder = () => {
                             <table className="table table-hover ">
                                 <thead>
                                 <tr className="th-list">
-                                    <th className="px-3 py-2 bg-primary ">Mã hoá đơn
+                                    <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Mã hoá đơn
                                     </th>
-                                    <th className="px-3 py-2 bg-primary ">Tên khách hàng
+                                    <th className="px-3 py-2 bg-primary " style={{width:"260px"}}>Tên khách hàng
                                     </th>
-                                    <th className="px-3 py-2 bg-primary ">Ngày lập
+                                    <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Ngày lập
                                     </th>
-                                    <th className="px-3 py-2 bg-primary ">Giờ lập
+                                    <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Giờ lập
                                     </th>
-                                    <th className="px-3 py-2 bg-primary ">Người lập
+                                    <th className="px-3 py-2 bg-primary " style={{width:"260px"}}>Người lập
                                     </th>
-                                    <th className="px-3 py-2 bg-primary ">Tổng tiền
+                                    <th className="px-3 py-2 bg-primary " style={{width:"150px"}}>Tổng tiền
                                     </th>
                                     <th className="px-3 py-2 bg-primary ">Ghi chú
                                     </th>
@@ -96,16 +135,16 @@ const ListInvoiceOrder = () => {
                                 </thead>
                                 <tbody>
                                 {
-                                    invoices.map((invoice,index) => (
-                                        <tr>
-                                            <td className={`px-3 py-3 `} >{invoice.code}</td>
-                                            <td className={`px-3 py-3 `}>{invoice.nameCustomer}</td>
-                                            <td className={`px-3 py-3 `}>{invoice.orderDate}</td>
-                                            <td className={`px-3 py-3 `}>{invoice.orderTime}</td>
-                                        <td className={`px-3 py-3 `}>{invoice.nameEmployee}</td>
-                                        <td className={`px-3 py-3 `}>{invoice.orderDetailsPrice}</td>
-                                            <td className={`px-3 py-3 `}>{invoice.orderNote}</td>
-                                        </tr>
+                                    invoices.map((invoice, index) => (
+                                            <tr>
+                                                <td className={`px-3 py-3 `}>{invoice.code}</td>
+                                                <td className={`px-3 py-3 `}>{invoice.nameCustomer}</td>
+                                                <td className={`px-3 py-3 `}>{format(parseISO(invoice.orderDate), "dd/MM/yyyy")}</td>
+                                                <td className={`px-3 py-3 `}>{invoice.orderTime}</td>
+                                                <td className={`px-3 py-3 `}>{invoice.nameEmployee}</td>
+                                                <td className={`px-3 py-3 `}>{currency(invoice.orderDetailsPrice)}</td>
+                                                <td className={`px-3 py-3 `}>{invoice.orderNote}</td>
+                                            </tr>
                                         )
                                     )
                                 }
@@ -114,11 +153,17 @@ const ListInvoiceOrder = () => {
                             </table>
                         </div>
                         <div
-                            className={`justify-content-center d-flex rounded-bottom shadow `}>
-                            <button className={`btn btn-primary }`}
+                            className={`justify-content-center d-flex rounded-bottom shadow ${
+                                totalPage === 0 ? "d-none" : ""
+                            }`}>
+                            <button className={`btn btn-primary ${
+                                page === 0 ? "disabled" : ""
+                            }`}
                                     style={{margin: "5px"}}
                                     onClick={() => {
-
+                                        if (page < totalPage && page > 0) {
+                                            setPage((prev) => prev - 1);
+                                        }
                                     }}>
                                 <AiOutlineDoubleLeft className=""/>
                             </button>
@@ -129,18 +174,43 @@ const ListInvoiceOrder = () => {
                                      margin: "5px",
                                      borderRadius: "5px"
                                  }}>
-                                1/1
+                                {page + 1}/{totalPage}
                             </div>
-                            <button className={`btn btn-primary }`}
+                            <button className={`btn btn-primary ${
+                                page === totalPage - 1 ? "disabled" : ""
+                            }`}
                                     style={{margin: "5px"}}
                                     onClick={() => {
-
+                                        if (page < totalPage) {
+                                            setPage((prev) => prev + 1);
+                                        }
                                     }}
                             >
                                 <AiOutlineDoubleRight className="mx-1"/>
                             </button>
                         </div>
                     </div>
+                </div>
+                <div className="button-list-employee justify-content-end d-flex">
+                    <Link>
+                        <button className="btn btn-light btn-outline-primary m-1">
+                            <FaPlus className="mx-1"/> Thêm mới
+                        </button>
+                    </Link>
+                    <button
+                        className="btn btn-light btn-outline-primary m-1"
+                        onClick={() => {
+                        }}
+                    >
+                        <FaRegTrashAlt/> Xoá
+                    </button>
+                    <button className="btn btn-outline-primary m-1">In phiếu</button>
+                    <Link to="/home">
+                        <button className="btn btn-outline-primary m-1">
+                            <AiOutlineRollback/>
+                            Trở về
+                        </button>
+                    </Link>
                 </div>
             </div>
         </>

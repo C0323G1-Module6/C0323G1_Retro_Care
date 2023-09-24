@@ -19,6 +19,7 @@ const CreationEmployee = () => {
   const inputFileRef = useRef(null);
   const [imageUpload, setImageUpload] = useState(null);
   const saveEmployee = async (employee, setErrors) => {
+    if(imageUpload !== null){
     const fileName = `images/${imageUpload.name + v4()}`;
     const imageRef = ref(storage, fileName);
     await uploadBytes(imageRef, imageUpload).then((snapshot) => {
@@ -49,6 +50,31 @@ const CreationEmployee = () => {
         }
       });
     });
+    }else {
+      try {
+      await crateEmployee({
+        ...employee,
+        image:"https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/02/avatar-trang-y-nghia.jpeg?fit=512%2C20000&quality=95&ssl=1"
+      }).then(() => {
+        navigate("/dashboard/employee");
+      })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Tạo mới thành công !",
+              showConfirmButton: false,
+              timer: 2000,
+              customClass: {
+                icon: "icon-post",
+              },
+            });
+          });
+      } catch (err) {
+        if (err.response.data) {
+          setErrors(err.response.data);
+        }
+      }
+    }
   };
   const handleInputChange = (event) => {
     const file = event.target.files[0];
@@ -109,7 +135,8 @@ const CreationEmployee = () => {
             "Tên nhân viên chỉ được chứa chữ cái và khoảng trắng."),
         address: Yup.string()
           .required("Vui lòng nhập địa chỉ.")
-          .max(100, "Vui lòng nhập dưới 100 kí tự."),
+          .max(100, "Vui lòng nhập dưới 100 kí tự.")
+            .matches(/^[\p{L}\p{N}\s]+$/u,"Địa chỉ chỉ chứa số, chữ và dấu '/'"),
         phoneNumber: Yup.string()
           .required("Vui lòng nhập số điện thoại.")
           .min(10, "Vui lòng chỉ nhập từ 10 đến 11 số.")
@@ -132,7 +159,9 @@ const CreationEmployee = () => {
           .matches(
             /^\d{9}(\d{3})?$/u,
             "Vui lòng chỉ nhập số và độ dài là 9 hoặc 12."),
-        appUser: Yup.string().required("Vui lòng nhập tên tài khoản."),
+        appUser: Yup.string().required("Vui lòng nhập tên tài khoản.")
+            .max(30,"Vui lòng nhập dưới 30 kí tự")
+            .matches(/^[0-9a-zA-Z]+$/u,"Tên tài khoản chỉ chứa chữ và số"),
         note: Yup.string().max(100,"Vui lòng nhập note dưới 100 kí tự")
       })}
       onSubmit={(value, { setErrors }) => {
