@@ -45,6 +45,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/invoice" element={<InvoiceList />} />
         <Route path="/home/search/:keyword" element={<SearchPage />} />
+        <Route path="/home/search/" element={<SearchPage />} />
         <Route path="/dashboard" element={<Dashboard />}>
           <Route
             path="/dashboard/prescription"
