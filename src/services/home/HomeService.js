@@ -33,6 +33,9 @@ export const searchMedicines = async (
   sortDirection
 ) => {
   try {
+    console.log(
+      `${baseURL}/list-page?page=${page}&limit=${limit}&keyword=${keyword}&type=${type}&sortBy=${sortBy}&sortDirection=${sortDirection}`
+    );
     const response = await axios.get(
       `${baseURL}/list-page?page=${page}&limit=${limit}&keyword=${keyword}&type=${type}&sortBy=${sortBy}&sortDirection=${sortDirection}`
     );
