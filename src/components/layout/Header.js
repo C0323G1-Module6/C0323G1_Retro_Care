@@ -11,7 +11,7 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
-import { BiCog, BiLogOutCircle } from "react-icons/bi";
+import { BiCog, BiLogOutCircle, BiUserCircle } from "react-icons/bi";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
@@ -141,6 +141,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                   <div className="user-dropdown-list">
                     {JwtToken ? (
                       <>
+                        <Link to={"/user-infor"} className="user-dropdown-item">
+                          <BiUserCircle className="me-3 ms-0" size={25} />
+                          <div className="dropdown-text">Thông tin</div>
+                        </Link>
                         <Link
                           to={"/dashboard/prescription"}
                           className="user-dropdown-item"
