@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import {  Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as appUserService from '../../services/user/AppUserService';
 import { BsFacebook } from "react-icons/bs"
@@ -15,10 +15,10 @@ const Login = () => {
     }, [])
     const loginWithFacebook = async (resolve) => {
         try {
-            console.log(resolve.data.email)
+           
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate("/home");
+            navigate(-1);
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -31,9 +31,9 @@ const Login = () => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            const checkRoleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
-            navigate("/home");
+            navigate(-1);
         } catch (e) {
+            console.log(e);
             Swal.fire({
                 icon: 'error',
                 title: e.response.data,
