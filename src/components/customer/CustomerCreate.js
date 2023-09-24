@@ -104,7 +104,6 @@ const CustomerCreate = () => {
         >
           {({ isValid,dirty }) => (
               <Form>
-
                 <fieldset
                     className="form-input shadow"
                     style={{

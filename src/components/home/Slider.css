@@ -1,0 +1,17 @@
+.banner-top {
+}
+
+.slider-banner {
+  height: 20rem;
+}
+
+.img-banner {
+  height: 20rem;
+}
+
+.img-banner img {
+  height: 10rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 2rem;
+}

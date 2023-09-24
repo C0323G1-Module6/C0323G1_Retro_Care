@@ -104,7 +104,6 @@ function MedicineList() {
     const handleSearch = () => {
         setSearchInput(document.getElementById("search").value);
         setPage(0);
-        getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
     }
 
     const handleSearchOption = (e) => {
