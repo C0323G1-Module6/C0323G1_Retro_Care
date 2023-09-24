@@ -18,15 +18,19 @@ import {
   getIdByUserName,
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
+
 export default function Details() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [activeIndex, setActiveIndex] = useState(0); // this is to control 'active' value
   const { id } = useParams();
   console.log(id);
+
   const [medicine, setMedicine] = useState({});
   const [images, setImages] = useState([]);
   const [appUserId, setAppUserId] = useState(null);
+
   const getMedicineDetails = async () => {
     try {
       const res = await getMedicineForDisplay(id);
@@ -44,6 +48,7 @@ export default function Details() {
       }
     }
   };
+
   const addToCart = async (medicineId) => {
     const isLoggedIn = infoAppUserByJwtToken();
     if (!isLoggedIn) {
@@ -55,7 +60,6 @@ export default function Details() {
       console.log("igiigigig");
       console.log(id.data);
       setAppUserId(id.data);
-      // Fix something
       // do checking
       const quantity = document.getElementById("quantity-value").value;
       const quantityInCart = await getQuantityInCart(id.data, medicineId);
@@ -65,7 +69,7 @@ export default function Details() {
       } else {
         try {
           const res = await checkQuantity(
-            id.data,
+            medicineId,
             parseInt(quantity) + quantityInCart
           );
           console.log(res);
@@ -77,11 +81,16 @@ export default function Details() {
           dispatch(getAllCarts(id.data));
           toast.success("Thêm sản phẩm thành công!");
         } catch {
-          swal.fire("Sản phẩm vượt quá số lượng cho phép!", "", "warning");
+          swal.fire(
+            "Sản phẩm vượt quá số lượng cho phép!",
+            "Số lượng trong giỏ hàng của bạn: " + quantityInCart,
+            "warning"
+          );
         }
       }
     }
   };
+
   function handlePlus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value < 99) {
@@ -90,6 +99,7 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
+
   function handleMinus() {
     let quantityInput = document.getElementById("quantity-value");
     if (quantityInput.value > 1) {
@@ -99,190 +109,208 @@ export default function Details() {
       quantityInput.value = 99;
     }
   }
+
   const currency = (money) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(money);
+
   useEffect(() => {
     getMedicineDetails();
   }, []);
+
   return (
     <>
       <Header />
-      <div className="mb-5">
-        {medicine.id && (
-          <div
-            className="container mt-5 position-relative"
-            style={{ top: "5rem" }}
-          >
-            <div className=" row row-cols-md-2 row-cols-1 ">
-              <div
-                id="carouselExampleIndicators"
-                className="carousel slide col col-md-6 col-auto"
-                data-bs-ride="true"
-                style={{ height: "100%" }}
-              >
-                <div className="carousel-indicators">
-                  {images.length > 0 &&
-                    images.map((el, index) => {
-                      return (
-                        <button
-                          type="button"
-                          data-bs-target="#carouselExampleIndicators"
-                          data-bs-slide-to={index}
-                          className={index === activeIndex ? "active" : ""}
-                          aria-current="true"
-                          aria-label={`Slide ${index + 1}`}
-                          style={{ width: 60, height: 70 }}
-                        >
-                          <img
-                            src={el}
-                            alt="..."
-                            className="d-block w-100"
-                            style={{ border: "1px lightskyblue solid" }}
-                          />
-                        </button>
-                      );
-                    })}
-                </div>
-                {/* ----- */}
-                <div className="carousel-inner">
-                  {images.length > 0 &&
-                    images.map((el, index) => {
-                      return (
-                        <div
-                          className={`carousel-item ${
-                            index === activeIndex ? "active" : ""
-                          }`}
-                        >
-                          <img src={el} className="d-block w-100" alt="..." />
-                        </div>
-                      );
-                    })}
-                </div>
-                <button
-                  className="carousel-control-prev"
-                  type="button"
-                  data-bs-target="#carouselExampleIndicators"
-                  data-bs-slide="prev"
-                >
-                  <span
-                    className="carousel-control-prev-icon"
-                    aria-hidden="true"
-                  />
-                  <span className="visually-hidden">Previous</span>
-                </button>
-                <button
-                  className="carousel-control-next"
-                  type="button"
-                  data-bs-target="#carouselExampleIndicators"
-                  data-bs-slide="next"
-                >
-                  <span
-                    className="carousel-control-next-icon"
-                    aria-hidden="true"
-                  />
-                  <span className="visually-hidden">Next</span>
-                </button>
-              </div>
-              <div className=" col col-md-6 col-auto">
-                <h1 className="name">{medicine.medicine_Name}</h1>
-                <h3>
-                  {currency(medicine.price)}{" "}
-                  <h5 className=" d-inline">/ {medicine.unit_Name}</h5>
-                </h3>
+      <div id="hannah" className="pb-5">
+        <div className="mb-5">
+          {medicine.id && (
+            <div
+              className="container mt-5 position-relative"
+              style={{ top: "5rem" }}
+            >
+              <div className=" row row-cols-md-2 row-cols-1 ">
                 <div
-                  style={{
-                    backgroundColor: "lightblue",
-                    borderRadius: 10,
-                  }}
-                  className="p-4"
+                  id="carouselExampleIndicators"
+                  className="carousel slide col col-md-6 col-auto"
+                  data-bs-ride="true"
+                  style={{ height: "100%" }}
                 >
-                  <p className="m-0" style={{ fontSize: "14px" }}>
-                    Giá đã bao gồm Thuế.
-                  </p>
-                  <p className=" m-0" style={{ fontSize: "14px" }}>
-                    Phí vận chuyển và các chi phí khác (nếu có) sẽ được thể hiện
-                    khi đặt hàng
-                  </p>
-                </div>
-                <p className="mt-2">{medicine.medicine_Note}</p>
-                {Math.floor(medicine.quantity / medicine.conversion_Rate) >
-                0 ? (
-                  <h6 style={{ color: "green" }}>Còn hàng</h6>
-                ) : (
-                  <h6 style={{ color: "red" }}>Hết hàng</h6>
-                )}
-                <div className="buttons d-flex justify-content-between align-items-center">
-                  <div className="btn-input-group col d-flex justify-content-start align-items-end ">
-                    <input
-                      type="button"
-                      defaultValue="-"
-                      className="btn-minus"
-                      data-field="quantity"
-                      onClick={handleMinus}
-                    />
-                    <input
-                      id="quantity-value"
-                      type="number"
-                      step={1}
-                      maxlength="2"
-                      min="1"
-                      max="99"
-                      defaultValue={1}
-                      style={{ width: "50px", height: "35px" }}
-                      name="quantity"
-                      className=" input-quantity text-center form-input px-2"
-                    />
-                    <input
-                      type="button"
-                      defaultValue="+"
-                      className="btn-plus"
-                      data-field="quantity"
-                      onClick={handlePlus}
-                    />
+                  <div className="carousel-indicators">
+                    {images.length > 0 &&
+                      images.map((el, index) => {
+                        return (
+                          <button
+                            type="button"
+                            data-bs-target="#carouselExampleIndicators"
+                            data-bs-slide-to={index}
+                            className={index === activeIndex ? "active" : ""}
+                            aria-current="true"
+                            aria-label={`Slide ${index + 1}`}
+                            style={{ width: 60, height: 70 }}
+                          >
+                            <img
+                              src={el}
+                              alt="..."
+                              className="d-block w-100"
+                              style={{ border: "1px lightskyblue solid" }}
+                            />
+                          </button>
+                        );
+                      })}
+                  </div>
+                  {/* ----- */}
+                  <div className="carousel-inner">
+                    {images.length > 0 &&
+                      images.map((el, index) => {
+                        return (
+                          <div
+                            className={`carousel-item ${
+                              index === activeIndex ? "active" : ""
+                            }`}
+                          >
+                            <img src={el} className="d-block w-100" alt="..." />
+                          </div>
+                        );
+                      })}
                   </div>
                   <button
-                    onClick={() => addToCart(medicine.id)}
-                    className="col btn fw-bold mb-0"
-                    style={{
-                      backgroundColor: "orange",
-                      height: "38px",
-                      textDecoration: "none",
-                      color: "black",
-                      cursor: "pointer",
-                    }}
+                    className="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="prev"
                   >
-                    THÊM VÀO GIỎ HÀNG
+                    <span
+                      className="carousel-control-prev-icon"
+                      aria-hidden="true"
+                    />
+                    <span className="visually-hidden">Previous</span>
+                  </button>
+                  <button
+                    className="carousel-control-next"
+                    type="button"
+                    data-bs-target="#carouselExampleIndicators"
+                    data-bs-slide="next"
+                  >
+                    <span
+                      className="carousel-control-next-icon"
+                      aria-hidden="true"
+                    />
+                    <span className="visually-hidden">Next</span>
                   </button>
                 </div>
-                <hr />
-                <p>
-                  Mã:{" "}
-                  <span style={{ color: "blue", fontSize: 14 }}>
-                    {medicine.medicine_Code}
-                  </span>
-                </p>
-                <hr />
-                <p>
-                  Danh mục:{" "}
-                  <span style={{ color: "blue", fontSize: 14 }}>
-                    {medicine.kind_Of_Medicine_Name}
-                  </span>
-                </p>
-                <hr />
-                <p>
-                  Từ khoá:{" "}
-                  <span style={{ color: "blue", fontSize: 14 }}>
-                    Men vi sinh lợi khuẩn
-                  </span>
-                </p>
+                <div className=" col col-md-6 col-auto">
+                  <h1 className="name">{medicine.medicine_Name}</h1>
+                  <h3>
+                    {currency(medicine.price)}{" "}
+                    <h5 className=" d-inline">/ {medicine.unit_Name}</h5>
+                  </h3>
+                  <div
+                    style={{
+                      backgroundColor: "lightblue",
+                      borderRadius: 10,
+                    }}
+                    className="p-4"
+                  >
+                    <p className="m-0" style={{ fontSize: "14px" }}>
+                      Giá đã bao gồm Thuế.
+                    </p>
+                    <p className=" m-0" style={{ fontSize: "14px" }}>
+                      Phí vận chuyển và các chi phí khác (nếu có) sẽ được thể
+                      hiện khi đặt hàng
+                    </p>
+                  </div>
+                  <p className="mt-2">{medicine.medicine_Note}</p>
+
+                  {Math.floor(medicine.quantity / medicine.conversion_Rate) >
+                  0 ? (
+                    <h6 style={{ color: "green" }}>
+                      Còn hàng (
+                      <span>
+                        {Math.floor(
+                          medicine.quantity / medicine.conversion_Rate
+                        )}
+                      </span>
+                      )
+                    </h6>
+                  ) : (
+                    <h6 style={{ color: "red" }}>Hết hàng</h6>
+                  )}
+
+                  <div className="buttons d-flex justify-content-between align-items-center">
+                    <div className="btn-input-group col d-flex justify-content-start align-items-end ">
+                      <input
+                        type="button"
+                        defaultValue="-"
+                        className="btn-minus"
+                        data-field="quantity"
+                        onClick={handleMinus}
+                      />
+                      <input
+                        id="quantity-value"
+                        type="number"
+                        step={1}
+                        maxlength="2"
+                        min="1"
+                        max="99"
+                        defaultValue={1}
+                        style={{ width: "50px", height: "35px" }}
+                        name="quantity"
+                        className=" input-quantity text-center px-2"
+                      />
+                      <input
+                        type="button"
+                        defaultValue="+"
+                        className="btn-plus"
+                        data-field="quantity"
+                        onClick={handlePlus}
+                      />
+                    </div>
+                    <button
+                      onClick={() => addToCart(medicine.id)}
+                      className="col btn fw-bold mb-0"
+                      style={{
+                        backgroundColor: "orange",
+                        height: "38px",
+                        textDecoration: "none",
+                        color: "black",
+                        cursor: "pointer",
+                      }}
+                    >
+                      THÊM VÀO GIỎ HÀNG
+                    </button>
+                  </div>
+                  <hr />
+                  <p>
+                    <span className=" fw-bold">Mã sản phẩm: </span>
+                    <span>{medicine.medicine_Code}</span>
+                  </p>
+                  <hr />
+                  <p>
+                    <span className=" fw-bold">Danh mục: </span>
+                    <span>{medicine.kind_Of_Medicine_Name}</span>
+                  </p>
+                  <hr />
+                  <p>
+                    <span className=" fw-bold">Nhà sản xuất: </span>
+                    <span> {medicine.maker}</span>
+                  </p>
+                  <p>
+                    <span className=" fw-bold">Thành phần hoạt chất: </span>
+
+                    <span className=" d-inline-block ">
+                      {" "}
+                      {medicine.activeElement}
+                    </span>
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
+
       <Footer />
       <ToastContainer autoClose={2000} className="toast-position" />
     </>
