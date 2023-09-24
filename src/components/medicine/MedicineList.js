@@ -1,17 +1,30 @@
 import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
-import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import swal from "sweetalert2";
+import "./MedicineList.css"
+import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
+import {FiEdit} from "react-icons/fi";
 
 function MedicineList() {
-    const [medicineList, setMedicineList] = useState([])
+    const [showContent,setShowContent]= useState(false);
+    const [medicineList, setMedicineList] = useState([]);
+    const [medicine, setMedicine] = useState("");
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [selectMedicine, setSelectMedicine] = useState({
         id: null,
         name: ""
     });
+
+    const handleMouseEnter = (medicine) => {
+        setShowContent(true);
+        setMedicine(medicine);
+    };
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
 
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
@@ -102,15 +115,13 @@ function MedicineList() {
     }
 
     const handleSearch = () => {
-        setSearchInput(document.getElementById("search").value);
+        setSearchInput(document.getElementById("search").value.trim());
         setPage(0);
     }
 
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
-
-    console.log(searchInMedicine)
 
     const handleSearchConditional = async (e) => {
         await setConditional(e.target.value);
@@ -120,7 +131,9 @@ function MedicineList() {
     useEffect(() => {
         console.log("get list")
         getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
-    }, [searchInput, page, limit])
+    }, [searchInput, page, limit]);
+
+    const quantity = 20 ;
 
     if (!medicineList) {
         return null;
@@ -168,7 +181,7 @@ function MedicineList() {
 
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
-                        <div className="table table-container ">
+                        <div className="table table-container1 ">
                             <table className="table  w-100 leading-normal overflow-hidden rounded-3 table-hover ">
                                 <thead>
                                 <tr style={{background: '#0d6efd', color: '#ffffff'}}>
@@ -217,8 +230,19 @@ function MedicineList() {
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide "
+                                            onMouseEnter={()=>{handleMouseEnter(item.name)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.name.length > quantity ? `${item.name.slice(0,quantity)}...`:item.name}
+                                            {showContent && medicine === item.name &&
+                                                <div>{item.name}</div>}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide"
+                                            onMouseEnter={()=>{handleMouseEnter(item.activeElement)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.activeElement.length > quantity ? `${item.activeElement.slice(0,quantity)}...`:item.activeElement}
+                                            {showContent && medicine === item.activeElement &&
+                                                <div>{item.activeElement}</div>}
+                                        </td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
                                         <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
@@ -266,24 +290,24 @@ function MedicineList() {
                     <div className="d-flex align-items-center justify-content-end gap-3 mt-3">
 
                         <Link to={'/dashboard/medicine/create'} className="btn btn-outline-primary">
-                            <i className="fa-solid fa-plus"></i>
+                            <FaPlus className="mx-1" />
                             Thêm mới
                         </Link>
                         <Link
                             to={`/dashboard/medicine/update/${selectMedicine.id}`}
                             className="btn btn-outline-primary">
-                            <i className="fa-regular fa-pen-to-square"></i>
+                            <FiEdit className="mx-1" />
                             Sửa
                         </Link>
                         <button
                             type="button"
                             onClick={() => handleDelete()}
                             className="btn btn-outline-primary">
-                            <i className="fa-solid fa-trash"></i>
+                            <FaRegTrashAlt className="mx-1" />
                             Xoá
                         </button>
                         <Link to={`/home`} className="btn btn-outline-primary">
-                            <i className="fa-solid fa-rotate-left"></i>
+                            <AiOutlineRollback className="mx-1" />
                             Trở về
                         </Link>
                     </div>

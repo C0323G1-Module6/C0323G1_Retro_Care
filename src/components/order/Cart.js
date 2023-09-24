@@ -289,11 +289,9 @@ export default function Cart() {
       .render("#paypal-button-container");
   };
 
-  const currency = (money) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(money);
+  const currency = (money) => {
+    return new Intl.NumberFormat("vi-VN").format(money);
+  };
 
   const getLoyaltyPoint = async (appUserId) => {
     const data = await getPoint(appUserId);
@@ -324,6 +322,9 @@ export default function Cart() {
       }
     }
   };
+  useEffect(() => {
+    document.title = "RetroCare - Giỏ Hàng";
+  }, []);
 
   useEffect(() => {
     getAppUserIdFirst();
@@ -346,7 +347,9 @@ export default function Cart() {
       <Header />
       <div id="hannah" className="pb-5 pt-5">
         <div className="container-fluid p-1 position-relative">
-          <h1 className="text-center my-5 mx-auto">Giỏ Hàng</h1>
+          <h1 className="text-center my-5 mx-auto" style={{ color: "#119cd4" }}>
+            Giỏ Hàng
+          </h1>
 
           {carts.length > 0 ? (
             <div className="container-fluid w-100">
@@ -370,9 +373,9 @@ export default function Cart() {
                       <thead className="text-secondary">
                         <tr className="text-center fw-bold">
                           <td>SẢN PHẨM</td>
-                          <td>Giá (VND)</td>
+                          <td>Giá (VNĐ)</td>
                           <td>Số lượng</td>
-                          <td>Tổng (VND)</td>
+                          <td>Tổng (VNĐ)</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -449,6 +452,9 @@ export default function Cart() {
                                       style={{
                                         width: "50px",
                                         height: "35px",
+                                        border: "1px white",
+
+                                        borderRadius: "5px",
                                       }}
                                       name="quantity"
                                       className="text-center input-quantity"
@@ -471,7 +477,7 @@ export default function Cart() {
                                 <td className="align-middle text-center fw-bold">
                                   {currency(
                                     el.medicinePrice * el.quantityInCart
-                                  )}
+                                  )}{" "}
                                 </td>
                               </tr>
                             );
@@ -483,7 +489,7 @@ export default function Cart() {
                       style={{ display: showCf ? "block" : "none" }}
                       id="confirm-order"
                     >
-                      <h3 className=" text-center text-success">
+                      <h3 className=" text-center" style={{ color: "#119cd4" }}>
                         XÁC NHẬN THÔNG TIN GIAO HÀNG
                         <img
                           style={{
@@ -652,13 +658,13 @@ export default function Cart() {
                         <div className="border-bottom mb-2 pb-2">
                           <span>Tạm Tính</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(totalPrice)}
+                            {currency(totalPrice)} VNĐ
                           </span>
                         </div>
                         <div className="border-bottom mb-2 pb-2">
                           <span>Giảm giá:</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(discount)}
+                            {currency(discount)} VNĐ
                             <input
                               className="fw-bold discount"
                               type="hidden"
@@ -674,7 +680,7 @@ export default function Cart() {
                               type="hidden"
                               value={totalPrice - discount}
                             />
-                            {currency(totalPrice - discount)}
+                            {currency(totalPrice - discount)} VNĐ
                           </span>
                         </div>
                       </div>
@@ -696,7 +702,7 @@ export default function Cart() {
                         <small className=" d-inline-block mb-1">
                           Tích luỹ hiện có:
                           <small className=" text-danger mx-2">
-                            {currency(point).slice(0, -1)} RETRO
+                            {currency(point)} RETRO
                             <input
                               className="fw-bold point"
                               type="hidden"

@@ -41,14 +41,12 @@ export async function edit(kindOfMedicine) {
 
 // Paginate 
 export async function pagination(page, searchCodes, searchNames) {
-    try {
+    
         const response = await axios.get(
-            `http://localhost:8080/api/kindOfMedicines/get?page=${page}&searchCode=${searchCodes}&searchName=${searchNames}`
-        );
+            `http://localhost:8080/api/kindOfMedicines/get?page=${page}&searchCode=${searchCodes}&searchName=${searchNames}`)
+
 
         // console.log(JSON.stringify(response));
         return response.data;
-    } catch (error) {
-        console.log(error);
-    }
+    
 }
