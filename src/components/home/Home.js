@@ -17,15 +17,22 @@ import * as homeService from "../../services/home/HomeService";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
 import { ToastContainer, toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { addToCartFromHomeAndDetails } from "../../services/order/CartService";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllCarts } from "../order/redux/cartAction";
 import * as utils from "../../services/utils/utils";
+import {
+  infoAppUserByJwtToken,
+  getIdByUserName,
+} from "../../services/user/AppUserService";
+import Swal from "sweetalert2";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [medicineList, setMedicineList] = useState([]);
   const [favoriteList, setFavoriteList] = useState([]);
+  const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
 
@@ -44,9 +51,22 @@ const Home = () => {
     setFavoriteList(response);
   };
   const addToCart = async (medicineId) => {
-    const response = await addToCartFromHomeAndDetails(1, medicineId, 1);
-    dispatch(getAllCarts(1));
-    toast.success("Thêm sản phẩm thành công");
+    const isLoggedIn = infoAppUserByJwtToken();
+    if (!isLoggedIn) {
+      Swal.fire("Vui lòng đăng nhập tài khoản!", "", "warning");
+      navigate("/login");
+    } else {
+      const id = await getIdByUserName(isLoggedIn.sub);
+      console.log(id.data);
+      setAppUserId(id.data);
+      const response = await addToCartFromHomeAndDetails(
+        id.data,
+        medicineId,
+        1
+      );
+      dispatch(getAllCarts(id.data));
+      toast.success("Thêm sản phẩm thành công");
+    }
   };
   const doNothing = () => {};
   return (
@@ -66,7 +86,7 @@ const Home = () => {
                     chăm sóc sức khoẻ lớn nhất
                   </h5>
                   <div className="banner-btn mt-4">
-                    <a href="#menu" className="sec-btn">
+                    <a href="#" className="sec-btn">
                       Về chúng tôi
                     </a>
                   </div>

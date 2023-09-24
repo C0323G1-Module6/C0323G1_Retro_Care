@@ -7,6 +7,11 @@ import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCarts } from "../order/redux/cartAction";
+import {
+  getIdByUserName,
+  infoAppUserByJwtToken,
+} from "../../services/user/AppUserService";
+import { BiCog, BiLogOutCircle } from "react-icons/bi";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
@@ -18,7 +23,7 @@ const Header = ({ inputSearch, onInputChange }) => {
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
   useEffect(() => {
-    dispatch(getAllCarts(1));
+    getAppUserId();
   }, []);
 
   useEffect(() => {
@@ -28,6 +33,15 @@ const Header = ({ inputSearch, onInputChange }) => {
   const getUsername = async () => {
     const response = await userService.infoAppUserByJwtToken();
     setUsername(response);
+  };
+
+  const getAppUserId = async () => {
+    const isLoggedIn = infoAppUserByJwtToken();
+    if (isLoggedIn) {
+      const id = await getIdByUserName(isLoggedIn.sub);
+      console.log(id.data);
+      dispatch(getAllCarts(id.data));
+    }
   };
 
   const handleLogOut = () => {
@@ -77,7 +91,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <Link to={"/home"}>Trang chủ</Link>
                   </li>
                   <li>
-                    <a href="#menu">Danh mục</a>
+                    <a href="#about">Về chúng tôi</a>
+                  </li>
+                  <li>
+                    <a href="#">Danh mục</a>
                   </li>
                 </ul>
               </nav>
@@ -85,6 +102,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                 <form className="header-search-form for-des">
                   <input
                     type="search"
+                    id="form-input-home"
                     className="form-input m-0"
                     placeholder="Tìm kiếm..."
                     value={inputSearch}
@@ -127,18 +145,18 @@ const Header = ({ inputSearch, onInputChange }) => {
                           to={"/dashboard/prescription"}
                           className="user-dropdown-item"
                         >
-                          <i className="bx bx-log-out-circle"></i>
+                          <BiCog className="me-3 ms-0" size={25} />
                           <div className="dropdown-text">Chức năng</div>
                         </Link>
-                        <div className="user-dropdown-item">
-                          <i className="bx bx-log-out-circle"></i>
+                        <Link className="user-dropdown-item">
+                          <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div
                             className="dropdown-text"
                             onClick={() => handleLogOut()}
                           >
                             Đăng xuất
                           </div>
-                        </div>
+                        </Link>
                       </>
                     ) : null}
                   </div>

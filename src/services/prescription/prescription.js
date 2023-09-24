@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const getAllPrescription = async (page,search,searchPrescription) => {
-    const res = await axios.get(`http://localhost:8080/prescription?page=${page}&search=${search}&searchPrescription=${searchPrescription}`);
+export const getAllPrescription = async (page,search,searchPrescription,sortBy) => {
+    const res = await axios.get(`http://localhost:8080/prescription?page=${page}&search=${search}&searchPrescription=${searchPrescription}&sortBy=${sortBy}`);
     return res;
 }
 

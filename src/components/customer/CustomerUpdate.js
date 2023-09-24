@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineRollback } from "react-icons/ai";
 import { FaPlus } from "react-icons/fa";
+import "./CustomerCreate.css";
 import {differenceInYears, isAfter, parseISO} from "date-fns";
 import XRegExp from "xregexp";
 
@@ -89,6 +90,7 @@ const CustomerUpdate = () => {
 
   useEffect(() => {
     loadCustomerDetail(params.id);
+    document.title = 'RetroCare - Sửa thông tin khách hàng';
   }, [params.id]);
   if (!customer) {
     return null;
@@ -106,7 +108,7 @@ const CustomerUpdate = () => {
                 .min(3, "Tên khách hàng tối thiểu 3 ký tự").required("Không bỏ trống trường này").matches(XRegExp('^\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*$'), "Nhập sai định dạng vd:Nguyen Van An "),
             birthday: Yup.string().required(
                 "Không bỏ trống trường này."
-            ).test( "birthday",
+            ).matches(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,"Nhập sai định dạng ngày sinh VD: dd/mm/yyyy").test( "birthday",
                 "Ngày sinh không được vượt quá thời gian thực tế.",
                 validateBirth).test("birthday",
                 "Cảnh báo khách hàng chưa đủ 18 tuổi.",
@@ -124,15 +126,23 @@ const CustomerUpdate = () => {
                 .matches(
                     /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
                     "Nhập sai định dạng vd:nguyenvanan@gmail.com"
-                ).max(50,"Email tối đa 50 ký tự"),
+                ).max(30,"Email tối đa 30 ký tự"),
             note: Yup.string().max(200, "Ghi chú tối đa 200 ký tự."),
           })}
           onSubmit={(values, { setErrors }) => handleSubmit(values, setErrors)}
         >
           {({ isValid,dirty }) => (
           <Form>
-            <fieldset className="form-input shadow">
-              <legend className="float-none w-auto px-3">
+            <fieldset
+                className="form-input shadow"
+                style={{
+                  width: "80%",
+                  border: "1px solid black",
+                  padding: 20,
+                  borderRadius: 20,
+                  height: "auto"
+                }}
+            >              <legend className="float-none w-auto px-3">
                 <h2>Sửa thông tin khách hàng</h2>
               </legend>
               <div className="row p-2">
