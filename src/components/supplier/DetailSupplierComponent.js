@@ -25,10 +25,8 @@ function DetailSupplierComponent() {
     const getSupplier = async () => {
         try {
             const data = await getSupplierDetailById(idSupplier);
-            setSupplier(data);
-            console.log(data);
+            setSupplier(data);        
         } catch (e) {
-            console.log(e);
             if (e.response.status === 400 || e.response.status === 404) {
                 Swal.fire({
                     icon: 'error',
@@ -47,7 +45,6 @@ function DetailSupplierComponent() {
             const invoiceData = await detailSupplierById(idSupplier, pageable, startDate, endDate);
             setInvoices(invoiceData);
         } catch (error) {
-            console.log(error);
             await setPageFunction(0)
                 .then(await setHandleStartDate(''))
                 .then(await setHandleEndDdate(''))
