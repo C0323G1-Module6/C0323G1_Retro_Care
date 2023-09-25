@@ -149,94 +149,12 @@ const UserCustomer = () => {
                                 {/*    bạn đã đăng ký rồi.*/}
                                 {/*</p>*/}
                             </div>
-<<<<<<< HEAD
                             <div className="mt-5">
                                 {/*<h5 style={{fontWeight: "bold", color: "whitesmoke"}}>Làm sao để cập nhật thông tin ?</h5>*/}
                                 {/*<p style={{color: "whitesmoke", fontWeight: "bold"}}>*/}
                                 {/*    Vui lòng điền đầy đủ thông tin để được cập nhật, sau đó hãy bấm nút cập*/}
                                 {/*    nhật để kết thúc thao tác.*/}
                                 {/*</p>*/}
-=======
-                            <div className="mb-3">
-                                <label htmlFor="phoneNumber" className="form-label">
-                                    Số điện thoại <small style={{color: "red"}}>*</small>
-                                </label>
-                                <Field
-                                    type="text"
-                                    className="form-control"
-                                    id="phoneNumber"
-                                    placeholder="VD: 0339779751"
-                                    name="phoneNumber"
-                                />
-                                <div style={{height: "0.6rem", marginBottom: "0.6rem"}}>
-                                    <ErrorMessage
-                                        className=" text-danger"
-                                        name="phoneNumber"
-                                        component="small"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-3">
-                                <label htmlFor="birthday" className="form-label">
-                                    Ngày sinh <small style={{color: "red"}}>*</small>
-                                </label>
-                                <Field
-                                    type="date"
-                                    className="form-control"
-                                    id="birthday"
-                                    name="birthday"
-                                />
-                                <div style={{height: "0.6rem", marginBottom: "0.6rem"}}>
-                                    <ErrorMessage
-                                        className=" text-danger"
-                                        name="birthday"
-                                        component="small"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-4">
-                                <label htmlFor="address" className="form-label">
-                                    Địa chỉ <small style={{color: "red"}}>*</small>
-                                </label>
-                                <Field
-                                    as="textarea"
-                                    className="form-control"
-                                    id="address"
-                                    name="address"
-                                    placeholder="Vd :120 tên đường, quận/huyện , tỉnh/thành"
-                                    defaultValue={""}
-                                />
-                                <div style={{height: "0.6rem", marginBottom: "0.6rem"}}>
-                                    <ErrorMessage
-                                        className=" text-danger"
-                                        name ="address"
-                                        component ="small"
-                                    />
-                                </div>
-                            </div>
-                            <div className="mb-3 d-flex justify-content-between align-items-center">
-                                <div  style={{float: "start"}}>
-                                    <small className="text-danger">(*)</small> Thông tin cần thiết để mua
-                                    hàng
-                                </div>
-                                <div >
-                                    { isValid && dirty && (
-                                        <button
-                                            className="btn btn-success float-end mx-1 mt-2 shadow"
-                                            type="submit"
-                                        >Cập nhật
-                                        </button>)}
-                                </div>
-                                <div >
-                                    <button
-                                        type="button"
-                                        onClick={comeBackPagePrev}
-                                        className="btn btn-outline-secondary float-end mx-1 mt-2 shadow"
-                                    >
-                                        Trở về
-                                    </button>
-                                </div>
->>>>>>> 0dba88fa9db20a4262addf7643e27aff87550122
                             </div>
                         </div>
                         <Form className="col-7 px-3 pt-3" style={{borderRadius: 20}}>
