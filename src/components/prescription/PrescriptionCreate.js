@@ -186,7 +186,7 @@ function PrescriptionCreate() {
                                                         <div className="mb-3 row d-flex align-items-center justify-content-start">
                                                             <label className="col-sm-1 col-form-label">{index + 1}.</label>
                                                             <div className="col-sm-4">
-                                                                {/* <Field
+                                                                <Field
                                                                     type="text"
                                                                     className="form-control"
                                                                     placeholder="Tìm thuốc..."
@@ -200,8 +200,8 @@ function PrescriptionCreate() {
                                                                             <option value={medicine.name}></option>
                                                                         </>
                                                                     ))}
-                                                                </datalist> */}
-                                                                <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
+                                                                </datalist>
+                                                                {/* <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
                                                                     {
                                                                         chooseMedicines.map((t) => (
                                                                             <>
@@ -209,7 +209,7 @@ function PrescriptionCreate() {
                                                                             </>
                                                                         ))
                                                                     }
-                                                                </Field>
+                                                                </Field> */}
                                                                 <div className="col-sm-10"><ErrorMessage name={`indicationDto[${index}].medicine`} component="small" style={{ color: 'red' }} /></div>
 
                                                             </div>
@@ -230,12 +230,12 @@ function PrescriptionCreate() {
                                                             <div className="col-sm-1">&nbsp;</div>
                                                             <label className="col-sm-2 col-form-label">Ngày : </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                             <div className="col-sm-6 text-center" style={{ marginLeft: '-0.4rem' }}>
