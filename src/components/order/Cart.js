@@ -265,7 +265,8 @@ export default function Cart() {
               loyaltyPoint,
               totalPrice,
               deletedCartIDs,
-              customer
+              customer,
+              false
             );
             navigate("/success", {
               state: {
@@ -368,8 +369,8 @@ export default function Cart() {
       <Header />
       <div id="hannah" className="pb-5 pt-5">
         <div className="container-fluid p-1 position-relative">
-          <h1 className="text-center my-5 mx-auto" style={{ color: "#119cd4" }}>
-            Giỏ Hàng
+          <h1 className="text-center my-5 mx-auto" style={{ color: "#0340c1" }}>
+            GIỎ HÀNG
           </h1>
 
           {carts.length > 0 ? (
@@ -510,7 +511,7 @@ export default function Cart() {
                       style={{ display: showCf ? "block" : "none" }}
                       id="confirm-order"
                     >
-                      <h3 className=" text-center" style={{ color: "#119cd4" }}>
+                      <h3 className=" text-center" style={{ color: "#0340c1" }}>
                         XÁC NHẬN THÔNG TIN GIAO HÀNG
                         <img
                           style={{
@@ -559,7 +560,7 @@ export default function Cart() {
                             // the checkout here is to temporarily fix paypal bug somehow :)
                             if (!checkout) {
                               setCheckOut(true);
-                              await renderPaypal(values);
+                              renderPaypal(values);
                             }
                           } catch (error) {
                             if (error.response && error.response.data) {

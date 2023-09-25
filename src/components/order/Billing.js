@@ -4,7 +4,6 @@ import { Link, useLocation } from "react-router-dom";
 import Header from "../layout/Header";
 
 export default function Billing() {
-  
   let location = useLocation();
 
   const [orderDetails, setOrderDetails] = useState([]);
