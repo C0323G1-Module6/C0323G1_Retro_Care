@@ -341,6 +341,7 @@ function KindOfMedicineList(props) {
                                                 readOnly
                                                 type="text"
                                                 name="code"
+                                                disabled={choseRow.length < 1}
                                                 // onChange={handleInputChange}
                                                 id="code"
                                                 defaultValue={dataId?.code}
@@ -359,14 +360,14 @@ function KindOfMedicineList(props) {
                                             <Field
                                                 type="text"
                                                 name="name"
-
+                                               
                                                 // onChange={handleInputChange}
                                                 id="name"
                                                 className="form-control"
                                                 placeholder=""
                                                 aria-describedby="helpId"
                                             />
-                                            <ErrorMessage name='name' component="div" />
+                                            <ErrorMessage style={{color:"red"}} name='name' component="div" />
                                         </div>
 
                                         <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
