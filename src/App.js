@@ -38,7 +38,12 @@ import Authentication from "./components/user/Authentication";
 import AuthorOfCustomer from "./components/user/AuthorOfCustomer";
 import AuthorOfEmployee from "./components/user/AuthorOfEmployee";
 import { EnumAppUserRole } from "./components/user/EnumAppUserRole";
+import {axiosClient} from './services/user/AxiosClient';
+import Billing from './components/order/Billing';
+import ReturnVNPay from './components/order/ReturnVNPay';
+import ListInvoiceOrder from './components/order/ListInvoiceOrder';
 function App() {
+  axiosClient();
   return (
     <>
       <ScrollToTop />
@@ -62,7 +67,11 @@ function App() {
             />
           }
         >
+          <Route path="/cart" element={<Cart/>}/>
+          <Route path="/success" element={<Billing />}></Route>
+          <Route path="/success-vnp" element={<ReturnVNPay />}></Route>
           <Route path="/dashboard" element={<Dashboard />}>
+            <Route path="/dashboard/ListInvoiceOrder" element={<ListInvoiceOrder/>}/>
             <Route element={<AuthorOfCustomer />}>
               <Route path="/dashboard/retail" element={<Retail />} />
               <Route
