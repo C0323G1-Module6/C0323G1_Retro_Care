@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {
     getCustomerDetailByUserId,
     updateCustomer,
+    updateNewCustomer
 } from "../../services/customer/CustomerService";
 import {Field, Form, Formik, ErrorMessage} from "formik";
 import * as Yup from "yup";
@@ -70,7 +71,7 @@ const UserCustomer = () => {
     const handleSubmit = async (value, setErrors) => {
         try {
             console.log(value);
-            const result = await updateCustomer(value);
+            const result = await updateNewCustomer(value);
             Swal.fire(
                 "Cập nhật thành công !",
                 "khách hàng " + value.name + " đã được cập nhật!",
@@ -99,6 +100,7 @@ const UserCustomer = () => {
             <Formik
                 initialValues={{
                     ...customer,
+                    note: ""
                 }}
                 validationSchema={Yup.object({
                     name: Yup.string()

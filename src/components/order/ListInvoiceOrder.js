@@ -135,10 +135,10 @@ const ListInvoiceOrder = () => {
                                     invoices.map((invoice, index) => (
                                             <tr>
                                                 <td className={`px-3 py-3 `}>{invoice.code}</td>
-                                                <td className={`px-3 py-3 `}>{invoice.nameCustomer}</td>
+                                               {invoice.nameCustomer ==null ?<td className={`px-3 py-3 `}>Khách lẻ</td>:<td className={`px-3 py-3 `}>{invoice.nameCustomer}</td> } 
                                                 <td className={`px-3 py-3 `}>{format(parseISO(invoice.orderDate), "dd/MM/yyyy")}</td>
                                                 <td className={`px-3 py-3 `}>{invoice.orderTime}</td>
-                                                <td className={`px-3 py-3 `}>{invoice.nameEmployee}</td>
+                                                {invoice.nameEmployee ==null ?<td className={`px-3 py-3 `}>Không có</td>:<td className={`px-3 py-3 `}>{invoice.nameEmployee}</td> } 
                                                 <td className={`px-3 py-3 `}>{new Intl.NumberFormat("vi-VN").format(
                                                     invoice.orderDetailsPrice
                                                 )}</td>

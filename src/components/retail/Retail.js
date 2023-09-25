@@ -244,7 +244,7 @@ export default function Retail() {
         }
         if (listCart.length === 0) {
             Swal.fire({
-                text: "Chưa có gì để in bill",
+                text: "Chưa có gì để in hoá đơn",
                 icon: "warning",
                 timer: 1500,
             });

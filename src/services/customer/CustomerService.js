@@ -37,7 +37,9 @@ export const getCodeCustomer = async () => {
     console.log(e);
   }
 }
-
+export const updateNewCustomer = async (customer) => {
+  await axios.patch(`http://localhost:8080/customers/api/update-new/${customer.id}`, customer);
+}
 // QuyenHT
 
 export const getAllCustomers = async (page, name, code, address, phoneNumber, groupValue, sortItem,sortType) => {
