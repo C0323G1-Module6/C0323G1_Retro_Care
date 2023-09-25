@@ -270,12 +270,6 @@ export default function MedicineEdit() {
                                 <legend className="float-none w-auto px-3"><h2>Thông tin thuốc</h2></legend>
                                 <Form>
                                     <div className="row">
-                                        {/*<div className="col-4  d-flex justify-content-center align-items-center">*/}
-                                        {/*    <img*/}
-                                        {/*        src={medicines?.imageMedicineDto?.imagePath}*/}
-                                        {/*        ref={imgPreviewRef} width="250" height="300"*/}
-                                        {/*        style={{borderRadius: "10px", objectFit: "cover"}}/>*/}
-                                        {/*</div>*/}
                                         <div className="col-12">
                                             <div className="row">
                                                 <div className="col-md-6">
@@ -549,21 +543,8 @@ export default function MedicineEdit() {
                                                 </div>
                                             </div>
                                             <div className={"row"}>
-                                                <div className={"col-6 row d-flex justify-content-center"}>
-                                                    <img
-                                                        src={medicines?.imageMedicineDto?.imagePath}
-                                                        ref={imgPreviewRef}
-                                                        style={{
-                                                            padding: "0",
-                                                            width: "400px",
-                                                            height: "300px",
-                                                            borderRadius: "10px",
-                                                            objectFit: "cover",
-                                                            border: "1px solid black"
-                                                        }}/>
-                                                </div>
                                                 <div className={"col-6"}>
-                                                    <div style={{marginLeft: "6%"}}>
+                                                    <div>
                                                         <div className="row">
                                                             <div className="d-flex justify-content-start">
                                                                 <label className="col-md-4" style={{height: "60%"}}
@@ -592,6 +573,19 @@ export default function MedicineEdit() {
                                                                    name="note" id="note"/>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div className={"col-6 row d-flex justify-content-right"}>
+                                                    <img
+                                                        src={medicines?.imageMedicineDto?.imagePath}
+                                                        ref={imgPreviewRef}
+                                                        style={{
+                                                            padding: "0",
+                                                            width: "400px",
+                                                            height: "300px",
+                                                            borderRadius: "10px",
+                                                            objectFit: "cover",
+                                                            border: "1px solid black"
+                                                        }}/>
                                                 </div>
                                             </div>
                                             <br/>
