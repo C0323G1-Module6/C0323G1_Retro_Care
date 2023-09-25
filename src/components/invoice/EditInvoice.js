@@ -13,8 +13,7 @@ import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
 import { Link, useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
-
-export function EditInvoice() {
+function EditInvoice() {
     const [supplier, setSupplier] = useState([]);
     const [invoice, setInvoice] = useState();
     const [employee, setEmployee] = useState();
@@ -105,14 +104,14 @@ export function EditInvoice() {
 
                         }}
 
-                    // validationSchema={Yup.object({
-                    //     paid: Yup.number("Trường nhập vào phải là số")
-                    //         .required("Không được để trống trường này")
-                    //         .min(0, "Trường không được nhỏ hơn 0")
-                    //         .max(1000000000, "Không được lớn hơn 1 tỷ"),
-                    //     note: Yup.string().max(100, "Trường nhập vào phải nhỏ hơn 100 kí tự"),
-                    //     documentNumber: Yup.string().max(10, "Trường nhập vào phải nhỏ hơn 10 kí tự")
-                    // })}
+                    validationSchema={Yup.object({
+                        paid: Yup.number("Trường nhập vào phải là số")
+                            .required("Không được để trống trường này")
+                            .min(0, "Trường không được nhỏ hơn 0")
+                            .max(1000000000, "Không được lớn hơn 1 tỷ"),
+                        note: Yup.string().max(100, "Trường nhập vào phải nhỏ hơn 100 kí tự"),
+                        documentNumber: Yup.string().max(10, "Trường nhập vào phải nhỏ hơn 10 kí tự")
+                    })}
                     >
                         {
                             ({ values }) => (

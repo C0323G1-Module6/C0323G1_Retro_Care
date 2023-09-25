@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlus, } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt, } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
     AiOutlineRollback,
@@ -11,7 +11,8 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import XRegExp from 'xregexp'
-import localStorage from 'redux-persist/es/storage';
+import { Link } from 'react-router-dom';
+
 
 function KindOfMedicineList(props) {
     const [kindOfMedicines, setKindOfMedicine] = useState([]);
@@ -393,16 +394,18 @@ function KindOfMedicineList(props) {
                                         // data-bs-target="#exampleModal"
                                         onClick={() => handleDelete()}
                                     >
-                                        <i className="fa-solid fa-trash" />
+                                        <FaRegTrashAlt className="mx-1" />
                                         Xoá
                                     </button>
-                                    <a className="btn btn-outline-primary" href="/HuyL_home.html">
+                                    <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
+
+                                    {/* <a className="btn btn-outline-primary" href="/home">
                                         <AiOutlineRollback className="mx-1" />
                                         Trở về
-                                    </a>
+                                    </a> */}
                                 </div>
-                                <p> Code: {values.code}</p>
-                                <p> Name: {values.name}</p>
+                                {/* <p> Code: {values.code}</p>
+                                <p> Name: {values.name}</p> */}
                             </Form> 
                         )}
                        
@@ -433,7 +436,7 @@ function KindOfMedicineList(props) {
                                         Huỷ xoá
                                     </button>
                                     <button type="button" className="btn btn-primary">
-                                        Xoá
+                                        <FaRegTrashAlt className="mx-1" /> Xoá
                                     </button>
                                 </div>
                             </div>
