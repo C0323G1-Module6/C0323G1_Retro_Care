@@ -101,6 +101,7 @@ function KindOfMedicineList(props) {
                         code: "",
                         name: "",
                     })
+                    setChoseRow([])
                 } else {
                     Swal.fire({
                         text: "Bạn chọn hoàn tác ",
