@@ -65,12 +65,11 @@ export default function RetailListPrescriptionList() {
   return (
     <div className="container">
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#0D6EFD' }}>
-        Danh sách toa thuốc kê sẵn
+        DANH SÁCH TOA THUỐC
       </h1>
-      <h1>{select}</h1>
       <div className="row">
         <div className="col-md-6">
-          <div className="note-frame border border-dark rounded-3" data-title="Tìm kiếm thông tin">
+          <div className="note-frame border border-dark rounded-3 p-2 d-flex gap-2 align-items-center mb-3" data-title="Tìm kiếm thông tin">
             <label htmlFor="findBy">Tìm kiếm theo</label>
             <select
               id="findBy"
@@ -86,7 +85,7 @@ export default function RetailListPrescriptionList() {
               value={input}
               onChange={(event) => setInput((pre) => event.target.value)}
             />
-            <button className="btn btn-primary" onClick={() => findPrescription()}>
+            <button className="btn btn-primary p-1" onClick={() => findPrescription()}>
               Xem
             </button>
           </div>
@@ -125,7 +124,7 @@ export default function RetailListPrescriptionList() {
           </div>
         </div>
       </div>
-      <div className="text-end">
+      <div className="text-end mt-2 d-flex gap-2 justify-content-end">
               <a  className="btn btn-outline-primary"
                 onClick={() => toPrescriptionInformation()}>
                 Chi tiết toa thuốc
