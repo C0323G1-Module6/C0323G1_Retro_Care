@@ -184,7 +184,7 @@ export const SearchPage = () => {
                             className="card-btn"
                             onClick={() => addToCart(el.medicineId)}
                           >
-                            Xem chi tiết
+                            Mua
                           </button>
                         </div>
                         <div className="product-info">
