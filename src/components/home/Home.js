@@ -24,6 +24,7 @@ import {
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import Sliders from "./Sliders";
+import * as kindOfMedicines from "../../services/kindOfMedicine/KindOfMedicineService";
 
 const Home = () => {
   const navigate = useNavigate();
