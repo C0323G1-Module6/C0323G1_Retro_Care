@@ -1,13 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import * as medicineService from "../../services/medicine/MedicineService";
-import {AiOutlineDoubleLeft, AiOutlineDoubleRight} from "react-icons/ai";
+import {AiOutlineDoubleLeft, AiOutlineDoubleRight, AiOutlineRollback} from "react-icons/ai";
 import swal from "sweetalert2";
+import "./MedicineList.css"
+import {FaPlus, FaRegTrashAlt} from "react-icons/fa";
+import {FiEdit} from "react-icons/fi";
 
 function MedicineList() {
-    const params = useParams();
-    const navigate = useNavigate()
-    const [medicineList, setMedicineList] = useState([])
+    const [showContent,setShowContent]= useState(false);
+    const [medicineList, setMedicineList] = useState([]);
+    const [medicine, setMedicine] = useState("");
     const [page, setPage] = useState(0);
     const [totalPage, setTotalPage] = useState(0);
     const [selectMedicine, setSelectMedicine] = useState({
@@ -15,27 +18,36 @@ function MedicineList() {
         name: ""
     });
 
+    const handleMouseEnter = (medicine) => {
+        setShowContent(true);
+        setMedicine(medicine);
+    };
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
+
     const [searchInMedicine, setSearchInMedicine] = useState("searchByCode");
     const [searchInput, setSearchInput] = useState("");
-    const [limit, setLimit] = useState(5)
+    const [limit, setLimit] = useState(5);
+    const [conditional, setConditional] = useState("greater");
 
-// ------------------------------------------- delete -------------------------------------------------
     const handleDelete = async () => {
         if (selectMedicine.id == null) {
             swal.fire({
                 icon: "error",
                 title: "Rất tiếc...",
-                text: "Vui lòng chọn khách hàng trước khi thực hiện thao tác này!",
+                text: "Vui lòng chọn thuốc trước khi thực hiện thao tác này!",
             })
         } else {
             swal.fire({
-                title: "Bạn có muốn xoá sản phẩm này khỏi giỏ hàng?",
+                title: "Bạn có muốn xoá sản phẩm này " + selectMedicine.name + "?" ,
                 text: selectMedicine.name,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085D6",
                 cancelButtonColor: "#d33",
                 confirmButtonText: "Đồng ý!",
+                cancelButtonText: "Hủy"
             })
                 .then(async (willDelete) => {
                     if (willDelete.isConfirmed) {
@@ -52,18 +64,11 @@ function MedicineList() {
                             text: 'Xóa thất bại!'
                         });
                     }
-                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit);
+                    await getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional);
                 });
         }
     };
-// ---------------------------------------- Get list ---------------------------------------------
 
-    // const getListMedicine = async (page) => {
-    //     const result = await medicineService.findAll(page);
-    //     setMedicineList(result?.data.content);
-    //     setTotalPage(result?.data.totalPages);
-    //     console.log(totalPage);
-    // }
     const previousPage = () => {
         if (page > 0) {
             setPage((pre) => pre - 1)
@@ -75,45 +80,60 @@ function MedicineList() {
             setPage((pre) => pre + 1)
         }
     }
-// ----------------------------------------- Search ---------------------------------------
-    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit) => {
-        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit);
-        setMedicineList(result?.content);
-        setTotalPage(result?.totalPages);
+
+    const getListSearchMedicine = async (searchInMedicine, searchInput, page, limit, conditional) => {
+        const result = await medicineService.searchMedicine(searchInMedicine, searchInput, page, limit, conditional);
+        console.log(result)
+        if (result?.status === 200) {
+            setMedicineList(result?.data.content);
+            setTotalPage(result?.data.totalPages);
+        } else {
+            await swal.fire({
+                icon: 'warning',
+                title: 'Không tìm thấy dữ liệu cần tìm.',
+                showConfirmButton: true,
+                timer: 1500
+            })
+            handleResetList();
+        }
     }
-// select child
+
+        const handleResetList = () => {
+            setSearchInMedicine("searchByCode");
+            setSearchInput("");
+            setConditional("greater");
+        }
+
     const handleShowCondition = () => {
         let select = document.getElementById("select").value;
         const conditional = document.getElementById("conditional");
-        if (select === "4") {
+        if (select === "searchByPrice") {
             conditional.style.display = "inline";
         } else {
             conditional.style.display = "none";
         }
     }
 
-    const handleSearch = async () => {
-        setSearchInput(document.getElementById("search").value);
+    const handleSearch = () => {
+        setSearchInput(document.getElementById("search").value.trim());
         setPage(0);
     }
-// select father
+
     const handleSearchOption = (e) => {
         setSearchInMedicine(e.target.value);
     }
 
-    // useEffect(() => {
-    //     getListMedicine(page);
-    // }, [page])
-
-    const handleReset = () => {
-        setPage(0);
-        setSearchInMedicine("");
-        setSearchInput("");
+    const handleSearchConditional = async (e) => {
+        await setConditional(e.target.value);
+        console.log(conditional)
     }
 
     useEffect(() => {
-        getListSearchMedicine(searchInMedicine, searchInput, page, limit)
-    }, [searchInput, page, limit])
+        console.log("get list")
+        getListSearchMedicine(searchInMedicine, searchInput, page, limit, conditional)
+    }, [searchInput, page, limit]);
+
+    const quantity = 20 ;
 
     if (!medicineList) {
         return null;
@@ -121,7 +141,7 @@ function MedicineList() {
     return (
         <>
             <div className="container">
-                <div className="row header" >
+                <div className="row header">
                     <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>DANH SÁCH THUỐC</h1>
                 </div>
                 <div className="row row-function" style={{display: 'flex'}}>
@@ -133,22 +153,18 @@ function MedicineList() {
                                 style={{width: '150px', borderRadius: '5px', color: 'blue'}}
                                 id="select" className="appearance-none pl-8 pr-6 py-2">
                             <option selected value="searchByCode">Mã thuốc</option>
-                            <option value="searchByNameKindOfMedicine">Nhóm thuốc</option>
+                            <option value="searchByKindOfMedicine">Nhóm thuốc</option>
                             <option value="searchByName">Tên thuốc</option>
                             <option value="searchByActiveElement">Hoạt chất</option>
-                            <option value="4">Giá bán lẻ</option>
+                            <option value="searchByPrice">Giá bán lẻ</option>
                         </select>
 
                         <select style={{width: '150px', borderRadius: '5px', color: 'blue', display: "none"}}
+                                onChange={(e) => handleSearchConditional(e)}
                                 id="conditional" className="appearance-none pl-8 pr-6 py-2">
-                            <option selected>Điều kiện</option>
-                            <option value="1">Bằng</option>
-                            <option value="2">Lớn hơn</option>
-                            <option value="3">Nhỏ hơn</option>
-                            <option value="4">Lớn hơn bằng</option>
-                            <option value="5">Nhỏ hơn bằng</option>
-                            <option value="6">Khác</option>
-                            <option value="7">Tất cả</option>
+                            <option value="">Tất cả</option>
+                            <option value="greater">Lớn hơn bằng</option>
+                            <option value="small">Nhỏ hơn bằng</option>
                         </select>
                         <input style={{width: '250px', borderRadius: '5px'}}
                                className="appearance-none pl-8 pr-6 py-2 bg-white text-sm focus:outline-none"
@@ -156,17 +172,16 @@ function MedicineList() {
                                id={'search'}/>
                         <button className="btn btn-outline-primary"
                                 style={{marginRight: `auto`, width: `auto`, marginLeft: '5px'}}
-                                onClick={() => handleSearch()} value="searchInMedicine">
+                                onClick={() => handleSearch()}>
                             <i className="fa-solid fa-magnifying-glass"></i>
                             Tìm kiếm
                         </button>
                     </div>
                 </div>
 
-
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="d-inline-block w-100 shadow rounded-lg overflow-hidden">
-                        <div className="table table-container ">
+                        <div className="table table-container1 ">
                             <table className="table  w-100 leading-normal overflow-hidden rounded-3 table-hover ">
                                 <thead>
                                 <tr style={{background: '#0d6efd', color: '#ffffff'}}>
@@ -189,55 +204,52 @@ function MedicineList() {
                                         ĐVT
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        ĐV DĐ
+                                        ĐV QĐ
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                                         Số lượng
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá nhập
+                                        Giá bán
                                     </th>
                                     <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        Giá lẻ
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % CK
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        %LN XL
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
-                                        % VAT
+                                        Giá bán lẻ
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
-                                    medicineList.map((item, index) => (
-                                        <tr key={index} id={index} onClick={() => {
-                                            if (selectMedicine === null || selectMedicine.id !== item.id) {
-                                                setSelectMedicine({id: item.id, name: item?.name});
-                                            } else if (selectMedicine.id === item.id) {
-                                                setSelectMedicine({id: null, name: ""});
-                                            }
-
-                                        }}
-                                            style={(selectMedicine.id === item?.id) ? {background: 'rgba(252, 245, 76, 0.73)'} : {}}>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.name}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.activeElement}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price - (item.price / (100 + (item.vat + item.retailProfits)) * 100)}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.discount}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailProfits}</td>
-                                            <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.vat}</td>
-                                        </tr>
-                                    ))}
+                                {medicineList ? (medicineList.map((item, index) => (
+                                    <tr key={index} id={index} onClick={() => {
+                                        if (selectMedicine === null || selectMedicine.id !== item.id) {
+                                            setSelectMedicine({id: item.id, name: item?.name});
+                                        } else if (selectMedicine.id === item.id) {
+                                            setSelectMedicine({id: null, name: ""});
+                                        }
+                                    }}
+                                        style={(selectMedicine.id === item?.id) ? {background: 'rgb(98, 158, 236)'} : {}}>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{index + 1}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.code}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.kindOfMedicineName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide "
+                                            onMouseEnter={()=>{handleMouseEnter(item.name)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.name.length > quantity ? `${item.name.slice(0,quantity)}...`:item.name}
+                                            {showContent && medicine === item.name &&
+                                                <div>{item.name}</div>}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm medicine-hide"
+                                            onMouseEnter={()=>{handleMouseEnter(item.activeElement)}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >{item.activeElement.length > quantity ? `${item.activeElement.slice(0,quantity)}...`:item.activeElement}
+                                            {showContent && medicine === item.activeElement &&
+                                                <div>{item.activeElement}</div>}
+                                        </td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.unitName}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.conversionUnit}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.quantity}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.price + " vnđ"}</td>
+                                        <td className="px-3 py-3 border-b border-gray-200 text-sm">{item.retailPrice+" vnđ"}</td>
+                                    </tr>
+                                ))) : (<h1>Tiếc quá! Retro Care không có dữ liệu về phần này.</h1>)}
                                 </tbody>
                             </table>
                         </div>
@@ -276,34 +288,32 @@ function MedicineList() {
                     </div>
 
                     <div className="d-flex align-items-center justify-content-end gap-3 mt-3">
-                        <a
-                            className="btn btn-outline-primary"
-                            href="TinVV_CreateMedicine.html">
-                            <i className="fa-solid fa-plus"></i>
+
+                        <Link to={'/dashboard/medicine/create'} className="btn btn-outline-primary">
+                            <FaPlus className="mx-1" />
                             Thêm mới
-                        </a>
-                        <a
-                            className="btn btn-outline-primary"
-                            href="TinVV_MedicineCreate.html">
-                            <i className="fa-regular fa-pen-to-square"></i>
+                        </Link>
+                        <Link
+                            to={`/dashboard/medicine/update/${selectMedicine.id}`}
+                            className="btn btn-outline-primary">
+                            <FiEdit className="mx-1" />
                             Sửa
-                        </a>
+                        </Link>
                         <button
                             type="button"
                             onClick={() => handleDelete()}
                             className="btn btn-outline-primary">
-                            <i className="fa-solid fa-trash"></i>
+                            <FaRegTrashAlt className="mx-1" />
                             Xoá
                         </button>
-                        <a className="btn btn-outline-primary" href="/HuyL_home.html">
-                            <i className="fa-solid fa-rotate-left"></i>
+                        <Link to={`/home`} className="btn btn-outline-primary">
+                            <AiOutlineRollback className="mx-1" />
                             Trở về
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>
         </>
     )
 }
-
 export default MedicineList;

@@ -29,20 +29,20 @@ const CreationEmployee = () => {
             ...employee,
             image: url,
           })
-            .then(() => {
-              navigate("/dashboard/employee");
-            })
-            .then(() => {
-              Swal.fire({
-                icon: "success",
-                title: "Tạo mới thành công !",
-                showConfirmButton: false,
-                timer: 2000,
-                customClass: {
-                  icon: "icon-post",
-                },
+              .then(() => {
+                navigate("/dashboard/employee");
+              })
+              .then(() => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Tạo mới thành công !",
+                  showConfirmButton: false,
+                  timer: 2000,
+                  customClass: {
+                    icon: "icon-post",
+                  },
+                });
               });
-            });
         } catch (err) {
           if (err.response.data) {
             setErrors(err.response.data);
@@ -344,103 +344,103 @@ const CreationEmployee = () => {
                     </div>
                   </div>
 
-                  <div className="col-3 p-2">
-                    <label style={{ fontWeight:"bold"}}>
-                      CCCD/CMND <sup style={{color:"red"}}>*</sup>
-                    </label>
-                  </div>
-                  <div className="col-9">
-                    <Field
-                      name="idCard"
-                      className="form-control border border-dark mt-2"
-                      type="text"
-                    />
+                    <div className="col-3 p-2">
+                      <label style={{ fontWeight:"bold"}}>
+                        CCCD/CMND <sup style={{color:"red"}}>*</sup>
+                      </label>
+                    </div>
+                    <div className="col-9">
+                      <Field
+                          name="idCard"
+                          className="form-control border border-dark mt-2"
+                          type="text"
+                      />
+                      <div style={{ height: "16px" }}>
+                        <ErrorMessage
+                            name="idCard"
+                            style={{ color: "red", marginLeft: "20px" }}
+                            component={"small"}
+                        />
+                      </div>
+                    </div>
+                    {/*<div className="col-3 p-2">*/}
+                    {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
+                    {/*</div>*/}
+                    {/*<div className="col-9">*/}
+                    {/*    <select  className="form-select border border-dark mt-2">*/}
+                    {/*        <option value="1">Nhân viên</option>*/}
+                    {/*        <option value="2">Quản lý</option>*/}
+                    {/*    </select>*/}
+                    {/*    /!*<div style={{height: '16px'}}>*!/*/}
+                    {/*    /!*    <small style={{color: 'red',marginLeft: '20px'}}>error</small>*!/*/}
+                    {/*    /!*</div>*!/*/}
+                    {/*</div>*/}
+                    <div className="col-3 p-2">
+                      <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
+                    </div>
+                    <div className="col-9">
+                      <div className="input-group mt-2 ">
+                        <Field
+                            type="file"
+                            class="form-control"
+                            aria-describedby="inputGroupFileAddon03"
+                            aria-label="Upload"
+                            accept="image/png, image/gif, image/jpeg"
+                            ref={inputFileRef}
+                            onChange={handleInputChange}
+                            name="image"
+                        />
+                      </div>
+                    </div>
+                    <div className="form-floating  mt-2">
+                      <Field
+                          as="textarea"
+                          name="note"
+                          className="form-control border border-dark"
+                          placeholder="Leave a comment here"
+                          id="floatingTextarea"
+                      />
+                      <label htmlFor="floatingTextarea">Note</label>
+                    </div>
                     <div style={{ height: "16px" }}>
                       <ErrorMessage
-                        name="idCard"
-                        style={{ color: "red", marginLeft: "20px" }}
-                        component={"small"}
+                          name="image"
+                          style={{ color: "red", marginLeft: "20px" }}
+                          component={"small"}
                       />
                     </div>
-                  </div>
-                  {/*<div className="col-3 p-2">*/}
-                  {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
-                  {/*</div>*/}
-                  {/*<div className="col-9">*/}
-                  {/*    <select  className="form-select border border-dark mt-2">*/}
-                  {/*        <option value="1">Nhân viên</option>*/}
-                  {/*        <option value="2">Quản lý</option>*/}
-                  {/*    </select>*/}
-                  {/*    /!*<div style={{height: '16px'}}>*!/*/}
-                  {/*    /!*    <small style={{color: 'red',marginLeft: '20px'}}>error</small>*!/*/}
-                  {/*    /!*</div>*!/*/}
-                  {/*</div>*/}
-                  <div className="col-3 p-2">
-                    <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
-                  </div>
-                  <div className="col-9">
-                    <div className="input-group mt-2 ">
-                      <Field
-                        type="file"
-                        class="form-control"
-                        aria-describedby="inputGroupFileAddon03"
-                        aria-label="Upload"
-                        accept="image/png, image/gif, image/jpeg"
-                        ref={inputFileRef}
-                        onChange={handleInputChange}
-                        name="image"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-floating  mt-2">
-                    <Field
-                      as="textarea"
-                      name="note"
-                      className="form-control border border-dark"
-                      placeholder="Leave a comment here"
-                      id="floatingTextarea"
-                    />
-                    <label htmlFor="floatingTextarea">Note</label>
-                  </div>
-                  <div style={{ height: "16px" }}>
-                    <ErrorMessage
-                      name="image"
-                      style={{ color: "red", marginLeft: "20px" }}
-                      component={"small"}
-                    />
-                  </div>
-                  <div className="col-4 p-2 mt-3">
+                    <div className="col-4 p-2 mt-3">
                     <span>
                       (<span style={{ color: "red" }}>*</span>) Thông tin bắt
                       buộc
                     </span>
-                  </div>
-                  <div className="col-8 mt-3">
-                    <div>
-                      <Link to={"/dashboard/employee"}>
-                        <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow">
-                          <i className="fa-solid fa-rotate-left"></i> Trở về
+                    </div>
+                    <div className="col-8 mt-3">
+                      <div>
+                        <Link to={"/dashboard/employee"}>
+                          <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow">
+                            <i className="fa-solid fa-rotate-left"></i> Trở về
+                          </button>
+                        </Link>
+                        <button type="reset" className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
+                          <i className="fa-solid fa-rotate-right"></i>
+                          Làm mới
                         </button>
-                      </Link>
-                      <button type="reset" className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
-                        <i className="fa-solid fa-rotate-right"></i>
-                        Làm mới
-                      </button>
-                      <button
-                        type={"submit"}
-                        className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
-                      >
-                        <i className="fa-solid fa-plus"></i> Thêm Mới
-                      </button>
+                        <button
+                            type={"submit"}
+                            className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
+                        >
+                          <i className="fa-solid fa-plus"></i> Thêm Mới
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </fieldset>
+                </fieldset>
+              </div>
             </div>
           </div>
-        </div>
-      </Form>
-    </Formik>
+        </Form>
+      </Formik>
   );
 };
 

@@ -16,7 +16,6 @@ export async function getCartDetailEmployee(id) {
 }
 
 export async function addMedicineToCart(userId, medicineId, quantity) {
-
     await axios.post("http://localhost:8080/api/carts/add-from-home-details?appUserId="
         + userId + "&medicineId=" + medicineId + "&newQuantity=" + quantity);
 }
@@ -58,5 +57,15 @@ export async function getAllIndicationsByPrescription(id){
 
 export async function getOnePrescriptionById(id){
     const res = await axios.get("http://localhost:8080/prescription/"+id);
+    return res.data;
+}
+
+export async function getNameEmployee(id){
+    const res = await axios.get("http://localhost:8080/api/carts/getNameEmployee?appUserId="+id);
+    return res.data;
+}
+
+export async function getOneMedicineByName(name){
+    const res = await axios.get("http://localhost:8080/api/carts/getOneMedicineByName?name="+name);
     return res.data;
 }

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { getPrescriptionByName, getPrescriptionBySymptoms } from "../../services/retail/RetailService";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import {AiOutlineRollback} from "react-icons/ai";
 
 export default function RetailListPrescriptionList() {
   const [input, setInput] = useState("");
@@ -10,6 +12,10 @@ export default function RetailListPrescriptionList() {
   const [list, setList] = useState([]);
   const [prescriptionId, setPrescriptionId] = useState(0);
   const navigate = useNavigate();
+  useEffect(()=>{
+    document.title="RetroCare - danh sách toa";
+  },[])
+  
 
   const handleRowClick = (index) => {
     if (index.id == prescriptionId) {
@@ -21,12 +27,14 @@ export default function RetailListPrescriptionList() {
 
 
   const getListByName = async () => {
-    const data = await getPrescriptionByName(input);
+    const find = input.trim();
+    const data = await getPrescriptionByName(find);
     setList((pre) => data);
   }
 
   const getListBySymptoms = async () => {
-    const data = await getPrescriptionBySymptoms(input);
+    const find = input.trim();
+    const data = await getPrescriptionBySymptoms(find);
     setList((pre) => data);
   }
 
@@ -44,6 +52,11 @@ export default function RetailListPrescriptionList() {
 
   const toPrescriptionInformation = () => {
     if (prescriptionId == 0) {
+      Swal.fire({
+        text: "Bạn chưa chọn gì",
+        icon: "warning",
+        timer: 1000,
+    });
       return;
     } else {
       navigate("/dashboard/retail/prescription-information/"+prescriptionId)
@@ -51,7 +64,6 @@ export default function RetailListPrescriptionList() {
   }
   return (
     <div className="container">
-      <h1>{prescriptionId}</h1>
       <h1 style={{ textAlign: 'center', marginBottom: '20px', color: '#0D6EFD' }}>
         Danh sách toa thuốc kê sẵn
       </h1>
@@ -95,7 +107,7 @@ export default function RetailListPrescriptionList() {
               </thead>
               <tbody>
                 {list.map((pre) => (
-                  <tr key={pre.id} style={prescriptionId === pre.id ? { backgroundColor: "yellow" } : {}}
+                  <tr key={pre.id} style={prescriptionId === pre.id ? { backgroundColor: 'rgb(98, 158, 236)' } : {}}
                     onClick={() => handleRowClick(pre)}
                   >
                     <td>{pre.code}</td>
@@ -109,19 +121,21 @@ export default function RetailListPrescriptionList() {
 
               </tbody>
             </table>
-            <div className="text-end">
+            
+          </div>
+        </div>
+      </div>
+      <div className="text-end">
               <a  className="btn btn-outline-primary"
                 onClick={() => toPrescriptionInformation()}>
                 Chi tiết toa thuốc
               </a>
               <a className="btn btn-outline-primary"
-                onClick={() => backToRetail()}>
+                onClick={() => backToRetail()}><AiOutlineRollback/>
                 Trở về
               </a>
             </div>
-          </div>
-        </div>
-      </div>
     </div>
+
   )
 }

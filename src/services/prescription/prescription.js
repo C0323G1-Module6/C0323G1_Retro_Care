@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const getAllPrescription = async (page) => {
-    const res = await axios.get(`http://localhost:8080/prescription?page=${page}`);
+export const getAllPrescription = async (page,search,searchPrescription,sortBy) => {
+    const res = await axios.get(`http://localhost:8080/prescription?page=${page}&search=${search}&searchPrescription=${searchPrescription}&sortBy=${sortBy}`);
     return res;
 }
 
@@ -15,7 +15,6 @@ export const createPrescription = async (newPrescription) => {
 }
 
 export const editPrescription = async (prescription) => {
-    console.log(prescription);
     await axios.patch(`http://localhost:8080/prescription/edit`,prescription)
 }
 
