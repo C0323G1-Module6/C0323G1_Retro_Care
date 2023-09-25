@@ -55,6 +55,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/details/:id" element={<Details />}></Route>
         <Route path="/user-infor/:id" element={<UserCustomer />} />
+        <Route path="/cart" element={<Cart/>}/>
         <Route
           element={
             <Authentication
@@ -67,7 +68,7 @@ function App() {
             />
           }
         >
-          <Route path="/cart" element={<Cart/>}/>
+          
           <Route path="/success" element={<Billing />}></Route>
           <Route path="/success-vnp" element={<ReturnVNPay />}></Route>
           <Route path="/dashboard" element={<Dashboard />}>
