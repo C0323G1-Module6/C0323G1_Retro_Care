@@ -46,7 +46,7 @@ export default function Retail() {
         await getCart();
         setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString())
         const currentDate = new Date();
-        const currentDateString = format(currentDate, 'dd/MM/yyyy');
+        const currentDateString = format(currentDate, 'dd-MM-yyyy');
         setDate(currentDateString)
         getUser();
     }
@@ -356,7 +356,7 @@ export default function Retail() {
                                         setPhoneNumber(event.target.value)
                                     }
                                 }} />
-                            <button className="btn btn-primary ms-2" onClick={() => getCustomer()}>Tìm</button>
+                            <button className="btn btn-outline-primary ms-2" onClick={() => getCustomer()}>Tìm</button>
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -424,8 +424,8 @@ export default function Retail() {
                                         }
                                     </td>
                                     <td onClick={() => handleRowClick(cart.cd_id)}>{cart.conversion_unit.toLocaleString()}</td>
-                                    <td onClick={() => handleRowClick(cart.cd_id)}>{cart.price.toLocaleString()}</td>
-                                    <td onClick={() => handleRowClick(cart.cd_id)}>{(cart.price * cart.cd_quantity).toLocaleString()}</td>
+                                    <td onClick={() => handleRowClick(cart.cd_id)}>{new Intl.NumberFormat("vi-VN").format(cart.price)}</td>
+                                    <td onClick={() => handleRowClick(cart.cd_id)}>{new Intl.NumberFormat("vi-VN").format(cart.price * cart.cd_quantity)}</td>
                                 </tr>
                             ))}
                             <tr>
@@ -464,7 +464,7 @@ export default function Retail() {
                 <br />
                 <div className="row d-flex align-items-center justify-content-between" style={{ textAlign: 'right'}}>
                     <div className="col-7 border border-1 border-dark w-25 rounded ms-2 d-flex justify-content-center p-2" style={{ textAlign: 'left' }}>
-                        <b>TỔNG TIỀN: {sum.toLocaleString()} VNĐ</b>
+                        <b>TỔNG TIỀN: {new Intl.NumberFormat("vi-VN").format(sum)} VNĐ</b>
                     </div>
                     <div className="col-5 d-flex align-items-center justify-content-end gap-2">
                         <button className="btn btn-outline-primary" onClick={() => pay()}><BsReceiptCutoff size={18} className="me-1"/>Thanh toán</button>
@@ -476,8 +476,8 @@ export default function Retail() {
                             <FaRegTrashAlt/> Xoá
                         </a>
                         <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}><AiOutlinePrinter size={18} className="me-1"/>In phiếu</button>
-                        <a className="btn btn-outline-primary" >
-                            <AiOutlineRollback size={18} className="me-1"/>Trở về </a>
+                        <Link to={'/dashboard/ListInvoiceOrder'} className="btn btn-outline-primary" >
+                            <AiOutlineRollback size={18} className="me-1" />Trở về </Link>
                     </div>
                 </div>
             </div>

@@ -30,7 +30,6 @@ import SearchPage from "./components/search/SearchPage";
 import Cart from "./components/order/Cart";
 import Details from "./components/order/Details";
 import PrescriptionEdit from "./components/prescription/PrescriptionEdit";
-import CreateInvoice from "./components/invoice/CreateInvoice";
 import UserCustomer from "./components/customer/UserCustomer";
 import "react-toastify/dist/ReactToastify.css";
 import ScrollToTop from "./components/home/ScrollToTop";
@@ -43,6 +42,7 @@ import Billing from './components/order/Billing';
 import ReturnVNPay from './components/order/ReturnVNPay';
 import ListInvoiceOrder from './components/order/ListInvoiceOrder';
 import { EditInvoice } from "./components/invoice/EditInvoice";
+import CreateInvoice from "./components/invoice/CreateInvoice";
 function App() {
   axiosClient();
   return (
