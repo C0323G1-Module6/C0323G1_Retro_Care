@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
@@ -119,7 +119,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                         {types?.map((type, index) => (
                           <Link
                             key={index}
-                            to={`/home/search/${type.name}`}
+                            to={`/home/list-medicines/${type.name}`}
                             className="category-dropdown-item"
                           >
                             <div className="dropdown-text">{type.name}</div>

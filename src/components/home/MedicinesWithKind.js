@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import Footer from "../layout/Footer";
+import HavingNoResults from "../search/HavingNoResults";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import * as homeService from "../../services/home/HomeService";
 import * as utils from "../../services/utils/utils";
-import HavingNoResults from "./HavingNoResults";
 import { ToastContainer, toast } from "react-toastify";
 import { addToCartFromHomeAndDetails } from "../../services/order/CartService";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,58 +15,34 @@ import {
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 
-export const SearchPage = () => {
+const MedicinesWithKind = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [medicineList, setMedicineList] = useState([]);
-  const [keyword, setKeyword] = useState(params.keyword);
-  const [type, setType] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [type, setType] = useState(params.type);
   const [sortBy, setSortBy] = useState("medicinePrice");
   const [sortDirection, setSortDirection] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [totalElements, setTotalElements] = useState(0);
-  const [displayKeyword, setDisplayKeyword] = useState(params.keyword);
   const [isNoContent, setIsNoContent] = useState(false);
+  const [displayType, setDisplayType] = useState(params.type);
   const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
 
   useEffect(() => {
-    console.log(params.keyword);
     setCurrentPage(1);
-    getMedicineList();
-  }, [params.keyword]);
+    getParams();
+  }, [params.type]);
 
   useEffect(() => {
     getMedicineList();
-  }, [currentPage, sortBy, sortDirection]);
+  }, [currentPage, sortBy, sortDirection, type]);
 
-  const getMedicineList = async () => {
-    setIsNoContent(false);
-    let trimKeyword = " ";
-    if (keyword !== undefined) {
-      trimKeyword = keyword.trim();
-    } else {
-      trimKeyword = "";
-    }
-    const response = await homeService.searchMedicines(
-      currentPage - 1,
-      pageSize,
-      trimKeyword,
-      type,
-      sortBy,
-      sortDirection
-    );
-    console.log(response);
-    if (response.status === 204) {
-      setIsNoContent(true);
-      setKeyword("");
-    } else {
-      setMedicineList(response.data.content);
-      setTotalElements(response.data.totalElements);
-      setDisplayKeyword(keyword);
-    }
+  const getParams = () => {
+    setType(params.type);
   };
 
   const addToCart = async (medicineId) => {
@@ -88,9 +64,25 @@ export const SearchPage = () => {
     }
   };
 
-  const handleInputChange = async (event) => {
-    event.preventDefault();
-    setKeyword(event.target.value);
+  const getMedicineList = async () => {
+    setIsNoContent(false);
+    const response = await homeService.searchMedicines(
+      currentPage - 1,
+      pageSize,
+      keyword,
+      type,
+      sortBy,
+      sortDirection
+    );
+    console.log(response);
+    if (response.status === 204) {
+      setIsNoContent(true);
+      setKeyword("");
+    } else {
+      setMedicineList(response.data.content);
+      setTotalElements(response.data.totalElements);
+      setDisplayType(type);
+    }
   };
 
   const handlePageChange = (newPage) => {
@@ -109,7 +101,7 @@ export const SearchPage = () => {
 
   return (
     <>
-      <Header inputSearch={keyword} onInputChange={handleInputChange} />
+      <Header onInputChange={() => {}} />
       <section
         className="our-menu bg-light repeat-img pb-5"
         style={{ padding: "7rem 0 0" }}
@@ -122,15 +114,14 @@ export const SearchPage = () => {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="sec-title text-center mt-4">
-                    <p className="sec-sub-title">Kết quả tìm kiếm</p>
+                    <p className="sec-sub-title">Danh mục {type}</p>
                   </div>
                   <div className="border border-warning rounded-2 py-2 mb-4">
                     <div
                       className="ms-5 fs-6 mb-1"
                       style={{ color: "rgb(27, 65, 168)" }}
                     >
-                      Tìm thấy {totalElements} kết quả với từ khoá "
-                      {displayKeyword}"
+                      Có {totalElements} sản phẩm thuộc danh mục
                     </div>
                     <div className="d-flex ms-5 gap-3 fs-6 align-items-center">
                       <span>Sắp xếp theo: </span>
@@ -184,7 +175,7 @@ export const SearchPage = () => {
                             className="card-btn"
                             onClick={() => addToCart(el.medicineId)}
                           >
-                            Xem chi tiết
+                            Mua
                           </button>
                         </div>
                         <div className="product-info">
@@ -274,4 +265,5 @@ export const SearchPage = () => {
     </>
   );
 };
-export default SearchPage;
+
+export default MedicinesWithKind;
