@@ -5,7 +5,6 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import * as homeService from "../../services/home/HomeService";
 import * as utils from "../../services/utils/utils";
 import HavingNoResults from "./HavingNoResults";
-import { ClipLoader } from "react-spinners";
 
 export const SearchPage = () => {
   const params = useParams();
@@ -20,7 +19,6 @@ export const SearchPage = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [displayKeyword, setDisplayKeyword] = useState(params.keyword);
   const [isNoContent, setIsNoContent] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log(params.keyword);
@@ -33,31 +31,29 @@ export const SearchPage = () => {
   }, [currentPage, sortBy, sortDirection]);
 
   const getMedicineList = async () => {
-    setLoading(true);
     setIsNoContent(false);
-    const trimKeyword = keyword.trim();
-    try {
-      const response = await homeService.searchMedicines(
-        currentPage - 1,
-        pageSize,
-        trimKeyword,
-        type,
-        sortBy,
-        sortDirection
-      );
-      console.log(response);
-      if (response.status === 204) {
-        setIsNoContent(true);
-        setKeyword("");
-      } else {
-        setMedicineList(response.data.content);
-        setTotalElements(response.data.totalElements);
-        setDisplayKeyword(keyword);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
+    let trimKeyword = " ";
+    if (keyword !== undefined) {
+      trimKeyword = keyword.trim();
+    } else {
+      trimKeyword = "";
+    }
+    const response = await homeService.searchMedicines(
+      currentPage - 1,
+      pageSize,
+      trimKeyword,
+      type,
+      sortBy,
+      sortDirection
+    );
+    console.log(response);
+    if (response.status === 204) {
+      setIsNoContent(true);
+      setKeyword("");
+    } else {
+      setMedicineList(response.data.content);
+      setTotalElements(response.data.totalElements);
+      setDisplayKeyword(keyword);
     }
   };
 
@@ -87,16 +83,6 @@ export const SearchPage = () => {
         className="our-menu bg-light repeat-img pb-5"
         style={{ padding: "7rem 0 0" }}
       >
-        {loading && (
-          <div className="loading-container">
-            <ClipLoader
-              color={"white"}
-              loading={loading}
-              className="loading-spinner"
-              size={100}
-            />
-          </div>
-        )}
         {isNoContent ? (
           <HavingNoResults />
         ) : (

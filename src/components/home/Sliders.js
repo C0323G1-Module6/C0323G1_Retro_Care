@@ -13,6 +13,7 @@ const Sliders = () => {
           <Swiper
             navigation={true}
             modules={[Navigation]}
+            loop={true}
             spaceBetween={20}
             className="mySwiper-promotion"
           >

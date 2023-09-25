@@ -5,7 +5,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 
 // COMPONENT AUTHORIZATION
-const Authorization = ({ allowedRoles }) => {
+const AuthorOfCustomer = ({ allowedRoles }) => {
   const roleAdmin = appUserService.checkRoleAppUser("ROLE_ADMIN");
   const roleManager = appUserService.checkRoleAppUser("ROLE_MANAGER");
   const roleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
@@ -20,8 +20,8 @@ const Authorization = ({ allowedRoles }) => {
 
   return roles && (roleAdmin || roleManager || roleEmployee)  ? (
     <Outlet />
-  ) : <Navigate to={`/home`} />
+  ) : <Navigate to={`/403`} />
 
 }
 
-export default Authorization;
+export default AuthorOfCustomer;
