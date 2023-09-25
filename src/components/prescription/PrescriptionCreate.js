@@ -21,7 +21,7 @@ function PrescriptionCreate() {
         const res = await getAllPatient();
         setPatients(res)
     };
-    console.log(indications);
+    console.log(chooseMedicines);
 
     const total = indications.indicationDto?.map((i) => (
         indications.duration * i.frequency * i.dosage
@@ -80,15 +80,14 @@ function PrescriptionCreate() {
                         code: Yup.string()
                             .required('Không được để trống mã toa thuốc!')
                             .max(6, "Độ dài không được quá 6 ký tự!")
-                            .matches(/^TH-[0-9]{3}/, "Mã không đúng định dạng!"),
+                            .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
                             .required('Không được để trống tên toa thuốc!')
                             .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
-                            .required('Không được để trống triệu chứng!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Triệu chứng không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống triệu chứng!'),
                         duration: Yup.number()
                             .required("Không được để trống!")
                             .max(30, "Không được quá 30 ngày!")
@@ -205,7 +204,9 @@ function PrescriptionCreate() {
                                                                 <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
                                                                     {
                                                                         chooseMedicines.map((t) => (
+                                                                            <>
                                                                             <option value={t.name}>{t.name}</option>
+                                                                            </>
                                                                         ))
                                                                     }
                                                                 </Field>

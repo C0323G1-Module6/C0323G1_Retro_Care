@@ -23,6 +23,10 @@ const Header = ({ inputSearch, onInputChange }) => {
   // replace 2 with userId
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
+  const roleAdmin = userService.checkRoleAppUser("ROLE_ADMIN");
+  const roleManager = userService.checkRoleAppUser("ROLE_MANAGER");
+  const roleEmployee = userService.checkRoleAppUser("ROLE_EMPLOYEE");
+
   useEffect(() => {
     getAppUserId();
   }, []);
@@ -40,7 +44,6 @@ const Header = ({ inputSearch, onInputChange }) => {
     const isLoggedIn = infoAppUserByJwtToken();
     if (isLoggedIn) {
       const id = await getIdByUserName(isLoggedIn.sub);
-      console.log(id.data);
       setUserId(id.data);
       dispatch(getAllCarts(id.data));
     }
@@ -62,7 +65,8 @@ const Header = ({ inputSearch, onInputChange }) => {
   };
 
   const searchMedicines = (keyword) => {
-    navigate(`/home/search/${keyword}`);
+    const trimKeyword = keyword.trim();
+    navigate(`/home/search/${trimKeyword}`);
   };
 
   const handleSearch = (event) => {
@@ -150,13 +154,15 @@ const Header = ({ inputSearch, onInputChange }) => {
                           <BiUserCircle className="me-3 ms-0" size={25} />
                           <div className="dropdown-text">Thông tin</div>
                         </Link>
-                        <Link
-                          to={"/dashboard/prescription"}
-                          className="user-dropdown-item"
-                        >
-                          <BiCog className="me-3 ms-0" size={25} />
-                          <div className="dropdown-text">Chức năng</div>
-                        </Link>
+                        {(roleAdmin || roleEmployee || roleManager) && (
+                          <Link
+                            to={"/dashboard/retail"}
+                            className="user-dropdown-item"
+                          >
+                            <BiCog className="me-3 ms-0" size={25} />
+                            <div className="dropdown-text">Chức năng</div>
+                          </Link>
+                        )}
                         <Link className="user-dropdown-item">
                           <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div

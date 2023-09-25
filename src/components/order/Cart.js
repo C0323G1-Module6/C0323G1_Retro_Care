@@ -8,7 +8,10 @@ import {
   checkAvailability,
   deleteMultiProduct,
 } from "../../services/order/CartService";
-import { createOrder } from "../../services/order/OrderService";
+import {
+  createOrder,
+  createVNPayPayment,
+} from "../../services/order/OrderService";
 import swal from "sweetalert2";
 import { Link } from "react-router-dom";
 import { Formik, Form, ErrorMessage, Field } from "formik";
@@ -23,6 +26,7 @@ import {
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
 import Billing from "./Billing";
+import { set } from "date-fns";
 // Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
@@ -34,6 +38,7 @@ export default function Cart() {
   const [appUserId, setAppUserId] = useState(null);
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [customerToPay, setCustomerToPay] = useState({});
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
   const navigate = useNavigate();
@@ -260,15 +265,9 @@ export default function Cart() {
               loyaltyPoint,
               totalPrice,
               deletedCartIDs,
-              customer
+              customer,
+              false
             );
-            // console.log("orderid");
-            // console.log(res);
-            // swal.fire(
-            //   "Thanh toán thành công!",
-            //   "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của RetroCare!",
-            //   "success"
-            // );
             navigate("/success", {
               state: {
                 orderId: res.data,
@@ -289,11 +288,9 @@ export default function Cart() {
       .render("#paypal-button-container");
   };
 
-  const currency = (money) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(money);
+  const currency = (money) => {
+    return new Intl.NumberFormat("vi-VN").format(money);
+  };
 
   const getLoyaltyPoint = async (appUserId) => {
     const data = await getPoint(appUserId);
@@ -325,6 +322,31 @@ export default function Cart() {
     }
   };
 
+  const handleVNPAY = async () => {
+    let finalPrice = totalPrice - discount;
+    const plusPoint = totalPrice / 100;
+    const loyaltyPoint = point + plusPoint - discount;
+    let deletedCartIDs = [];
+    selectedMedicines.forEach((med) => deletedCartIDs.push(med.cartId));
+    const tempOrder = {
+      appUserId: appUserId,
+      loyaltyPoint: loyaltyPoint,
+      totalPrice: finalPrice,
+      customerToPay: customerToPay,
+      deletedCartIDs: deletedCartIDs,
+      totalPriceBeforeDiscount: totalPrice,
+      discount: discount,
+    };
+    localStorage.setItem("tempOrder", JSON.stringify(tempOrder));
+
+    const res = await createVNPayPayment(finalPrice);
+    window.location.href = res;
+  };
+
+  useEffect(() => {
+    document.title = "RetroCare - Giỏ Hàng";
+  }, []);
+
   useEffect(() => {
     getAppUserIdFirst();
   }, []);
@@ -334,6 +356,7 @@ export default function Cart() {
       (total, el) => total + el.medicinePrice * el.quantityInCart,
       0
     );
+
     setTotalPrice(newTotalPrice);
   }, [selectedMedicines]);
 
@@ -346,7 +369,9 @@ export default function Cart() {
       <Header />
       <div id="hannah" className="pb-5 pt-5">
         <div className="container-fluid p-1 position-relative">
-          <h1 className="text-center my-5 mx-auto">Giỏ Hàng</h1>
+          <h1 className="text-center my-5 mx-auto" style={{ color: "#0340c1" }}>
+            GIỎ HÀNG
+          </h1>
 
           {carts.length > 0 ? (
             <div className="container-fluid w-100">
@@ -370,9 +395,9 @@ export default function Cart() {
                       <thead className="text-secondary">
                         <tr className="text-center fw-bold">
                           <td>SẢN PHẨM</td>
-                          <td>Giá (VND)</td>
+                          <td>Giá (VNĐ)</td>
                           <td>Số lượng</td>
-                          <td>Tổng (VND)</td>
+                          <td>Tổng (VNĐ)</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -449,6 +474,9 @@ export default function Cart() {
                                       style={{
                                         width: "50px",
                                         height: "35px",
+                                        border: "1px white",
+
+                                        borderRadius: "5px",
                                       }}
                                       name="quantity"
                                       className="text-center input-quantity"
@@ -471,7 +499,7 @@ export default function Cart() {
                                 <td className="align-middle text-center fw-bold">
                                   {currency(
                                     el.medicinePrice * el.quantityInCart
-                                  )}
+                                  )}{" "}
                                 </td>
                               </tr>
                             );
@@ -483,7 +511,7 @@ export default function Cart() {
                       style={{ display: showCf ? "block" : "none" }}
                       id="confirm-order"
                     >
-                      <h3 className=" text-center text-success">
+                      <h3 className=" text-center" style={{ color: "#0340c1" }}>
                         XÁC NHẬN THÔNG TIN GIAO HÀNG
                         <img
                           style={{
@@ -522,6 +550,7 @@ export default function Cart() {
                           note: yup.string().max(255),
                         })}
                         onSubmit={async (values, { setErrors }) => {
+                          setCustomerToPay(values);
                           try {
                             swal.fire(
                               "Cập nhật thông tin thành công!",
@@ -531,7 +560,7 @@ export default function Cart() {
                             // the checkout here is to temporarily fix paypal bug somehow :)
                             if (!checkout) {
                               setCheckOut(true);
-                              await renderPaypal(values);
+                              renderPaypal(values);
                             }
                           } catch (error) {
                             if (error.response && error.response.data) {
@@ -635,7 +664,23 @@ export default function Cart() {
                         </Form>
                       </Formik>
                     </div>
+                    <div className=" w-100 d-flex justify-content-center">
+                      <button
+                        className="btn fw-bold w-50"
+                        style={{
+                          marginBottom: "20px",
+                          color: "black",
+                          backgroundColor: "#119cd4",
+                          border: "1px #119cd4 solid ",
+                          display: checkout ? "block" : "none",
+                        }}
+                        onClick={handleVNPAY}
+                      >
+                        THANH TOÁN VỚI VNPAY
+                      </button>
+                    </div>
                     <div id="paypal-button-container" className="w-50"></div>
+
                     <Link to="/home" className="btn btn-outline-primary mb-5">
                       ← Tiếp tục xem sản phẩm
                     </Link>
@@ -652,13 +697,13 @@ export default function Cart() {
                         <div className="border-bottom mb-2 pb-2">
                           <span>Tạm Tính</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(totalPrice)}
+                            {currency(totalPrice)} VNĐ
                           </span>
                         </div>
                         <div className="border-bottom mb-2 pb-2">
                           <span>Giảm giá:</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(discount)}
+                            {currency(discount)} VNĐ
                             <input
                               className="fw-bold discount"
                               type="hidden"
@@ -674,7 +719,7 @@ export default function Cart() {
                               type="hidden"
                               value={totalPrice - discount}
                             />
-                            {currency(totalPrice - discount)}
+                            {currency(totalPrice - discount)} VNĐ
                           </span>
                         </div>
                       </div>
@@ -696,7 +741,7 @@ export default function Cart() {
                         <small className=" d-inline-block mb-1">
                           Tích luỹ hiện có:
                           <small className=" text-danger mx-2">
-                            {currency(point).slice(0, -1)} RETRO
+                            {currency(point)} RETRO
                             <input
                               className="fw-bold point"
                               type="hidden"

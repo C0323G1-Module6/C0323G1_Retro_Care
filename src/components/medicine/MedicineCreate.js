@@ -1,7 +1,12 @@
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import * as Yup from "yup"
 import {useEffect, useRef, useState} from "react";
-import {getAllUnit, addMedicine, getAllKindOfMedicine, getCountries} from "../../services/medicine/MedicineService";
+import {
+    getAllUnit,
+    addMedicine,
+    getCountries,
+    getMedicineCode
+} from "../../services/medicine/MedicineService";
 import "./MedicineCreate.css";
 import {useNavigate} from "react-router-dom";
 import Swal from "sweetalert2";
@@ -18,6 +23,15 @@ export default function MedicineCreate() {
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
     const [countries, setCountries] = useState([]);
+    const [medicineCode, setMedicineCode] = useState("");
+    const getCode = async () => {
+        const result = await getMedicineCode();
+        setMedicineCode(result.code);
+    };
+
+    useEffect(() => {
+        getCode()
+    }, [])
 
     useEffect(() => {
         getListCountries();
@@ -122,12 +136,15 @@ export default function MedicineCreate() {
             reader.readAsDataURL(file);
         }
     };
+    if (medicineCode == "") {
+        return null;
+    }
     return (
         <>
             <div id="tincute">
                 <Formik
                     initialValues={{
-                        code: "",
+                        code: medicineCode,
                         name: "",
                         price: "",
                         quantity: "",
@@ -149,21 +166,39 @@ export default function MedicineCreate() {
                     }
                     }
                     validationSchema={Yup.object({
-                        name: Yup.string().matches(/^[a-zA-Z0-9\s]+$/, "Tên không chứa kí tự đặc biệt").required("Không được để trống.").max(50, "Tên vượt quá 50 kí tự").min(2, "Tên phải từ 2 kí tự trở lên."),
-                        price: Yup.number().typeError("Không cho phép nhập chuỗi trong trường này .").min(0, "Giá không được là số âm."),
-                        vat: Yup.number().typeError("Không cho phép nhập chuỗi trong trường này .").min(0, "Vat không được là số âm."),
-                        maker: Yup.string().matches(/^[a-zA-Z0-9\s]+$/, "Nhà sản xuất không chứa kí tự đặc biệt").max(50, "Nhà sản xuất vượt quá 50 kí tự."),
+                        name: Yup.string()
+                            .matches(/^[a-zA-Z0-9\s]+$/, "Tên không chứa kí tự đặc biệt")
+                            .required("Không được để trống.").max(50, "Tên vượt quá 50 kí tự")
+                            .min(2, "Tên phải từ 2 kí tự trở lên."),
+                        price: Yup.number()
+                            .typeError("Không cho phép nhập chuỗi trong trường này .")
+                            .min(0, "Giá không được là số âm."),
+                        vat: Yup.number()
+                            .typeError("Không cho phép nhập chuỗi trong trường này .")
+                            .min(0, "Vat không được là số âm."),
+                        maker: Yup.string()
+                            .matches(/^[a-zA-Z0-9\s]+$/, "Nhà sản xuất không chứa kí tự đặc biệt")
+                            .max(50, "Nhà sản xuất vượt quá 50 kí tự."),
                         activeElement: Yup.string()
                             .matches(/^[a-zA-Z0-9\s]+$/, "Hoạt chất không chứa kí tự đặc biệt")
                             .required("Không được để trống.")
                             .max(50, "Hoạt chất không vượt quá 50 kí tự."),
-                        note: Yup.string().max(100, "Ghi chú không vượt quá 100 kí tự."),
-                        origin: Yup.string().required("Không được để trống.").max(50, "Xuất xứ vượt quá 50 kí tự."),
-                        retailProfits: Yup.number().typeError("Không cho phép nhập chuỗi trong trường này .").required("Không được để trống. ").min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),
-                        kindOfMedicineDto: Yup.string().required("Không được để trống."),
+                        note: Yup.string()
+                            .max(100, "Ghi chú không vượt quá 100 kí tự."),
+                        origin: Yup.string()
+                            .required("Không được để trống.")
+                            .max(50, "Xuất xứ vượt quá 50 kí tự."),
+                        retailProfits: Yup.number()
+                            .typeError("Không cho phép nhập chuỗi trong trường này .")
+                            .required("Không được để trống. ").min(0, "% Lợi nhuận xuất lẻ  không được bé hơn 0."),
+                        kindOfMedicineDto: Yup.string()
+                            .required("Không được để trống."),
                         unitDetailDto: Yup.object().shape({
-                            conversionRate: Yup.number().typeError("Không cho phép nhập chuỗi trong trường này .").required("Không được để trống.").min(0, "Tỷ lệ quy đổi không được bé hơn 0."),
-                            conversionUnit: Yup.string().required("Không được để trống."),
+                            conversionRate: Yup.number()
+                                .typeError("Không cho phép nhập chuỗi trong trường này .")
+                                .required("Không được để trống.").min(0, "Tỷ lệ quy đổi không được bé hơn 0."),
+                            conversionUnit: Yup.string()
+                                .required("Không được để trống."),
                             unit: Yup.number().required("Không được để trống."),
                         }),
                     })}

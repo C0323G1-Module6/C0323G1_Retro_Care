@@ -4,6 +4,7 @@ import "bootstrap/dist/js/bootstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./Home.css";
 import arrow from "../../img/arrow.png";
+import drugStoreImage from "../../img/drug-store.png";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
@@ -43,12 +44,12 @@ const Home = () => {
 
   const getMedicineList = async () => {
     const response = await homeService.findMedicineForHomepage("", "");
-    setMedicineList(response);
+    setMedicineList(response.data);
   };
 
   const getFavoriteList = async () => {
     const response = await homeService.findFavoriteMedicineForHomepage();
-    setFavoriteList(response);
+    setFavoriteList(response.data);
   };
   const addToCart = async (medicineId) => {
     const isLoggedIn = infoAppUserByJwtToken();
@@ -491,7 +492,7 @@ const Home = () => {
             >
               <SwiperSlide>
                 <a
-                  href="https://data-service.pharmacity.io/pmc-ecm-webapp-config-api/production/banner/WEB-1693476977103.png"
+                  href="#"
                   className="book-table-img back-img swiper-slide"
                   style={{
                     backgroundImage:
@@ -511,11 +512,10 @@ const Home = () => {
               </SwiperSlide>
               <SwiperSlide>
                 <a
-                  href="https://medicare.vn/wp-content/uploads/2023/08/5-1400x658.jpg"
+                  href="#"
                   className="book-table-img back-img swiper-slide"
                   style={{
-                    backgroundImage:
-                      "url(https://medicare.vn/wp-content/uploads/2023/08/5-1400x658.jpg)",
+                    backgroundImage: `url(${drugStoreImage})`,
                   }}
                 />
               </SwiperSlide>

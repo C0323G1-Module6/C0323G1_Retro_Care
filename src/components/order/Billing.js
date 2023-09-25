@@ -17,11 +17,9 @@ export default function Billing() {
     findOrderDetais();
   }, []);
 
-  const currency = (money) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(money);
+  const currency = (money) => {
+    return new Intl.NumberFormat("vi-VN").format(money);
+  };
 
   return (
     <>
@@ -43,7 +41,7 @@ export default function Billing() {
         <div className="container-fluid p-1 position-relative h-auto">
           <h1
             className="text-center mb-5 mx-auto "
-            style={{ color: "palevioletred" }}
+            style={{ color: "#119cd4" }}
           >
             THÔNG TIN ĐƠN HÀNG
           </h1>
@@ -57,9 +55,9 @@ export default function Billing() {
                       <thead className="text-secondary">
                         <tr className="text-center fw-bold">
                           <td>SẢN PHẨM</td>
-                          <td>Giá (VND)</td>
+                          <td>Giá (VNĐ)</td>
                           <td>Số lượng</td>
-                          <td>Tổng (VND)</td>
+                          <td>Tổng (VNĐ)</td>
                         </tr>
                       </thead>
                       <tbody>
@@ -116,10 +114,7 @@ export default function Billing() {
                       </tbody>
                     </table>
                     <div className=" mb-3" id="confirm-order">
-                      <h3
-                        className=" text-center"
-                        style={{ color: "palevioletred" }}
-                      >
+                      <h3 className=" text-center" style={{ color: "#119cd4" }}>
                         ĐỊA CHỈ NHẬN HÀNG
                         <img
                           style={{
@@ -219,13 +214,13 @@ export default function Billing() {
                         <div className="border-bottom mb-2 pb-2">
                           <span>Tạm Tính</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(location.state.totalPrice)}
+                            {currency(location.state.totalPrice)} VNĐ
                           </span>
                         </div>
                         <div className="border-bottom mb-2 pb-2">
                           <span>Giảm giá:</span>
                           <span className="fw-bold" style={{ float: "right" }}>
-                            {currency(location.state.discount)}
+                            {currency(location.state.discount)} VNĐ
                           </span>
                         </div>
                         <div className="border-bottom mb-2 pb-2">
@@ -234,7 +229,8 @@ export default function Billing() {
                             {currency(
                               location.state.totalPrice -
                                 location.state.discount
-                            )}
+                            )}{" "}
+                            VNĐ
                           </span>
                         </div>
                       </div>

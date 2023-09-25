@@ -15,8 +15,8 @@ import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
 import * as ServiceUser from "../../services/user/AppUserService"
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-
-export function CreateInvoice() {
+import Swal from "sweetalert2";
+function CreateInvoice() {
     const navigate = useNavigate();
     const [supplier, setSupplier] = useState([]);
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -24,7 +24,8 @@ export function CreateInvoice() {
     const [maxCode, setMaxCode] = useState('');
     const fieldNameRef = useRef(null);
     const elementRef = useRef(null);
-    const [employee, setEmployee] = useState();
+    const [employee, setEmployee] = useState({
+    });
 
 
 
@@ -38,8 +39,23 @@ export function CreateInvoice() {
         setMedicine(result);
     }
 
-    const createInvoice = async (invoice) => {
-        const result = await ServiceInvoice.createInvoice(invoice);
+    const createInvoice = async (invoice, setErrors) => {
+        try {
+            const result = await ServiceInvoice.createInvoice(invoice);
+
+            Swal.fire(
+                "Thêm thành công thành công !",
+                "Hóa đơn " + result.data.code + " đã được thêm!",
+                "success"
+            );
+            navigate("/dashboard/invoice")
+        } catch (err) {
+            Swal.fire(
+                "Thêm không thành công !",
+            );
+            setErrors(err.response.data);
+        }
+
     }
 
     const getMaxCode = async () => {
@@ -47,7 +63,7 @@ export function CreateInvoice() {
         setMaxCode(result);
     }
 
-       
+
     const getEmployee = async () => {
         const username = await ServiceUser.infoAppUserByJwtToken().sub;
         const result = await ServiceInvoice.getEmployee(username);
@@ -60,10 +76,7 @@ export function CreateInvoice() {
         getSupplier();
         getMedicine();
         getMaxCode();
-    }, [])
-
-
-
+    }, [employee.id])
 
 
     const getUnit = async (medicineId) => {
@@ -81,7 +94,10 @@ export function CreateInvoice() {
         }
         document.getElementById("medicinePrice").value = totalPrice;
         document.getElementById("totalPrice").value = totalPrice;
-        document.getElementById("extant").value = totalPrice - document.getElementById("paid").value;
+        if (totalPrice - document.getElementById("paid").value < 0)
+            document.getElementById("extant").value = 0
+        else
+            document.getElementById("extant").value = totalPrice - document.getElementById("paid").value;
     }
 
 
@@ -121,8 +137,7 @@ export function CreateInvoice() {
     const dataMedicine = medicine.map(
         item => ({ label: item.name, value: JSON.stringify(item) })
     );
-
-    if (!employee)
+    if (employee.id == null)
         return null;
 
     return (
@@ -147,11 +162,12 @@ export function CreateInvoice() {
 
                         },]
                     }}
-                    onSubmit={async (invoiceValue) => {
+                    onSubmit={async (invoiceValue, { setSubmitting, setErrors }) => {
+                        setSubmitting(true);
                         let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                        await createInvoice(newInvoiceValue);
-                        toast("Đã thêm thành công");
-                        navigate("/dashboard/invoice")
+                        newInvoiceValue = { ...newInvoiceValue, appUserId: employee.appUser.id }
+                        await createInvoice(newInvoiceValue, setErrors);
+                        setSubmitting(false);
                     }}
 
                     validationSchema={Yup.object({
@@ -194,7 +210,7 @@ export function CreateInvoice() {
                                                         <div className="mb-3 row">
                                                             <label htmlFor="makh" className="col-sm-4 col-form-label">Mã NCC</label>
                                                             <div className="col-sm-8">
-                                                                <div className="row">
+                                                                <div className="row g-1">
                                                                     <div className="col-10 p-0">
                                                                         <SelectPicker onChange={(value) => {
                                                                             let supplierObject = JSON.parse(value);
@@ -212,9 +228,11 @@ export function CreateInvoice() {
                                                                         <input id="supplierId" hidden name="supplierId" type="number" ></input>
                                                                     </div>
                                                                     <div className="col-2 h-auto p-0">
-                                                                        <button type="button" className="w-100 btn btn-outline-primary float-end">
-                                                                            <FaPlus />
-                                                                        </button>
+                                                                        <Link to={"/dashboard/supplier/create-supplier"}>
+                                                                            <button type="button" className="w-100 btn btn-outline-primary float-end">
+                                                                                <FaPlus />
+                                                                            </button>
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -375,7 +393,7 @@ export function CreateInvoice() {
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.discount`} />
                                                                                 </td>
                                                                                 <td></td>
-                                                                                <td className="realPrice">200</td>
+                                                                                <td className="realPrice">0</td>
 
                                                                                 <td ><Field type="text" name={`invoiceDetailDtoSet.${index}.lot`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.lot`} />

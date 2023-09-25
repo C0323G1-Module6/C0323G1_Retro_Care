@@ -5,7 +5,8 @@ export async function createOrder(
   loyaltyPoint,
   totalPrice,
   cartIDs,
-  customerInfo
+  customerInfo,
+  isVNP
 ) {
   try {
     const reqBody = JSON.stringify({
@@ -13,13 +14,13 @@ export async function createOrder(
       customerInfo: customerInfo,
     });
     const res = await axios.post(
-      `http://localhost:8080/api/orders/create?appUserId=${appUserId}&loyaltyPoint=${loyaltyPoint}&totalPrice=${totalPrice}`,
+      `http://localhost:8080/api/orders/create?appUserId=${appUserId}&loyaltyPoint=${loyaltyPoint}&totalPrice=${totalPrice}&isVNP=${isVNP}`,
       reqBody,
       { headers: { "Content-Type": "application/json" } }
     );
     return res;
   } catch (error) {
-    console.error(`Error in createOrder: ${error}`);
+    console.error(`error in createOrder: ${error}`);
   }
 }
 
@@ -27,5 +28,14 @@ export async function getOrderDetails(orderId) {
   const res = await axios.get(
     `http://localhost:8080/api/orders/get-order-details?orderId=${orderId}`
   );
+  return res.data;
+}
+
+export async function createVNPayPayment(price) {
+  const res = await axios.get("http://localhost:8080/payment", {
+    params: {
+      price: price,
+    },
+  });
   return res.data;
 }

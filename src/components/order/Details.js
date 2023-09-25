@@ -110,11 +110,13 @@ export default function Details() {
     }
   }
 
-  const currency = (money) =>
-    new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(money);
+  const currency = (money) => {
+    return new Intl.NumberFormat("vi-VN").format(money);
+  };
+
+  useEffect(() => {
+    document.title = "RetroCare - Thông tin chi tiết";
+  }, []);
 
   useEffect(() => {
     getMedicineDetails();
@@ -202,10 +204,10 @@ export default function Details() {
                 </div>
                 <div className=" col col-md-6 col-auto">
                   <h1 className="name">{medicine.medicine_Name}</h1>
-                  <h3>
-                    {currency(medicine.price)}{" "}
-                    <h5 className=" d-inline">/ {medicine.unit_Name}</h5>
-                  </h3>
+                  <h4>
+                    <span>{currency(medicine.price)} VNĐ</span>
+                    <span> / {medicine.unit_Name}</span>
+                  </h4>
                   <div
                     style={{
                       backgroundColor: "lightblue",
@@ -255,7 +257,12 @@ export default function Details() {
                         min="1"
                         max="99"
                         defaultValue={1}
-                        style={{ width: "50px", height: "35px" }}
+                        style={{
+                          width: "50px",
+                          height: "35px",
+                          border: "1px white",
+                          borderRadius: "5px",
+                        }}
                         name="quantity"
                         className=" input-quantity text-center px-2"
                       />

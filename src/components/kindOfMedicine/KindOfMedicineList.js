@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import { FaPlus, FaRegTrashAlt, } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
     AiOutlineRollback,
@@ -10,8 +10,9 @@ import { add, deleteKindOfMedicine, edit, getListById, pagination } from '../../
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import { da } from 'date-fns/locale';
 import XRegExp from 'xregexp'
+import { Link } from 'react-router-dom';
+
 
 function KindOfMedicineList(props) {
     const [kindOfMedicines, setKindOfMedicine] = useState([]);
@@ -22,7 +23,6 @@ function KindOfMedicineList(props) {
     const [choseRow, setChoseRow] = useState([]);
     const [dataId, setDataId] = useState({});
     const [editKindOfMedicine, setEditKindOfMedicine] = useState()
-    const formRef = useRef(null);
 
 
     // edit
@@ -30,11 +30,32 @@ function KindOfMedicineList(props) {
         const data = await getListById(id);
         setEditKindOfMedicine(data)
     }
+    const handleEdit = () => {
+        console.log(55);
+        if (choseRow.length < 1) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
+    // Create
+    const handleCreate = () => {
+        if (choseRow.length > 0) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy bỏ chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
     // choseRow
     const choseDelete = (kindOfMedicine) => {
         const checkExists = choseRow.some(choice => choice === kindOfMedicine.id);
         if (checkExists) {
-            formRef.current.reset();
             const choseRowNew = choseRow.filter(choice => choice !== kindOfMedicine.id);
             setDataId({ id: undefined, code: undefined, name: undefined })
             setChoseRow(choseRowNew);
@@ -53,37 +74,40 @@ function KindOfMedicineList(props) {
     }
     //delete
     const handleDelete = async () => {
-        if (dataId !== '') {
+        if ( dataId.id !== undefined) {
+            console.log(1);
             Swal.fire({
-                title: "Delete Confirmation",
-                text: "Do you want to delete: " + dataId.name,
+                title: " Xác nhận xoá",
+                text: "Bạn có muốn xoá: " + dataId.name,
                 showCancelButton: true,
+                cancelButtonText: "Hoàn tác",
                 showConfirmButton: true,
-                confirmButtonText: "Yes, delete it",
+                confirmButtonText: "Vâng, xoá",
                 icon: "question",
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                    console.log(2);
                     const response = await deleteKindOfMedicine(dataId.id);
-                    const data = await pagination(page, searchCodes, searchNames);
-                    setKindOfMedicine(data.content);
-                    if (response?.status === 200) {
-                        Swal.fire({
-                            text: "Delete successfully ",
-                            icon: "success",
-                            timer: 1500,
-                        });
-                    }
+                    setDataId({ id: undefined, code: undefined, name: undefined })
                     await showList();
+
+                    Swal.fire({
+                        text: " Xoá thành công ",
+                        icon: "success",
+                        timer: 3000,
+                    });
+
                     setEditKindOfMedicine({
                         id: "",
                         code: "",
                         name: "",
                     })
+                    setChoseRow([])
                 } else {
                     Swal.fire({
-                        text: "You choose cancel ",
+                        text: "Bạn chọn hoàn tác ",
                         icon: "warning",
-                        timer: 1500,
+                        timer: 3000,
                     });
                 }
             });
@@ -91,30 +115,34 @@ function KindOfMedicineList(props) {
             Swal.fire({
                 text: "Chọn nhóm thuốc ",
                 icon: "warning",
-                timer: 1500,
+                timer: 3000,
             });
         }
 
     };
     // List
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleButtonSearch()
+        }
+    }
     const showList = async () => {
-        const data = await pagination(page, searchCodes, searchNames);
-        if (data !== null) {
+        try {
+            const data = await pagination(page, searchCodes, searchNames);
+            setKindOfMedicine(data);
             setKindOfMedicine(data?.content);
             setTotalPage(data?.totalPages)
-        } else {
+        } catch (error) {
+            console.log(error);
             await Swal.fire({
                 text: "Không tìm thấy dữ liệu cần tìm ",
                 icon: "warning",
                 timer: 1500,
             })
-            handleReset();
+            setSearchCode(document.getElementById('medicineCode').value = "");
+            setSearchName(document.getElementById('medicineName').value = "");
         }
-    }
-
-    const handleReset = () => {
-        setSearchCode("");
-        setSearchName("")
     }
 
     // search
@@ -139,7 +167,7 @@ function KindOfMedicineList(props) {
 
 
     useEffect(() => {
-        showList()
+        showList(page, searchCodes, searchNames)
     }, [page, searchCodes, searchNames, dataId.id]);
 
     useEffect(() => {
@@ -170,11 +198,13 @@ function KindOfMedicineList(props) {
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control"
                                 placeholder='Mã nhóm Thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <input id='medicineName'
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control" nhómThuốc
                                 placeholder='Tên nhóm thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <button className="btn btn-outline-primary" style={{ width: 120 }} type="submit" onClick={handleButtonSearch} >
                                 <i className="fa-solid fa-magnifying-glass" />
@@ -254,8 +284,8 @@ function KindOfMedicineList(props) {
                         validationSchema={Yup.object({
                             name: Yup.string()
 
-                                .max(25)
-                                .min(3)
+                                .max(25,"Không quá 25 ký tự")
+                                .min(3,"Tối thiểu 3 kí tự")
                                 .required("Nhập để thêm mới")
                                 .matches(XRegExp('^(\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*)\\d*$'), "Nhập sai định dạng")
                                 .test("check-space", "Nhập không đúng định dạng", (value) => value.trim() !== 0)
@@ -264,106 +294,123 @@ function KindOfMedicineList(props) {
                         onSubmit={async (value) => {
                             console.log(choseRow);
                             if (choseRow.length > 0) {
-                         
                                 await edit(value)
+                                console.log(33);
                                 await showList()
-                                setEditKindOfMedicine("")
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                                 Swal.fire({
-                                    text: "Update successfully ",
+                                    text: "Cập nhật thành công ",
                                     icon: "success",
                                     timer: 1500,
                                 });
                             } else {
+
                                 console.log(15);
                                 await add(value);
                                 await showList();
                                 Swal.fire({
-                                    text: "Add successfully ",
+                                    text: "Thêm mới thành công ",
                                     icon: "success",
                                     timer: 1500,
                                 });
-                                setEditKindOfMedicine("")
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                             }
                             // formRef.current.reset();
 
                         }}
                     >
-                        <Form ref={formRef}>
-                            <div className="row justify-content-center m-3 h-10">
-                                <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
+                        {({ values }) => (
+                            <Form>
+                                <div className="row justify-content-center m-3 h-10">
+                                    <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
 
-                                    {/* mã thuốc */}
-                                    <div className=" m-5">
-                                        <label id="pharmacyCode" htmlFor="" className="form-label">
-                                            Mã nhóm thuốc
-                                        </label>
-                                        <Field
-                                            readOnly
-                                            type="text"
-                                            name="code"
-                                            // onChange={handleInputChange}
-                                            id="code"
-                                            defaultValue={dataId?.code}
-                                            className="form-control"
-                                            placeholder=""
-                                            aria-describedby="helpId"
+                                        {/* mã thuốc */}
+                                        <div className=" m-5">
+                                            <label id="pharmacyCode" htmlFor="" className="form-label">
+                                                Mã nhóm thuốc
+                                            </label>
+                                            <Field
+                                                readOnly
+                                                type="text"
+                                                name="code"
+                                                // onChange={handleInputChange}
+                                                id="code"
+                                                defaultValue={dataId?.code}
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-describedby="helpId"
 
-                                        />
-                                        {/* <ErrorMessage name='code' component="div" /> */}
-                                    </div>
-                                    {/* nhóm thuốc */}
-                                    <div className=" m-5">
-                                        <label id="pharmacyName" htmlFor="" className="form-label">
-                                            Tên nhóm thuốc
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="name"
+                                            />
+                                            {/* <ErrorMessage name='code' component="div" /> */}
+                                        </div>
+                                        {/* nhóm thuốc */}
+                                        <div className=" m-5">
+                                            <label id="pharmacyName" htmlFor="" className="form-label">
+                                                Tên nhóm thuốc
+                                            </label>
+                                            <Field
+                                                type="text"
+                                                name="name"
 
-                                            // onChange={handleInputChange}
-                                            id="name"
-                                            className="form-control"
-                                            placeholder=""
-                                            aria-describedby="helpId"
-                                        />
-                                        <ErrorMessage name='name' component="div" />
-                                    </div>
+                                                // onChange={handleInputChange}
+                                                id="name"
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-describedby="helpId"
+                                            />
+                                            <ErrorMessage name='name' component="div" />
+                                        </div>
 
-                                    <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
-                                </fieldset>
-                            </div>
+                                        <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
+                                    </fieldset>
+                                </div>
+                              
 
+                                {/* action */}
+                                <div className="d-flex align-items-center justify-content-end gap-3">
+                                    {/* add */}
+                                    <button className="btn btn-outline-primary" type='submit' onClick={handleCreate} disabled={choseRow.length > 0}>
+                                        <FaPlus className="mx-1" />
+                                        Thêm mới
+                                    </button>
+                                    {/* edit */}
+                                    <button className="btn btn-outline-primary" type='submit' onClick={handleEdit}>
+                                        <FiEdit className="mx-1" />
+                                        Sửa
+                                    </button>
+                                    {/* delete */}
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        // data-bs-toggle="modal"
+                                        // data-bs-target="#exampleModal"
+                                        onClick={() => handleDelete()}
+                                    >
+                                        <FaRegTrashAlt className="mx-1" />
+                                        Xoá
+                                    </button>
+                                    <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
 
-                            {/* action */}
-                            <div className="d-flex align-items-center justify-content-end gap-3">
-                                {/* add */}
-                                <button className="btn btn-outline-primary" type='submit'>
-                                    <FaPlus className="mx-1" />
-                                    Thêm mới
-                                </button>
-                                {/* edit */}
-                                <button className="btn btn-outline-primary" type='submit'>
-                                    <FiEdit className="mx-1" />
-                                    Sửa
-                                </button>
-                                {/* delete */}
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-primary"
-                                    // data-bs-toggle="modal"
-                                    // data-bs-target="#exampleModal"
-                                    onClick={() => handleDelete()}
-                                >
-                                    <i className="fa-solid fa-trash" />
-                                    Xoá
-                                </button>
-                                <a className="btn btn-outline-primary" href="/HuyL_home.html">
-                                    <AiOutlineRollback className="mx-1" />
-                                    Trở về
-                                </a>
-                            </div>
-                        </Form>
+                                    {/* <a className="btn btn-outline-primary" href="/home">
+                                        <AiOutlineRollback className="mx-1" />
+                                        Trở về
+                                    </a> */}
+                                </div>
+                                {/* <p> Code: {values.code}</p>
+                                <p> Name: {values.name}</p> */}
+                            </Form> 
+                        )}
+                       
                     </Formik>
+                
                     {/* MOdal action */}
                     <div className="modal fade" id="exampleModal" tabIndex={-1}>
                         <div className="modal-dialog">
@@ -389,7 +436,7 @@ function KindOfMedicineList(props) {
                                         Huỷ xoá
                                     </button>
                                     <button type="button" className="btn btn-primary">
-                                        Xoá
+                                        <FaRegTrashAlt className="mx-1" /> Xoá
                                     </button>
                                 </div>
                             </div>

@@ -186,6 +186,9 @@ function CustomerList() {
   }
   // --------------------------------------------------------------Use Effect ----------------------------------------------------
   useEffect(() => {
+    document.title = 'RetroCare - Danh sách khách hàng'
+  }, []);
+  useEffect(() => {
     loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
   }, [page, name, code, address, phoneNumber, groupValue, sortItem, sortType]);
 
@@ -247,8 +250,8 @@ function CustomerList() {
               <option value={"name"}>Tên khách hàng</option>
             </select>
             <select name="sortType" id="sortType" defaultValue={""} onChange={handleSort} className="form-select m-1 " style={{ width: 130 }}>
-              <option value={"ASC"}>Tăng dần</option>
               <option value={"DESC"}>Giảm dần</option>
+              <option value={"ASC"}>Tăng dần</option>
             </select>
           </div>
         </div>
@@ -315,7 +318,7 @@ function CustomerList() {
                     {customer?.address.length > 20 ? `${customer?.address.slice(0, 20)}...` : customer?.address}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                    {customer?.phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3')}
+                    {customer?.phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {customer?.customerType}
@@ -386,10 +389,11 @@ function CustomerList() {
           <FaRegTrashAlt className="mx-1" />
           Xoá
         </button>
-        <a className="btn btn-outline-primary" href="/HuyL_home.html">
-          <AiOutlineRollback className="mx-1" />
-          Trở về
-        </a>
+        <Link to="/home">
+          <button className="btn btn-light btn-outline-primary m-1">
+            <AiOutlineRollback />Trở về
+          </button>
+        </Link>
       </div>
     </div >
   )

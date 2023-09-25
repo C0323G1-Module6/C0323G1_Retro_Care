@@ -4,7 +4,6 @@ export const getReport = async (startDate, endDate, reportName) => {
   const result = await axios.get(
     `http://localhost:8080/api/report/general/?startDate=${startDate}&endDate=${endDate}&reportName=${reportName}`
   );
-  console.log(result);
   return result.data;
 };
 
