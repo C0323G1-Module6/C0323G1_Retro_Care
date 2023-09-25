@@ -43,8 +43,7 @@ export default function Retail() {
     }, [])
 
     const getStart = async () => {
-        await getCart();
-        setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString())
+        setCode("OR" + Math.floor(1000 + Math.random() * 9000).toString())
         const currentDate = new Date();
         const currentDateString = format(currentDate, 'dd-MM-yyyy');
         setDate(currentDateString)
@@ -338,6 +337,9 @@ export default function Retail() {
 
 
             <div className="container">
+            <div className="row header">
+                    <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>HỆ THỐNG BÁN LẺ</h1>
+                </div>
                 <div className="row">
                     <div className="col-md-4 mb-2">
                         <div>
@@ -403,7 +405,7 @@ export default function Retail() {
                 <div className="note-frame border border-dark rounded-3">
                     <table className="table rounded-3 overflow-hidden">
                         <thead>
-                            <tr style={{ backgroundColor: 'rgb(13, 110, 253)', height: '40px' }}>
+                            <tr className="text-light" style={{ backgroundColor: 'rgb(13, 110, 253)', height: '40px' }}>
                                 <th>Tên thuốc</th>
                                 <th>Số lượng</th>
                                 <th>Đơn vị tính</th>
