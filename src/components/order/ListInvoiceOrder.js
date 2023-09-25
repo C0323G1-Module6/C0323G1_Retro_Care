@@ -43,11 +43,7 @@ const ListInvoiceOrder = () => {
             }
         }
     }
-    const currency = (money) =>
-        new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-        }).format(money);
+
     const handleSelectSort = (value) => {
         setOptionSort(value);
     }
@@ -128,14 +124,14 @@ const ListInvoiceOrder = () => {
                                     </th>
                                     <th className="px-3 py-2 bg-primary " style={{width:"260px"}}>Người lập
                                     </th>
-                                    <th className="px-3 py-2 bg-primary " style={{width:"150px"}}>Tổng tiền
+                                    <th className="px-3 py-2 bg-primary " style={{width:"150px"}}>Tổng tiền (VNĐ)
                                     </th>
                                     <th className="px-3 py-2 bg-primary ">Ghi chú
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {
+                                {invoices.length !==0?
                                     invoices.map((invoice, index) => (
                                             <tr>
                                                 <td className={`px-3 py-3 `}>{invoice.code}</td>
@@ -143,13 +139,16 @@ const ListInvoiceOrder = () => {
                                                 <td className={`px-3 py-3 `}>{format(parseISO(invoice.orderDate), "dd/MM/yyyy")}</td>
                                                 <td className={`px-3 py-3 `}>{invoice.orderTime}</td>
                                                 <td className={`px-3 py-3 `}>{invoice.nameEmployee}</td>
-                                                <td className={`px-3 py-3 `}>{currency(invoice.orderDetailsPrice)}</td>
+                                                <td className={`px-3 py-3 `}>{new Intl.NumberFormat("vi-VN").format(
+                                                    invoice.orderDetailsPrice
+                                                )}</td>
                                                 <td className={`px-3 py-3 `}>{invoice.orderNote}</td>
                                             </tr>
                                         )
-                                    )
+                                    ):<tr>
+                                        <td colSpan="8" style={{textAlign:"center"}}>Không có dữ liệu</td>
+                                    </tr>
                                 }
-
                                 </tbody>
                             </table>
                         </div>
@@ -193,19 +192,11 @@ const ListInvoiceOrder = () => {
                     </div>
                 </div>
                 <div className="button-list-employee justify-content-end d-flex">
-                    <Link>
+                    <Link to="/dashboard/retail">
                         <button className="btn btn-light btn-outline-primary m-1">
                             <FaPlus className="mx-1"/> Thêm mới
                         </button>
                     </Link>
-                    <button
-                        className="btn btn-light btn-outline-primary m-1"
-                        onClick={() => {
-                        }}
-                    >
-                        <FaRegTrashAlt/> Xoá
-                    </button>
-                    <button className="btn btn-outline-primary m-1">In phiếu</button>
                     <Link to="/home">
                         <button className="btn btn-outline-primary m-1">
                             <AiOutlineRollback/>
