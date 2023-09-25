@@ -11,9 +11,8 @@ import { addJwtTokenToLocalStorage, getIdByUserName, infoAppUserByJwtToken } fro
 import jsPDF from "jspdf";
 import diacriticless from "diacriticless";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
-import { FiEdit } from "react-icons/fi";
-import {AiOutlineRollback} from "react-icons/ai";
-
+import {AiOutlineRollback, AiOutlinePrinter} from "react-icons/ai";
+import {BsReceiptCutoff} from "react-icons/bs"
 
 
 
@@ -340,7 +339,7 @@ export default function Retail() {
 
             <div className="container">
                 <div className="row">
-                    <div className="col-md-4">
+                    <div className="col-md-4 mb-2">
                         <div>
                             <label htmlFor="id">Số phiếu</label>
                             <input id="id" name="id" value={code} readOnly className="form-control" />
@@ -357,7 +356,7 @@ export default function Retail() {
                                         setPhoneNumber(event.target.value)
                                     }
                                 }} />
-                            <button className="btn btn-primary" onClick={() => getCustomer()}>Tìm</button>
+                            <button className="btn btn-primary ms-2" onClick={() => getCustomer()}>Tìm</button>
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -369,17 +368,19 @@ export default function Retail() {
                 </div>
                 <div className="row">
                     <div className="col-md-4">
-                        <div>
+                        <div className="mb-2">
                             <label htmlFor="employee">Nhân viên</label>
                             <input id="employee" name="employee" value={employeeName} readOnly className="form-control" />
-                            <label htmlFor="date">Ngày lập</label>
+                        </div>
+                        <div>
+                        <label htmlFor="date">Ngày lập</label>
                             <input id="date" name="date" value={date} className="form-control" readOnly />
                         </div>
                     </div>
                     <div className="col-md-4">
                         <div className="row">
                             <label htmlFor="note">Ghi chú</label>
-                            <textarea cols="20" rows="3" id="note" name="note" className="form-control"
+                            <textarea cols="20" rows="4" id="note" name="note" className="form-control"
                                 value={note} onChange={(event) => {
                                     if (event.target.value.length < 255) {
                                         setNote(event.target.value)
@@ -416,10 +417,10 @@ export default function Retail() {
                                     style={idCartDetail === cart.cd_id ? { backgroundColor: 'rgb(98, 158, 236)' } : {}}
                                 >
                                     <td  onClick={() => handleRowClick(cart.cd_id)}>{cart.name}</td>
-                                    <td><input type="number" value={cart.cd_quantity} defaultValue={cart.cd_quantity}
+                                    <td><input type="number" value={cart.cd_quantity} style={{width:"50px"}} defaultValue={cart.cd_quantity}
                                         onChange={(event) => setQuantity(event.target.value, cart)} />
                                         {cart.cd_quantity > cart.m_quantity && 
-                                        <p style={{ color: 'black' }}>  Chỉ còn {cart.m_quantity} {cart.conversion_unit}</p>
+                                        <p style={{ margin: "0 5px 0" }}>  Chỉ còn {cart.m_quantity} {cart.conversion_unit}</p>
                                         }
                                     </td>
                                     <td onClick={() => handleRowClick(cart.cd_id)}>{cart.conversion_unit.toLocaleString()}</td>
@@ -439,7 +440,7 @@ export default function Retail() {
 
                                     />
                                     <a
-                                        className="btn btn-outline-primary"
+                                        className="btn btn-outline-primary mt-2"
                                         onClick={() => addMedicine()}
                                     >
                                         <FaPlus className="mx-1" />
@@ -461,13 +462,12 @@ export default function Retail() {
                     </table>
                 </div>
                 <br />
-                <div className="row" style={{ textAlign: 'right', display: 'flex' }}>
-                    <div className="col-7" style={{ textAlign: 'left' }}>
-                        <b>TỔNG TIỀN: </b>
-                        <b>{sum.toLocaleString()} VNĐ</b>
+                <div className="row d-flex align-items-center justify-content-between" style={{ textAlign: 'right'}}>
+                    <div className="col-7 border border-1 border-dark w-25 rounded ms-2 d-flex justify-content-center p-2" style={{ textAlign: 'left' }}>
+                        <b>TỔNG TIỀN: {sum.toLocaleString()} VNĐ</b>
                     </div>
-                    <div className="col-5">
-                        <button className="btn btn-outline-primary" onClick={() => pay()}>Thanh toán</button>
+                    <div className="col-5 d-flex align-items-center justify-content-end gap-2">
+                        <button className="btn btn-outline-primary" onClick={() => pay()}><BsReceiptCutoff size={18} className="me-1"/>Thanh toán</button>
                         <a
                             type="button"
                             onClick={() => openSwal()}
@@ -475,9 +475,9 @@ export default function Retail() {
                         >
                             <FaRegTrashAlt/> Xoá
                         </a>
-                        <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}>In phiếu</button>
+                        <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}><AiOutlinePrinter size={18} className="me-1"/>In phiếu</button>
                         <a className="btn btn-outline-primary" >
-                            <AiOutlineRollback/>Trở về </a>
+                            <AiOutlineRollback size={18} className="me-1"/>Trở về </a>
                     </div>
                 </div>
             </div>
