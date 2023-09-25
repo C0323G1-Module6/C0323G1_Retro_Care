@@ -11,6 +11,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import XRegExp from 'xregexp'
+import { Link } from 'react-router-dom';
 
 
 function KindOfMedicineList(props) {
@@ -396,10 +397,12 @@ function KindOfMedicineList(props) {
                                         <FaRegTrashAlt className="mx-1" />
                                         Xoá
                                     </button>
-                                    <a className="btn btn-outline-primary" href="/home">
+                                    <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
+
+                                    {/* <a className="btn btn-outline-primary" href="/home">
                                         <AiOutlineRollback className="mx-1" />
                                         Trở về
-                                    </a>
+                                    </a> */}
                                 </div>
                                 {/* <p> Code: {values.code}</p>
                                 <p> Name: {values.name}</p> */}
