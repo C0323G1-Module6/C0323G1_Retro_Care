@@ -73,7 +73,7 @@ export default function MedicineCreate() {
                             ...medicine,
                             kindOfMedicineDto: JSON.parse(medicine?.kindOfMedicineDto),
                         }
-                        medicine1.imageMedicineDto.imagePath = imageUpload;
+                        medicine1.imageMedicineDto.imagePath = url;
                         await addMedicine(medicine1);
                         Swal.fire({
                             title: 'Thêm mới thành công !',
