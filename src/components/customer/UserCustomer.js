@@ -39,7 +39,7 @@ const UserCustomer = () => {
                     position: 'center',
                     icon: 'error',
                     title: 'Lỗi kết nối',
-                    text: 'Khách hàng bị null',
+                    text: 'Không tìm thấy khách hàng',
                     showConfirmButton: false,
                     timer: 1500
                 });

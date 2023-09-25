@@ -1,4 +1,4 @@
-import {  Field, Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as appUserService from '../../services/user/AppUserService';
 import { BsFacebook } from "react-icons/bs"
@@ -14,15 +14,17 @@ const Login = () => {
     useEffect(() => {
         document.title = 'RetroCare - Đăng nhập'
     }, [])
-    const loginWithFacebook = async (resolve) => {
+
+    const handleLogin = async (resolve) => {
         try {
-           
+
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             const tempURL = localStorage.getItem("tempURL");
-            if(tempURL){
+            localStorage.removeItem("tempURL");
+            if (tempURL) {
                 navigate(tempURL);
-            }else{
+            } else {
                 navigate('/home');
 
             }
@@ -31,7 +33,25 @@ const Login = () => {
                 icon: 'error',
                 title: e.response.data,
             })
-        }
+        }   
+    }
+
+    const loginWithFacebook = async (resolve) => {
+        console.log(resolve);
+        Swal.fire({
+            text: 'Chào '+resolve.data.name+', bạn có muốn đăng nhập thông qua facebook ' + resolve.data.email+" không?",
+            showDenyButton: true,
+            confirmButtonText: 'Xác nhận',
+            denyButtonText: `Thoát`,
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                handleLogin(resolve)
+            } else if (result.isDenied) {
+                return;
+            }
+        })
+
     }
 
     const loginByUserName = async (appUser) => {
@@ -39,9 +59,10 @@ const Login = () => {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
             const tempURL = localStorage.getItem("tempURL");
-            if(tempURL){
+            localStorage.removeItem("tempURL");
+            if (tempURL) {
                 navigate(tempURL);
-            }else{
+            } else {
                 navigate('/home');
 
             }
@@ -121,7 +142,7 @@ const Login = () => {
                                     <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
                                 </a>
                             </div>
-                        
+
 
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
@@ -129,7 +150,7 @@ const Login = () => {
                                     Đăng ký
                                 </Link>
                             </div>
-                  
+
 
                         </div>
                     </div>

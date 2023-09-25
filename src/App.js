@@ -43,10 +43,11 @@ import ReturnVNPay from "./components/order/ReturnVNPay";
 import ListInvoiceOrder from "./components/order/ListInvoiceOrder";
 import EditInvoice from "./components/invoice/EditInvoice";
 import CreateInvoice from "./components/invoice/CreateInvoice";
-import MedicinesWithKind from "./components/home/MedicinesWithKind";
+// import MedicinesWithKind from "./components/home/MedicinesWithKind";
 import Error403 from "./components/user/Error403";
+import Error401 from "./components/user/Error401";
 function App() {
-  axiosClient();
+  axiosClient();  
   return (
     <>
       <ScrollToTop />
@@ -55,16 +56,17 @@ function App() {
         <Route path="/home" element={<Home />}></Route>
         <Route path="/home/search/:keyword" element={<SearchPage />} />
         <Route path="/home/search/" element={<SearchPage />} />
-        <Route
+        {/* <Route
           path="/home/list-medicines/:type"
           element={<MedicinesWithKind />}
-        />
+        /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/details/:id" element={<Details />}></Route>
         <Route path="/user-infor/:id" element={<UserCustomer />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/403" element={<Error403 />} />
+        <Route path="/401" element={<Error401/>}/>
         <Route
           element={
             <Authentication

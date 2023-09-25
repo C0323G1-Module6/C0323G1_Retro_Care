@@ -113,7 +113,8 @@ export default function Billing() {
                           })}
                       </tbody>
                     </table>
-                    <div className=" mb-3" id="confirm-order">
+                    <div className="container-fluid d-flex flex-column align-items-center justify-content-center">
+                    <div className=" mb-3 w-75" id="confirm-order">
                       <h3 className=" text-center" style={{ color: "#119cd4" }}>
                         ĐỊA CHỈ NHẬN HÀNG
                         <img
@@ -201,6 +202,8 @@ export default function Billing() {
                     <Link to="/home" className="btn btn-outline-primary mb-5">
                       ← Tiếp tục xem sản phẩm
                     </Link>
+                    </div>
+
                   </div>
                 </div>
                 <div className="col-sm-12 col-md-12 col-lg-4 col-xl-4 container position-relative">
