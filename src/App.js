@@ -28,6 +28,7 @@ import MedicineCreate from "./components/medicine/MedicineCreate";
 import MedicineEdit from "./components/medicine/MedicineEdit";
 // import Details from "./components/order/Details";
 import SearchPage from "./components/search/SearchPage";
+import InvoiceDetailMedicine from "./components/invoice/InvoiceDetailMedicine";
 // import Cart from "./components/order/Cart";
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
           element={<UpdateSupplierComponent />}
         />
         <Route path="/dashboard/invoice" element={<InvoiceList />} />
+        <Route path="/dashboard/invoice/detail/:id" element={<InvoiceDetailMedicine />} />
         <Route path="/dashboard/retail" element={<Retail />} />
         <Route
           path="/dashboard/retail/prescription-list"
