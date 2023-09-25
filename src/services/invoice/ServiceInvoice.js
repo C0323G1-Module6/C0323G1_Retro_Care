@@ -41,9 +41,8 @@ export async function createInvoice(invoice) {
     return result;
 }
 export async function editInvoice(invoice) {
-    console.log(invoice);
-        const result = await axios.patch(`http://localhost:8080/api/invoice/edit`, invoice);
-        return result.data;
+    const result = await axios.patch(`http://localhost:8080/api/invoice/edit`, invoice);
+    return result.data;
 
 }
 
@@ -61,7 +60,6 @@ export async function getMedicine(medicineId) {
         const result = await axios.get(`http://localhost:8080/api/medicine/get-medicine/${medicineId}`);
         return result.data;
     } catch (e) {
-        console.log(e);
         return {
             medicineQuantity: 0,
             vat: 0,
@@ -85,11 +83,11 @@ export async function getEmployee(username) {
 export async function getInvoiceDetails(invoiceId) {
     try {
         const result = await axios.get(`http://localhost:8080/api/invoice-detail/${invoiceId}`);
-        console.log(result);
         return result.data;
     } catch (e) {
         console.log(e);
     }
 
 }
+
 

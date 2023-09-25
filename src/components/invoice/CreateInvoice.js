@@ -16,8 +16,7 @@ import * as ServiceUser from "../../services/user/AppUserService"
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
-
-export function CreateInvoice() {
+function CreateInvoice() {
     const navigate = useNavigate();
     const [supplier, setSupplier] = useState([]);
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -25,7 +24,8 @@ export function CreateInvoice() {
     const [maxCode, setMaxCode] = useState('');
     const fieldNameRef = useRef(null);
     const elementRef = useRef(null);
-    const [employee, setEmployee] = useState();
+    const [employee, setEmployee] = useState({
+    });
 
 
 
@@ -42,7 +42,7 @@ export function CreateInvoice() {
     const createInvoice = async (invoice, setErrors) => {
         try {
             const result = await ServiceInvoice.createInvoice(invoice);
-            console.log(result);
+
             Swal.fire(
                 "Thêm thành công thành công !",
                 "Hóa đơn " + result.data.code + " đã được thêm!",
@@ -76,10 +76,7 @@ export function CreateInvoice() {
         getSupplier();
         getMedicine();
         getMaxCode();
-    }, [])
-
-
-
+    }, [employee.id])
 
 
     const getUnit = async (medicineId) => {
@@ -140,8 +137,7 @@ export function CreateInvoice() {
     const dataMedicine = medicine.map(
         item => ({ label: item.name, value: JSON.stringify(item) })
     );
-
-    if (!employee)
+    if (employee.id == null)
         return null;
 
     return (
@@ -167,8 +163,9 @@ export function CreateInvoice() {
                         },]
                     }}
                     onSubmit={async (invoiceValue, { setSubmitting, setErrors }) => {
-                        let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
                         setSubmitting(true);
+                        let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
+                        newInvoiceValue = { ...newInvoiceValue, appUserId: employee.appUser.id }
                         await createInvoice(newInvoiceValue, setErrors);
                         setSubmitting(false);
                     }}
