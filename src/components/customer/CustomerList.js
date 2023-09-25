@@ -23,6 +23,7 @@ function CustomerList() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [groupValue, setGroupValue] = useState("");
   const [sortItem, setSortItem] = useState("");
+  const [sortType, setSortType] = useState("");
   const [page, setPage] = useState(0);
   const [totalPage, setTotalPage] = useState(0);
   const [selectedCustomer, setSeletedCustomer] = useState({
@@ -33,7 +34,7 @@ function CustomerList() {
 
   // ------------------------------------------------------ Get Customers List ---------------------------------------
   const loadCustomerList = async (page, name, code, address, phoneNumber, groupValue, sortItem) => {
-    const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem);
+    const result = await customerService.getAllCustomers(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
     if (result?.status === 200) {
       setCustomers(result?.data.content);
       setTotalPage(result?.data.totalPages);
@@ -41,9 +42,9 @@ function CustomerList() {
       Swal.fire({
         icon: 'error',
         title: 'Rất tiếc...',
-        text: 'Không tin bạn nhập không tồn tại!',
+        text: 'Dữ liệu không tồn tại!',
       })
-      setSearchValue("");
+      handleReset();
     }
   }
   const handleReset = () => {
@@ -54,6 +55,7 @@ function CustomerList() {
     setCode("");
     setGroupValue("");
     setSortItem("");
+    setSortType("");
   }
   // ----------------------------------------------------------- Pagination ---------------------------------------------
   const previousPage = () => {
@@ -71,16 +73,16 @@ function CustomerList() {
   // ------------------------------------------------------  Searching function -----------------------------------------
   const handleInputChange = (e) => {
     const { value } = e.target
-    setSearchValue(value);
+    setSearchValue(value.trim());
   }
 
-  const handleKeyDown = event => {
-    if (event.key === 'Enter') {
-      handleSearchEvent();
-    }
-  }
+  // const handleKeyDown = event => {
+  //   if (event.key === 'Enter') {
+  //     handleSearchEvent();
+  //   }
+  // }
 
-  const handleSearchEvent = () => { 
+  const handleSearchEvent = () => {
     switch (optionSearch) {
       case 1:
         setName(searchValue);
@@ -98,7 +100,6 @@ function CustomerList() {
         setCode(searchValue);
         break;
     }
-    // setSearchValue("");
   }
 
   const handleSelectChange = (event) => {
@@ -111,13 +112,17 @@ function CustomerList() {
     const { value } = e.target;
     setOptionSearch(+value);
     setSearchValue(document.getElementById("search").value);
-    console.log(searchValue);
     handleReset();
   }
 
   // ------------------------------------------------------ Sort -----------------------------------------------------
   const handleSortEvent = (event) => {
     setSortItem(event.target.value);
+    setSortType(document.getElementById("sortType").value);
+  }
+  const handleSort = (event) => {
+    setSortItem(document.getElementById("sortItem").value);
+    setSortType(event.target.value);
   }
 
   //--------------------------------------------------- Delete method -----------------------------------------------
@@ -134,7 +139,8 @@ function CustomerList() {
         text: "Bạn muốn xóa khách hàng: " + selectedCustomer.name,
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Đúng vậy",
+        confirmButtonText: "Xóa",
+        cancelButtonText: "Không",
         icon: "question",
       }).then(async (result) => {
         if (result.isConfirmed) {
@@ -145,6 +151,7 @@ function CustomerList() {
               icon: "success",
               timer: 1000,
             });
+            setSeletedCustomer({ id: null, name: "" })
           } else {
             Swal.fire({
               icon: 'error',
@@ -154,10 +161,11 @@ function CustomerList() {
           }
         } else {
           Swal.fire({
-            text: "Không ",
+            text: "Hủy thao tác",
             icon: "warning",
             timer: 1000,
           });
+          setSeletedCustomer({ id: null, name: "" })
         }
         await loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
       });
@@ -178,8 +186,11 @@ function CustomerList() {
   }
   // --------------------------------------------------------------Use Effect ----------------------------------------------------
   useEffect(() => {
-    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem);
-  }, [page, name, code, address, phoneNumber, groupValue, sortItem]);
+    document.title = 'RetroCare - Danh sách khách hàng'
+  }, []);
+  useEffect(() => {
+    loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
+  }, [page, name, code, address, phoneNumber, groupValue, sortItem, sortType]);
 
   if (!customers) {
     return <div></div>;
@@ -191,11 +202,11 @@ function CustomerList() {
         DANH SÁCH KHÁCH HÀNG
       </h1>
       <div className="row m-3" style={{ display: "flex" }}>
-        <div className="col-9 col-search">
+        <div className="col-8 col-search">
           <label className="m-1">Lọc theo: </label>
           <div className="btn-group">
             <select name='optionSearch' defaultValue={0} onChange={handleOptionSearchChange} className="form-select m-1" style={{ width: 200 }}>
-              <option value={0}> Mã khách hàng</option>
+              <option value={0}>Mã khách hàng</option>
               <option value={1}>Tên khách hàng</option>
               <option value={2}>Nhóm khách hàng</option>
               <option value={3}>Địa chỉ</option>
@@ -215,13 +226,14 @@ function CustomerList() {
             padding: 5,
             border: "1px black solid"
           }}
-            placeholder="Tìm kiếm khách hàng"
+            placeholder={(optionSearch === 2) ? "Nhập tên tìm kiếm..." : "Tìm kiếm khách hàng"}
             className="bg-white align-middle appearance-none m-1"
             aria-describedby="button-addon"
-            id="search" onKeyDown={handleKeyDown}
+            id="search"
+            // onKeyDown={handleKeyDown}
             onChange={handleInputChange}
           />
-          <button onClick={() => handleSearchEvent()}
+          <button onClick={handleSearchEvent}
             className="btn btn-outline-primary"
             style={{ marginRight: "auto", width: "auto", marginLeft: 5 }}
             id="button-addon">
@@ -229,13 +241,17 @@ function CustomerList() {
           </button>
         </div>
 
-        <div className="col-3 d-flex align-items-center justify-content-end">
+        <div className="col-4 d-flex align-items-center justify-content-end" >
           <label className="m-1">Sắp xếp: </label>
           <div className="btn-group">
-            <select name='sortIterm' defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 ">
-              <option value={"group"}>Nhóm khách hàng</option>
+            <select name='sortIterm' id="sortItem" defaultValue={"code"} onChange={handleSortEvent} className="form-select m-1 " style={{ width: 180 }}>
+              <option value={"app_user_id"}>Nhóm khách hàng</option>
               <option value={"code"}>Mã khách hàng</option>
               <option value={"name"}>Tên khách hàng</option>
+            </select>
+            <select name="sortType" id="sortType" defaultValue={""} onChange={handleSort} className="form-select m-1 " style={{ width: 130 }}>
+              <option value={"DESC"}>Giảm dần</option>
+              <option value={"ASC"}>Tăng dần</option>
             </select>
           </div>
         </div>
@@ -248,66 +264,79 @@ function CustomerList() {
         >
           <thead>
             <tr
-              style={{ background: "#0d6efd", color: "#ffffff" }}
+              style={{ background: "#0d6efd", color: "#ffffff", height: 50 }}
             >
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 50 }}>
                 STT
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 190 }}>
                 Mã khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
                 Tên khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 150 }}>
                 Ngày sinh
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 270 }}>
                 Địa chỉ
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 170 }}>
                 Số điện thoại
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 250 }}>
                 Nhóm khách hàng
               </th>
-              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
+              <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider" style={{ width: 180 }}>
                 Ghi chú
               </th>
             </tr>
           </thead>
-          <tbody className="bg-light">
-            {customers.map((customer, index) => (
-              <tr key={index} id={index} onClick={() => {
-                setSeletedCustomer({ id: customer?.id, name: customer?.name });
-              }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#FCF54C' } : {}}>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {index + 1}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.code}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.name}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200  text-sm">
-                  {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.address}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.phoneNumber}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.customerType}
-                </td>
-                <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                  {customer?.note}
+          {customers && customers.length !== 0 ?
+            <tbody className="bg-light">
+              {customers.map((customer, index) => (
+                <tr key={index} id={index} onClick={() => {
+                  if (selectedCustomer.id === null || selectedCustomer.id !== customer?.id) {
+                    setSeletedCustomer({ id: customer?.id, name: customer?.name });
+                  } else {
+                    setSeletedCustomer({ id: null, name: "" });
+                  }
+                }} style={(selectedCustomer.id === customer?.id) ? { backgroundColor: '#629eec', height: 50 } : { height: 50 }}>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {index + 1}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.code}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.name.length > 20 ? `${customer?.name.slice(0, 20)}...` : customer?.name}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200  text-sm">
+                    {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.address.length > 20 ? `${customer?.address.slice(0, 20)}...` : customer?.address}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1 $2 $3')}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.customerType}
+                  </td>
+                  <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                    {customer?.note.length > 9 ? `${customer?.note.slice(0, 9)}...` : customer?.note}
+                  </td>
+                </tr>
+              ))}
+            </tbody> :
+            <tbody>
+              <tr style={{ height: '150px' }}>
+                <td style={{ fontSize: '30px', textAlign: 'center' }} colSpan="8">Không có dữ
+                  liệu
                 </td>
               </tr>
-            ))}
-          </tbody>
+            </tbody>
+          }
         </table>
         <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
           <div className="justify-content-center d-flex">
@@ -360,12 +389,13 @@ function CustomerList() {
           <FaRegTrashAlt className="mx-1" />
           Xoá
         </button>
-        <a className="btn btn-outline-primary" href="/HuyL_home.html">
-          <AiOutlineRollback className="mx-1" />
-          Trở về
-        </a>
+        <Link to="/home">
+          <button className="btn btn-light btn-outline-primary m-1">
+            <AiOutlineRollback />Trở về
+          </button>
+        </Link>
       </div>
-    </div>
+    </div >
   )
 }
 export default CustomerList;

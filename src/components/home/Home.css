@@ -27,7 +27,7 @@ img {
 
 .site-header {
   position: fixed;
-  padding: 30px 0;
+  padding: 1.5rem 0;
   display: flex;
   align-items: center;
   top: 0;
@@ -179,18 +179,24 @@ ul {
   opacity: 0.5;
 }
 
-.header-search-form .form-input {
+.header-search-form #form-input-home {
   font-size: 14px;
   padding-right: 40px;
-  width: 200px;
+  width: 300px;
   height: 40px;
 }
 
-.form-input::placeholder {
+#form-input-home::-webkit-search-cancel-button {
+  position: relative;
+  right: 5px;
+  cursor: pointer;
+}
+
+#form-input-home::placeholder {
   color: rgba(70 69 71 / 0.7);
 }
 
-.form-input {
+#form-input-home {
   width: 100%;
   height: 50px;
   outline: none !important;
@@ -269,7 +275,7 @@ ul {
   text-transform: capitalize;
   font-weight: 500;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  padding-left: 1rem;
+  padding-left: 0.5rem;
 }
 
 .user-dropdown-item .bx {
@@ -332,8 +338,14 @@ ul {
     padding: 4px 15px;
     font-size: 15px;
   }
-  .header-search-form .form-input {
+  .header-search-form #form-input-home {
     width: 170px;
+  }
+}
+
+@media (max-width: 1500px) {
+  .header-search-form #form-input-home {
+    width: 200px;
   }
 }
 
@@ -523,7 +535,7 @@ ul {
 }
 
 .main-banner {
-  padding: 10rem 0 5rem;
+  padding: 10rem 0 2rem;
   position: relative;
 }
 
@@ -676,11 +688,12 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .brands-box:hover {
-  filter: brightness(0.3);
   opacity: 0.9;
+  transform: scale(1.2);
 }
 
 .brand-title .h5-title {
@@ -706,7 +719,8 @@ p {
   padding: 3px 20px;
   border-radius: 60px;
   color: #ff8243;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .h2-title {
@@ -935,6 +949,15 @@ p {
   width: 30px;
 }
 
+/* Swiper Bottom Wrapper */
+
+.book-table-img {
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 /* *************** */
 
 .social-icon {
@@ -1137,7 +1160,7 @@ p {
 }
 
 .product-container {
-  padding: 0 10vw;
+  padding: 0 5vw;
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -1150,14 +1173,14 @@ p {
 .product-card {
   flex: 0 0 auto;
   width: 250px;
-  height: 450px;
-  margin-right: 40px;
+  height: 370px;
+  /* margin-right: 40px; */
 }
 
 .product-image {
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 250px;
   overflow: hidden;
   border-radius: 5px;
   background: linear-gradient(145deg, #e6e6e6, #ffffff);
@@ -1173,12 +1196,12 @@ p {
 .discount-tag {
   position: absolute;
   background: #fff;
-  padding: 5px;
-  border-radius: 5px;
+  padding: 3px;
+  border-radius: 10px;
   color: #ff7d7d;
   right: 10px;
   top: 10px;
-  text-transform: capitalize;
+  border: 1px solid #ff7d7d;
 }
 
 .card-btn {
@@ -1200,6 +1223,7 @@ p {
 
 .product-card:hover .card-btn {
   opacity: 1;
+  background: #ff7d7d;
 }
 
 .card-btn:hover {
@@ -1222,14 +1246,23 @@ p {
   height: 20px;
   line-height: 20px;
   overflow: hidden;
-  opacity: 0.5;
+  opacity: 0.7;
   text-transform: capitalize;
   margin: 5px 0;
+  color: black;
+  font-weight: 600;
 }
 
 .price {
   font-weight: 900;
   font-size: 20px;
+}
+
+.actual-price {
+  font-weight: 600;
+  font-size: 15px;
+  color: #ff7d7d;
+  text-decoration: line-through;
 }
 
 .product-unit {
@@ -1240,7 +1273,7 @@ p {
 .pre-btn,
 .nxt-btn {
   border: none;
-  width: 10vw;
+  width: 5vw;
   height: 100%;
   position: absolute;
   top: 0;
@@ -1639,4 +1672,26 @@ p {
   .dropend .dropdown-toggle {
     margin-left: 0.5em;
   }
+}
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Optional: semi-transparent background for overlay effect */
+  z-index: 9999; /* Higher z-index to overlay all other elements */
+}
+
+.loading-spinner {
+  /* Adjust styles for the loader if needed */
 }

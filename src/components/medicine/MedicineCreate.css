@@ -1,11 +1,11 @@
-.form-input label {
+#tincute .form-input label {
     font-weight: bold;
 }
-.row {
+#tincute .row {
     margin-bottom: 5px;
 }
 
-.form-input {
+#tincute .form-input {
     border: 1px solid black;
     width: 80%;
     padding: 30px;
@@ -14,17 +14,17 @@
     margin-bottom: 20px;
 }
 
-.row input,
-.row select {
+#tincute .tin input,
+#tincute .tin select {
     margin-bottom: 10px;
 }
 
-.row input {
+#tincute .tin input {
     height: 75%;
 }
 
-.row input,
-.row select {
+#tincute .tin input,
+#tincute .tin select {
     border: 1px solid #ced4da;
     border-radius: 5px;
     width: 50%;
@@ -32,7 +32,7 @@
     right: 5px;
 }
 
-.row textarea {
+#tincute .tin textarea {
     border: 1px solid #ced4da;
     border-radius: 5px;
     width: 74%;

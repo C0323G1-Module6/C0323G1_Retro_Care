@@ -1,9 +1,8 @@
-import './style.css'
 import {Formik, Form, Field, ErrorMessage} from 'formik'
 import React, {useEffect, useRef, useState} from "react";
 import * as Yup from "yup";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {crateEmployee, getEmployee, updateEmployee} from "../../services/employee/EmployeeService";
+import { getEmployee, updateEmployee} from "../../services/employee/EmployeeService";
 import {v4} from "uuid";
 import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 import {storage} from "../../firebase/firebase";
@@ -17,19 +16,41 @@ const UpdationEmployee = () => {
     const imgPreviewRef = useRef(null)
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
-    const updateEmployees = async (employeeUpdate) => {
+    useEffect(() => {
+        document.title = 'RetroCare - Chỉnh sửa thông tin nhân viên'
+    }, []);
+    const updateEmployees = async (employeeUpdate,setErrors) => {
         if (imageUpload != null) {
             const fileName = `images/${imageUpload.name + v4()}`
             const imageRef = ref(storage, fileName);
             await uploadBytes(imageRef, imageUpload).then((snapshot) => {
                 getDownloadURL(snapshot.ref).then(async (url) => {
                     console.log(url);
-                    await updateEmployee({
-                        ...employeeUpdate,
-                        image: url
-                    }).then(() => {
-                        navigate("/dashboard/employee")
-                    })
+                    try {
+                        await updateEmployee({
+                            ...employeeUpdate,
+                            image: url
+                        }).then(() => {
+                            navigate("/dashboard/employee")
+                        }).then(
+                            () => {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Chỉnh sửa thành công !',
+                                    showConfirmButton: false,
+                                    timer: 2000,
+                                    customClass: {
+                                        icon: 'icon-post',
+                                    }
+                                })
+                            }
+                        )
+                    }catch (err){
+                        if(err.response.data){
+                            setErrors(err.response.data)
+                        }
+                    }
+
                 })
             })
         } else {
@@ -79,13 +100,26 @@ const UpdationEmployee = () => {
     };
 
     useEffect(() => {
+        document.title = "RetroCare - Chỉnh sửa thông tin nhân viên";
         loadEmployee(param.id);
     }, [param.id])
 
     const loadEmployee = async (id) => {
-        const newEmployee = await getEmployee(id);
-        console.log(newEmployee.data)
-        setEmployee(newEmployee.data);
+        try {
+            const newEmployee = await getEmployee(id);
+            console.log(newEmployee.data)
+            setEmployee(newEmployee.data);
+        }catch (err){
+            if(err.response.status ===404){
+                navigate("/dashboard/employee");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Không thể tìm thấy nhân viên!',
+                })
+            }
+        }
+
     }
     if (employee === undefined) {
         return null;
@@ -127,11 +161,30 @@ const UpdationEmployee = () => {
                     .max(12,"Vui lòng nhập từ 12 kí tự trở xuống")
                     .matches(/^\d{9}(\d{3})?$/u,"Vui lòng chỉ nhập số và độ dài là 9 hoặc 12"),
             })}
-            onSubmit={(value, {setSubmitting}) => {
-                setSubmitting(false);
-                updateEmployees(value).then(() => {
-                    setSubmitting(true);
-                });
+            onSubmit={(value, {setErrors}) => {
+                let timerInterval
+                Swal.fire({
+                    title: 'Auto close alert!',
+                    html: 'I will close in <b></b> milliseconds.',
+                    timer: 5000,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.showLoading()
+                        const b = Swal.getHtmlContainer().querySelector('b')
+                        timerInterval = setInterval(() => {
+                            b.textContent = Swal.getTimerLeft()
+                        }, 100)
+                    },
+                    willClose: () => {
+                        clearInterval(timerInterval)
+                    }
+                }).then((result) => {
+                    /* Read more about handling dismissals below */
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        console.log('I was closed by the timer')
+                    }
+                })
+                updateEmployees(value,setErrors)
             }}
         >
             <Form>
@@ -142,20 +195,25 @@ const UpdationEmployee = () => {
                                  style={{borderRadius: "50px", objectFit: "cover"}}/>
                         </div>
                         <div className="col-8  d-flex justify-content-center ">
-                            <fieldset className="form-input shadow">
+                            <fieldset className="shadow" style={{width: '590px',
+                                height: 'auto',
+                                border: '1px solid #000000',
+                                padding: '20px',
+                                borderRadius: '20px',
+                                backgroundColor: '#F8F9Fa'}}>
                                 <legend className="float-none w-auto px-3"><h2>Chỉnh sửa thông tin nhân viên</h2>
                                 </legend>
                                 <div className="row">
 
                                     <div className="col-3 p-2">
-                                        <label>Mã nhân viên</label>
+                                        <label style={{ fontWeight:"bold"}}>Mã nhân viên</label>
                                     </div>
                                     <div className="col-9">
                                         <Field disable name='codeEmployee' className="text-black-50 form-control mt-2 "
                                                type='text'/>
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Tên nhân viên <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Tên nhân viên <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='nameEmployee' className="form-control border border-dark mt-2"
@@ -166,7 +224,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Địa chỉ <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Địa chỉ <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='address' className="form-control border border-dark mt-2"
@@ -178,7 +236,7 @@ const UpdationEmployee = () => {
 
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Số điện thoại <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Số điện thoại <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='phoneNumber' className="form-control border border-dark mt-2"
@@ -190,7 +248,7 @@ const UpdationEmployee = () => {
 
                                     </div>
                                     <div className="col-3 p-2">
-                                        <label>Ngày vào làm <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Ngày vào làm <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='startDay' className="form-control border border-dark mt-2"
@@ -201,7 +259,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     <div className="col-3  p-2">
-                                        <label>Ngày sinh <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>Ngày sinh <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='birthday' className="form-control border border-dark mt-2"
@@ -213,7 +271,7 @@ const UpdationEmployee = () => {
                                     </div>
 
                                     <div className="col-3 p-2">
-                                        <label>CCCD <sup>*</sup></label>
+                                        <label style={{ fontWeight:"bold"}}>CCCD <sup style={{color:"red"}}>*</sup></label>
                                     </div>
                                     <div className="col-9">
                                         <Field name='idCard' className="form-control border border-dark mt-2"
@@ -224,7 +282,7 @@ const UpdationEmployee = () => {
                                         </div>
                                     </div>
                                     {/*<div className="col-3 p-2">*/}
-                                    {/*    <label>Chức vụ <sup>*</sup></label>*/}
+                                    {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
                                     {/*</div>*/}
                                     {/*<div className="col-9">*/}
                                     {/*    <select as='select' className="form-select border border-dark mt-2">*/}
@@ -236,7 +294,7 @@ const UpdationEmployee = () => {
                                     {/*    </div>*/}
                                     {/*</div>*/}
                                     <div className="col-3 p-2">
-                                        <label>Ảnh nhân viên</label>
+                                        <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
                                     </div>
                                     <div className='col-9'>
                                         <div className="input-group mt-2 ">
@@ -277,8 +335,6 @@ const UpdationEmployee = () => {
                 </div>
             </Form>
         </Formik>
-
-
     )
 }
 

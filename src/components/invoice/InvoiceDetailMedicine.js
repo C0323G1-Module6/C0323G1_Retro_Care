@@ -5,22 +5,34 @@ import {FaInfo, FaPlus, FaRegTrashAlt} from "react-icons/fa";
 import {FiEdit} from "react-icons/fi";
 import {AiOutlineRollback} from "react-icons/ai";
 
+
 function InvoiceDetailMedicine() {
     const param = useParams();
     const [invoiceDetail, setInvoiceDetail] = useState([]);
+    const [showContent,setShowContent]= useState(false);
+    const [medicine, setMedicine] = useState("");
 
+    const quantity = 15 ;
     const getMedicineById = async () => {
         const data = await getInvoiceDetailByID(param.id);
-        console.log(data)
         setInvoiceDetail(data);
     }
-
+    const handleMouseEnter = (activeElement) => {
+        if (activeElement.length > quantity) {
+            setShowContent(true);
+            setMedicine(activeElement);
+        }
+    };
+    console.log(handleMouseEnter)
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
 
     useEffect(() => {
         getMedicineById();
         document.title = "RetroCare - Chi tiết hóa đơn nhập kho";
     }, []);
-    console.log(invoiceDetail.length > 0 ? invoiceDetail[0].code : null)
+
     return (
         <>
             <div className="container mx-auto px-4 sm:px-8">
@@ -119,8 +131,51 @@ function InvoiceDetailMedicine() {
                                         <td className="py-3  border-b border-gray-200">{ind.codeMedicine}</td>
                                         <td className="py-3  border-b border-gray-200">{ind.nameMedicine}</td>
                                         <td className="py-3  border-b border-gray-200">{ind.nameKind}</td>
-                                        <td className="py-3  border-b border-gray-200">{ind.activeElement}</td>
-                                        <td className="py-3  border-b border-gray-200">{ind.noteMedicine}</td>
+                                        <td
+                                            className="py-3 border-b border-gray-200 text-sm"
+                                            style={{position: 'relative'}}
+                                            onMouseEnter={() => { handleMouseEnter(ind.activeElement);}}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {ind.activeElement.length > quantity
+                                                ? `${ind.activeElement.slice(0, quantity)}...`
+                                                : ind.activeElement
+                                            }
+                                            {showContent && medicine === ind.activeElement &&
+                                                <div style={{position: 'absolute',
+                                                    background:'#f3f3f5',
+                                                    color: 'blue',
+                                                    top: '-2%',
+                                                    borderRadius: '5px',
+                                                    boxSizing: 'border-box',
+                                                    width: '200px',
+                                                    height: '56px',
+                                                    zIndex: 99}}>{ind.activeElement}</div>
+                                            }
+                                        </td>
+                                        <td
+                                            className="py-3 border-b border-gray-200 text-sm"
+                                            style={{position: 'relative'}}
+                                            onMouseEnter={() => { handleMouseEnter(ind.noteMedicine); }}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {ind.noteMedicine.length > quantity
+                                                ? `${ind.noteMedicine.slice(0, quantity)}...`
+                                                : ind.noteMedicine
+                                            }
+                                            {showContent && medicine === ind.noteMedicine &&
+                                                <div
+                                                style={{position: 'absolute',
+                                                    color: 'blue',
+                                                    top: '-5%',
+                                                    left: '30%',
+                                                    borderRadius: '5px',
+                                                    boxSizing: 'border-box',
+                                                    width: '700px',
+                                                    height: 'auto',
+                                                    zIndex: 99}}>{ind.noteMedicine}</div>
+                                            }
+                                        </td>
                                         <td className="py-3  border-b border-gray-200">{ind.origin}</td>
                                         <td className="py-3  border-b border-gray-200">{ind.maker}</td>
                                         <td className="py-3  border-b border-gray-200">{ind.quantity}</td>

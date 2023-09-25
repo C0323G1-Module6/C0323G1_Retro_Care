@@ -1,5 +1,7 @@
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
     AiOutlineRollback,
     AiOutlineDoubleLeft,
@@ -10,10 +12,12 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { SelectPicker } from "rsuite";
 import "./styles.css";
 import * as ServiceInvoice from "../../services/invoice/ServiceInvoice"
-import {Link, useNavigate} from "react-router-dom";
+import * as ServiceUser from "../../services/user/AppUserService"
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import Swal from "sweetalert2";
 
-function CreateInvoice() {
+export function CreateInvoice() {
     const navigate = useNavigate();
     const [supplier, setSupplier] = useState([]);
     const [selectedRow, setSelectedRow] = useState(-1);
@@ -21,23 +25,7 @@ function CreateInvoice() {
     const [maxCode, setMaxCode] = useState('');
     const fieldNameRef = useRef(null);
     const elementRef = useRef(null);
-
-
-    const [invoiceDetails, setInvoiceDetails] = useState(
-        [{
-            medicineId: {},
-            discount: 0,
-            medicineQuantity: 0,
-        },]
-    )
-
-    // const [unitPrice, setUnitPrice] = useState(0);
-    // const [unit, setUnit] = useState('');
-    // const [realPrice, setRealPrice] = useState(0);
-
-    // const [infoInvoiceDetail, setInfoInvoiceDetail] = useState([{
-
-    // },]);
+    const [employee, setEmployee] = useState();
 
 
 
@@ -51,8 +39,23 @@ function CreateInvoice() {
         setMedicine(result);
     }
 
-    const createInvoice = async (invoice) => {
-        const result = await ServiceInvoice.createInvoice(invoice);
+    const createInvoice = async (invoice, setErrors) => {
+        try {
+            const result = await ServiceInvoice.createInvoice(invoice);
+            console.log(result);
+            Swal.fire(
+                "Thêm thành công thành công !",
+                "Hóa đơn " + result.data.code + " đã được thêm!",
+                "success"
+            );
+            navigate("/dashboard/invoice")
+        } catch (err) {
+            Swal.fire(
+                "Thêm không thành công !",
+            );
+            setErrors(err.response.data);
+        }
+
     }
 
     const getMaxCode = async () => {
@@ -61,15 +64,21 @@ function CreateInvoice() {
     }
 
 
+    const getEmployee = async () => {
+        const username = await ServiceUser.infoAppUserByJwtToken().sub;
+        const result = await ServiceInvoice.getEmployee(username);
+        setEmployee(result);
+    }
+
+
     useEffect(() => {
+        getEmployee();
         getSupplier();
         getMedicine();
         getMaxCode();
     }, [])
 
-    useEffect(() => {
 
-    }, [])
 
 
 
@@ -88,41 +97,42 @@ function CreateInvoice() {
         }
         document.getElementById("medicinePrice").value = totalPrice;
         document.getElementById("totalPrice").value = totalPrice;
-        document.getElementById("extant").value = totalPrice - document.getElementById("paid").value;
+        if (totalPrice - document.getElementById("paid").value < 0)
+            document.getElementById("extant").value = 0
+        else
+            document.getElementById("extant").value = totalPrice - document.getElementById("paid").value;
     }
 
-    // const setInvoiceDetailInfo = async (value, index) => {
-    //     console.log(document.getElementsByName(`invoiceDetailDtoSet.${index}.medicineQuantity`)[0].value);
-    //     let objectMedicine = await JSON.parse(value);
-    //     let quantity = parseInt(document.getElementsByName(`invoiceDetailDtoSet.${index}.medicineQuantity`));
-    //     let unit = await getUnit(objectMedicine.id);
-    //     let unitPrice = await objectMedicine.price - (objectMedicine.price * objectMedicine.retailProfits / 100);
-    //     let totalPrice = (unitPrice - (unitPrice * objectMedicine.vat / 100)) * quantity
-    //     console.log(totalPrice);
-    //     const element = document.getElementById(`${index}`);
-    //     element.getElementsByTagName('td')[1].textContent = unit;
-    //     element.getElementsByTagName('td')[3].textContent = unitPrice;
-    //     element.getElementsByTagName('td')[5].textContent = objectMedicine.vat;
-    //     element.getElementsByTagName('td')[6].textContent = totalPrice;
-    //     await setInvoiceInfo();
-    // }
 
+    const setInvoiceDetailInfo = async (value, index) => {
+        let quantity = document.getElementById(`invoiceDetailDtoSet.${index}.medicineQuantity`).value;
+        let discount = document.getElementById(`invoiceDetailDtoSet.${index}.discount`).value;
+        let unit = await getUnit(value.id);
+        let unitPrice = parseInt(value.price - (value.price * (value.retailProfits + value.vat) / 100));
+        let price = (unitPrice - (unitPrice * discount / 100)) * quantity;
+        const element = document.getElementById(`${index}`);
+        element.getElementsByTagName('td')[1].textContent = unit;
+        element.getElementsByTagName('td')[3].textContent = unitPrice;
+        element.getElementsByTagName('td')[5].textContent = value.vat;
+        element.getElementsByTagName('td')[6].textContent = price;
+        await setInvoiceInfo();
+    }
 
+    const updateInoviceDetail = async (medicineId, index) => {
+        const value = await ServiceInvoice.getMedicine(medicineId);
+        let quantity = document.getElementById(`invoiceDetailDtoSet.${index}.medicineQuantity`).value;
+        let discount = document.getElementById(`invoiceDetailDtoSet.${index}.discount`).value;
+        let unit = await getUnit(value.id);
+        let unitPrice = parseInt(value.price - (value.price * (value.retailProfits + value.vat) / 100)) || 0;
+        let price = (unitPrice - (unitPrice * discount / 100)) * quantity;
+        const element = document.getElementById(`${index}`);
+        element.getElementsByTagName('td')[1].textContent = unit;
+        element.getElementsByTagName('td')[3].textContent = unitPrice;
+        element.getElementsByTagName('td')[5].textContent = value.vat;
+        element.getElementsByTagName('td')[6].textContent = price;
+        await setInvoiceInfo();
+    }
 
-
-
-    // const setAvariableValue = async (value, number) => {
-    //     let objectMedicine = JSON.parse(value);
-    //     let unit = await getUnit(objectMedicine.id);
-    //     let cell = document.getElementById(number);
-    //     // console.log(unitDetail);
-    //     cell.getElementsByTagName('td')[1].innerText = unit;
-    //     cell.getElementsByTagName('td')[5].innerText = objectMedicine.vat;
-    //     let medicineQuantity = parseInt(cell.getElementsByTagName('td')[2].innerText) ? parseInt(cell.getElementsByTagName('td')[2].innerText) : 0;
-    //     let price = parseFloat(cell.getElementsByTagName('td')[3].innerText) ? parseFloat(cell.getElementsByTagName('td')[3].innerText) : 0;
-    //     let discount = parseFloat(cell.getElementsByTagName('td')[4].innerText) ? parseFloat(cell.getElementsByTagName('td')[4].innerText) : 0;
-    //     cell.getElementsByTagName('td')[6].innerText = (medicineQuantity * price) + (medicineQuantity * price) * discount / 100;
-    // }
 
     const dataSupllier = supplier.map(
         item => ({ label: item.code, value: JSON.stringify(item) })
@@ -130,6 +140,10 @@ function CreateInvoice() {
     const dataMedicine = medicine.map(
         item => ({ label: item.name, value: JSON.stringify(item) })
     );
+
+    if (!employee)
+        return null;
+
     return (
         <>
             <div className="container">
@@ -140,8 +154,9 @@ function CreateInvoice() {
                     initialValues={{
                         paid: 0,
                         note: "",
-                        documentNumber: "",
+                        documentNumber: null,
                         supplierId: 0,
+                        appUserId: employee.appUser.id,
                         invoiceDetailDtoSet: [{
                             medicineId: 0,
                             discount: 0,
@@ -151,10 +166,11 @@ function CreateInvoice() {
 
                         },]
                     }}
-                    onSubmit={async (invoiceValue) => {
+                    onSubmit={async (invoiceValue, { setSubmitting, setErrors }) => {
                         let newInvoiceValue = { ...invoiceValue, supplierId: document.getElementById("supplierId").value };
-                       await createInvoice(newInvoiceValue);
-                       await navigate("/dashboard/invoice");
+                        setSubmitting(true);
+                        await createInvoice(newInvoiceValue, setErrors);
+                        setSubmitting(false);
                     }}
 
                     validationSchema={Yup.object({
@@ -163,19 +179,21 @@ function CreateInvoice() {
                             .min(0, "Trường không được nhỏ hơn 0")
                             .max(1000000000, "Không được lớn hơn 1 tỷ"),
                         note: Yup.string().max(100, "Trường nhập vào phải nhỏ hơn 100 kí tự"),
-                        documentNumber: Yup.string().max(10, "Trường nhập vào phải nhỏ hơn 10 kí tự"),
-                        supplierId: Yup.number().test("Trường này không được để trống", value => value !== 0),
+                        documentNumber: Yup.string().required("Không được để trống trường này").max(10, "Trường nhập vào phải nhỏ hơn 10 kí tự"),
+                        // supplierId: Yup.number().required("Không được để trống trường này").test("Trường này không được để trống", value => value !== 0),
                         invoiceDetailDtoSet: Yup.array().of(
                             Yup.object().shape({
-                                medicineId: Yup.number().test("Trường này không được để trống", value => value !== 0),
+                                // medicineId: Yup.number().test("Trường này không được để trống", value => value !== 0),
                                 discount: Yup.number("Trường nhập vào phải là số")
                                     .min(0, "Trường không được nhỏ hơn 1")
-                                    .max(10000, "Không được lớn hơn 10000"),
+                                    .required("Không được để trống trường này")
+                                    .max(100, "Trường Không được lớn hơn 100"),
                                 medicineQuantity: Yup.number("Trường nhập vào phải là số")
                                     .min(1, "Trường không được nhỏ hơn 1")
-                                    .max(10000, "Không được lớn hơn 10000"),
-                                lot: Yup.string().max(20, "Trường nhập vào phải nhỏ hơn 20 kí tự"),
-                                expiry: Yup.date().min(new Date(), "Ngày phải lớn hơn ngày hiện tại")
+                                    .required("Không được để trống trường này")
+                                    .max(10000, "Trường Không được lớn hơn 10000"),
+                                lot: Yup.string().required("Không được để trống trường này").max(20, "Trường nhập vào phải nhỏ hơn 20 kí tự"),
+                                expiry: Yup.date().required("Không được để trống trường này").min(new Date(), "Ngày phải lớn hơn ngày hiện tại")
                             })
                         )
 
@@ -195,7 +213,7 @@ function CreateInvoice() {
                                                         <div className="mb-3 row">
                                                             <label htmlFor="makh" className="col-sm-4 col-form-label">Mã NCC</label>
                                                             <div className="col-sm-8">
-                                                                <div className="row">
+                                                                <div className="row g-1">
                                                                     <div className="col-10 p-0">
                                                                         <SelectPicker onChange={(value) => {
                                                                             let supplierObject = JSON.parse(value);
@@ -204,6 +222,7 @@ function CreateInvoice() {
                                                                             document.getElementById("supplierAddress").value = supplierObject.address;
 
                                                                         }}
+                                                                            defaultValue="0"
                                                                             locale={{ searchPlaceholder: "Tìm kiếm" }}
                                                                             placeholder={"Tìm kiếm"}
                                                                             preventOverflow virtualized data={dataSupllier}
@@ -212,9 +231,11 @@ function CreateInvoice() {
                                                                         <input id="supplierId" hidden name="supplierId" type="number" ></input>
                                                                     </div>
                                                                     <div className="col-2 h-auto p-0">
-                                                                        <button type="button" className="w-100 btn btn-outline-primary float-end">
-                                                                            <FaPlus />
-                                                                        </button>
+                                                                        <Link to={"/dashboard/supplier/create-supplier"}>
+                                                                            <button type="button" className="w-100 btn btn-outline-primary float-end">
+                                                                                <FaPlus />
+                                                                            </button>
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -263,7 +284,7 @@ function CreateInvoice() {
                                                         <div className="mb-3 row">
                                                             <label htmlFor="input7" className="col-sm-4 col-form-label">Nhân viên</label>
                                                             <div className="col-sm-8">
-                                                                <input type="text" disabled className="form-control" id="input7" />
+                                                                <input type="text" defaultValue={employee.nameEmployee} disabled className="form-control" id="input7" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -290,7 +311,7 @@ function CreateInvoice() {
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input11" className="col-sm-4 col-form-label">Thanh toán</label>
                                                         <div className="col-sm-8">
-                                                            <Field type="number" name="paid" className="form-control" id="paid" />
+                                                            <Field type="number" onKeyUp={() => setInvoiceInfo()} name="paid" className="form-control" id="paid" />
                                                             <ErrorMessage style={{ color: 'red' }} component='span' name="paid" />
                                                         </div>
                                                     </div>
@@ -311,7 +332,7 @@ function CreateInvoice() {
                                                 <div className="row">
                                                     <div className="table-responsive">
                                                         <table id="editableTable" className="table table-hover rounded-3 overflow-hidden">
-                                                            <thead className="text-light " style={{ backgroundColor: '#0d6efd' }}>
+                                                            <thead className="text-light text-center" style={{ backgroundColor: '#0d6efd' }}>
                                                                 <tr>
                                                                     <th scope="col">Tên thuốc</th>
                                                                     <th scope="col">Đơn vị tính</th>
@@ -354,28 +375,7 @@ function CreateInvoice() {
                                                                                     onChange={async (value) => {
                                                                                         let medicineObject = await JSON.parse(value);
                                                                                         values.invoiceDetailDtoSet[index].medicineId = await medicineObject.id ? medicineObject.id : 0;
-                                                                                        // const updatedList = invoiceDetails.map(item => {
-                                                                                        //     return {
-                                                                                        //         ...item, medicineId: {
-                                                                                        //             price: medicineObject.price,
-                                                                                        //             retailProfits: medicineObject.retailProfits,
-                                                                                        //             vat: medicineObject.vat
-                                                                                        //         }
-                                                                                        //     }
-                                                                                        // });
-
-                                                                                        // medicineId: {
-                                                                                        //     price: 0,
-                                                                                        //     retailProfits: 0,
-                                                                                        //     vat: 0
-                                                                                        // }
-                                                                                        // setInvoiceDetails(updatedList);
-                                                                                        // {...values, values.invoiceDetailDtoSet[index].medicineId.price : medicineObject.price}
-                                                                                        // setUnitPrice(medicineObject.price - (medicineObject.price * medicineObject.retailProfits / 100));
-                                                                                        // setRealPrice(unitPrice - (unitPrice * medicineObject.vat / 100));
-                                                                                        // let totalPrice = (unitPrice - (unitPrice * objectMedicine.vat / 100)) * quantity
-                                                                                        // const temp = await getUnit(medicineObject.id);
-                                                                                        // setUnit(temp);
+                                                                                        setInvoiceDetailInfo(medicineObject, index);
                                                                                     }
 
                                                                                     }
@@ -385,17 +385,18 @@ function CreateInvoice() {
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineId`} />
                                                                                 </td>
                                                                                 <td></td>
-                                                                                <td ><Field type="number" name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
+                                                                                <td>
+                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(value.medicineId, index)} id={`invoiceDetailDtoSet.${index}.medicineQuantity`} name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineQuantity`} />
                                                                                 </td>
                                                                                 <td className="unitPrice"></td>
 
                                                                                 <td className="discount">
-                                                                                    <Field type="number" name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
+                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(value.medicineId, index)} id={`invoiceDetailDtoSet.${index}.discount`} name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.discount`} />
                                                                                 </td>
                                                                                 <td></td>
-                                                                                <td className="realPrice"></td>
+                                                                                <td className="realPrice">0</td>
 
                                                                                 <td ><Field type="text" name={`invoiceDetailDtoSet.${index}.lot`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.lot`} />
@@ -430,9 +431,11 @@ function CreateInvoice() {
                                                 <button type="button" onClick={selectedRow !== -1 ? () => { remove(selectedRow); setSelectedRow(-1) } : null} className="btn btn-outline-primary"><FaRegTrashAlt className="mx-1" />
                                                     Xoá thuốc
                                                 </button>
-                                                <Link to={"/dashboard/invoice"}><button type="button" onClick={() => setInvoiceInfo()} className="btn btn-outline-primary">
-                                                    <AiOutlineRollback className="mx-1" /> Trở về
-                                                </button></Link>
+                                                <Link to={"/dashboard/invoice"}>
+                                                    <button type="button" className="btn btn-outline-primary">
+                                                        <AiOutlineRollback className="mx-1" /> Trở về
+                                                    </button>
+                                                </Link>
                                             </div>
                                         </div>
                                     </div>
@@ -443,6 +446,7 @@ function CreateInvoice() {
                     )}
                 </Formik >
             </div>
+
         </>
     );
 }

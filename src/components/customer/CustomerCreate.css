@@ -1,38 +1,13 @@
-.form-input {
-  width: 600px;
-  border: 1px solid black;
-  padding: 20px;
-  border-radius: 20px;
-  height: auto;
+.image-with-text {
+    background-image: url('https://thuthuatnhanh.com/wp-content/uploads/2022/06/Hinh-anh-Vien-Thuoc.jpg');
+    background-size:  cover;
+    background-repeat: no-repeat;
+    padding: 4%;
+    color: #ffffff;
+    border-radius: 20px;
+    clip-path: polygon(0% 0%, 97% 0%, 97% 100%, 0% 100%, 0% 97%);
 }
 
-.form-btn {
-  width: 600px;
-}
-
-body {
-  padding: 20px;
-}
-
-.form-input {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 20px;
-  margin-bottom: 20px;
-}
-
-.form-input label {
-}
-
-.form-control {
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-}
-.form-select {
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-}
-
-.form-btn {
-  text-align: right;
+.image-with-body{
+    background-color:  whitesmoke;
 }

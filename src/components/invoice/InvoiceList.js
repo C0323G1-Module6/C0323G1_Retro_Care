@@ -172,6 +172,14 @@ function InvoiceList() {
         setCurrentPage(page);
         setSearchPage(page);
     };
+    // const handleMouseEnter = (medicine) => {
+    //     setShowContent(true);
+    //     setMedicine(medicine);
+    // };
+    // const handleMouseLeave = () => {
+    //     setShowContent(false);
+    // };
+
     useEffect(() => {
         if (sortColumn) {
             handleFilter();
@@ -194,6 +202,15 @@ function InvoiceList() {
     const clearEndDate = () => {
         setEndDate("");
     };
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = String(date.getFullYear());
+
+        return `${day}-${month}-${year}`;
+    }
 
     return (
         <div>
@@ -350,9 +367,9 @@ function InvoiceList() {
                                     <col style={{ width: "80px", maxWidth: "80px" }} />
                                     <col style={{ width: "100px", maxWidth: "100px" }} />
                                     <col style={{ width: "80px", maxWidth: "80px" }} />
-                                    <col style={{ width: "130px", maxWidth: "130px" }} />
-                                    <col style={{ width: "130px", maxWidth: "130px" }} />
-                                    <col style={{ width: "200px", maxWidth: "200px" }} />
+                                    <col style={{ width: "130px", maxWidth: "150px" }} />
+                                    <col style={{ width: "130px", maxWidth: "150px" }} />
+                                    <col style={{ width: "200px", maxWidth: "250px" }} />
                                     <col style={{ width: "300px", maxWidth: "300px" }} />
                                 </colgroup>
                                 <thead style={{ background: "#0d6efd", color: "white" }}>
@@ -431,11 +448,7 @@ function InvoiceList() {
                                         </td>
                                         <td className="py-3 border-b border-gray-200 text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">
-                                                {new Date(i.creationDay).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })}
+                                                {formatDate(i.creationDay)}
                                             </p>
                                         </td>
 
