@@ -15,7 +15,7 @@ export async function deleteInvoice(id) {
     return response.data;
 }
 
-export async function searchInvoice(startDate, endDate, startTime, endTime, sortColumn, page, size) {
+export async function searchInvoice(startDate, endDate, startTime, endTime, sortColumn,sortType, page, size) {
     try {
         const response = await axios.get('http://localhost:8080/api/invoice/search/result', {
             params: {
@@ -26,7 +26,7 @@ export async function searchInvoice(startDate, endDate, startTime, endTime, sort
                 startTime: startTime,
                 endTime: endTime,
                 sortColumn: sortColumn,
-
+                sort: sortType
             },
         });
         return response.data;

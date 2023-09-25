@@ -12,7 +12,7 @@ function InvoiceDetailMedicine() {
     const [showContent,setShowContent]= useState(false);
     const [medicine, setMedicine] = useState("");
 
-    const quantity = 15 ;
+    const quantity = 18 ;
     const getMedicineById = async () => {
         const data = await getInvoiceDetailByID(param.id);
         setInvoiceDetail(data);
@@ -23,7 +23,6 @@ function InvoiceDetailMedicine() {
             setMedicine(activeElement);
         }
     };
-    console.log(handleMouseEnter)
     const handleMouseLeave = () => {
         setShowContent(false);
     };
@@ -51,12 +50,12 @@ function InvoiceDetailMedicine() {
                                 <colgroup>
                                     <col style={{ width: "40px", maxWidth: "40px" }} />
                                     <col style={{ width: "80px", maxWidth: "80px" }} />
+                                    <col style={{ width: "140px",}} />
                                     <col style={{ width: "100px" }} />
-                                    <col style={{ width: "100px" }} />
-                                    <col style={{ width: "150px" }} />
-                                    <col style={{ width: "150px" }} />
+                                    <col style={{ width: "160px" }} />
+                                    <col style={{ width: "160px" }} />
                                     <col style={{ width: "80px"}} />
-                                    <col style={{ width: "130px"}} />
+                                    <col style={{ width: "120px"}} />
                                     <col style={{ width: "80px"}} />
                                     <col style={{ width: "100px"}} />
                                 </colgroup>
@@ -126,10 +125,32 @@ function InvoiceDetailMedicine() {
                                 </thead>
                                 <tbody>
                                 {invoiceDetail.map((ind, index) => (
-                                    <tr key={ind.id}>
+                                    <tr key={ind.id} style={{position: 'relative',
+                                        zIndex: '2'}}>
                                         <td className="py-3  px-3 border-b border-gray-200">{index + 1}</td>
                                         <td className="py-3  border-b border-gray-200">{ind.codeMedicine}</td>
-                                        <td className="py-3  border-b border-gray-200">{ind.nameMedicine}</td>
+                                        <td
+                                            className="py-3 border-b border-gray-200 text-sm"
+                                            style={{position: 'relative', }}
+                                            onMouseEnter={() => { handleMouseEnter(ind.nameMedicine); }}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {ind.nameMedicine.length > quantity
+                                                ? `${ind.nameMedicine.slice(0, quantity)}...`
+                                                : ind.nameMedicine
+                                            }
+                                            {showContent && medicine === ind.nameMedicine &&
+                                                <div
+                                                    style={{position: 'absolute',
+                                                        background:'#f3f3f5',
+                                                        top: '-2%',
+                                                        boxSizing: 'border-box',
+                                                        width: '130px',
+                                                        height: '100px',
+                                                        zIndex: 99,
+                                                        }}>{ind.nameMedicine}</div>
+                                            }
+                                        </td>
                                         <td className="py-3  border-b border-gray-200">{ind.nameKind}</td>
                                         <td
                                             className="py-3 border-b border-gray-200 text-sm"
@@ -144,13 +165,12 @@ function InvoiceDetailMedicine() {
                                             {showContent && medicine === ind.activeElement &&
                                                 <div style={{position: 'absolute',
                                                     background:'#f3f3f5',
-                                                    color: 'blue',
                                                     top: '-2%',
-                                                    borderRadius: '5px',
                                                     boxSizing: 'border-box',
-                                                    width: '200px',
-                                                    height: '56px',
-                                                    zIndex: 99}}>{ind.activeElement}</div>
+                                                    width: 'auto',
+                                                    minHeight:'58px',
+                                                    zIndex: 99,
+                                                    }}>{ind.activeElement}</div>
                                             }
                                         </td>
                                         <td
@@ -165,15 +185,14 @@ function InvoiceDetailMedicine() {
                                             }
                                             {showContent && medicine === ind.noteMedicine &&
                                                 <div
-                                                style={{position: 'absolute',
-                                                    color: 'blue',
-                                                    top: '-5%',
-                                                    left: '30%',
-                                                    borderRadius: '5px',
-                                                    boxSizing: 'border-box',
-                                                    width: '700px',
-                                                    height: 'auto',
-                                                    zIndex: 99}}>{ind.noteMedicine}</div>
+                                                    style={{position: 'absolute',
+                                                        background:'#f3f3f5',
+                                                        top: '-2%',
+                                                        boxSizing: 'border-box',
+                                                        width: '190px',
+                                                        height: 'auto',
+                                                        minHeight:'58px',
+                                                        zIndex: 99}}>{ind.noteMedicine}</div>
                                             }
                                         </td>
                                         <td className="py-3  border-b border-gray-200">{ind.origin}</td>
