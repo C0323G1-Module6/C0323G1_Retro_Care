@@ -38,10 +38,11 @@ import Authentication from "./components/user/Authentication";
 import AuthorOfCustomer from "./components/user/AuthorOfCustomer";
 import AuthorOfEmployee from "./components/user/AuthorOfEmployee";
 import { EnumAppUserRole } from "./components/user/EnumAppUserRole";
-import {axiosClient} from './services/user/AxiosClient';
+import { axiosClient } from './services/user/AxiosClient';
 import Billing from './components/order/Billing';
 import ReturnVNPay from './components/order/ReturnVNPay';
 import ListInvoiceOrder from './components/order/ListInvoiceOrder';
+import { EditInvoice } from "./components/invoice/EditInvoice";
 function App() {
   axiosClient();
   return (
@@ -55,7 +56,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/details/:id" element={<Details />}></Route>
         <Route path="/user-infor/:id" element={<UserCustomer />} />
-        <Route path="/cart" element={<Cart/>}/>
+        <Route path="/cart" element={<Cart />} />
         <Route
           element={
             <Authentication
@@ -68,11 +69,11 @@ function App() {
             />
           }
         >
-          
+
           <Route path="/success" element={<Billing />}></Route>
           <Route path="/success-vnp" element={<ReturnVNPay />}></Route>
           <Route path="/dashboard" element={<Dashboard />}>
-            <Route path="/dashboard/ListInvoiceOrder" element={<ListInvoiceOrder/>}/>
+            <Route path="/dashboard/ListInvoiceOrder" element={<ListInvoiceOrder />} />
             <Route element={<AuthorOfCustomer />}>
               <Route path="/dashboard/retail" element={<Retail />} />
               <Route
@@ -154,6 +155,9 @@ function App() {
                   path="/dashboard/invoice/create"
                   element={<CreateInvoice />}
                 />
+                <Route
+                  path="/dashboard/invoice/edit/:id"
+                  element={<EditInvoice />} />
               </Route>
             </Route>
           </Route>
