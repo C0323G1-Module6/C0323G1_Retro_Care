@@ -258,12 +258,12 @@ const UserCustomer = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="mb-3 row">
-                                <div className="col-7" style={{float: "start"}}>
+                            <div className="mb-3 d-flex justify-content-between align-items-center">
+                                <div  style={{float: "start"}}>
                                     <small className="text-danger">(*)</small> Thông tin cần thiết để mua
                                     hàng
                                 </div>
-                                <div className="col-3">
+                                <div >
                                     { isValid && dirty && (
                                         <button
                                             className="btn btn-success float-end mx-1 mt-2 shadow"
@@ -271,7 +271,7 @@ const UserCustomer = () => {
                                         >Cập nhật
                                         </button>)}
                                 </div>
-                                <div className="col-2">
+                                <div >
                                     <button
                                         type="button"
                                         onClick={comeBackPagePrev}

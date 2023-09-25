@@ -26,7 +26,6 @@ import {
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
 import Billing from "./Billing";
-import { set } from "date-fns";
 // Fix something
 export default function Cart() {
   const [isUpdated, setIsUpdated] = useState(false);
@@ -39,6 +38,7 @@ export default function Cart() {
   const [selectedMedicines, setSelectedMedicines] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [customerToPay, setCustomerToPay] = useState({});
+  const [isCheckedAll, setIsCheckedAll] = useState(false);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
   const navigate = useNavigate();
@@ -343,6 +343,25 @@ export default function Cart() {
     window.location.href = res;
   };
 
+  const handleCheckedAll = () => {
+    setSelectedMedicines([]);
+    let checkboxes = document.querySelectorAll("input[type='checkbox']");
+
+    if (isCheckedAll) {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = false;
+      });
+      setIsCheckedAll(false);
+    } else {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = true;
+      });
+      setIsCheckedAll(true);
+      setSelectedMedicines(carts);
+    }
+    setDiscount(0);
+  };
+
   useEffect(() => {
     document.title = "RetroCare - Giỏ Hàng";
   }, []);
@@ -385,6 +404,17 @@ export default function Cart() {
                         cursor: "pointer",
                         fontSize: "14px",
                       }}
+                      onClick={handleCheckedAll}
+                    >
+                      Chọn tất cả
+                    </button>
+                    <button
+                      type="button"
+                      className=" mx-5 p-0 text-primary"
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "14px",
+                      }}
                       onClick={handleDelete}
                     >
                       Xoá sản phẩm
@@ -409,9 +439,14 @@ export default function Cart() {
                                   <div className="d-flex flex-column flex-md-row align-items-center justify-content-start ">
                                     <span>
                                       <input
+                                        id={`el_${el.cartId}`}
                                         type="checkbox"
                                         name="multiSelect"
-                                        style={{ marginRight: "20px" }}
+                                        style={{
+                                          width: "15px",
+                                          height: "15px",
+                                          marginRight: "20px",
+                                        }}
                                         onChange={() => handleMultiSelect(el)}
                                       />
                                     </span>

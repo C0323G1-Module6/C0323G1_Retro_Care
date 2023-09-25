@@ -6,6 +6,7 @@ import { AiFillGoogleCircle } from "react-icons/ai"
 import { Link, useNavigate } from "react-router-dom";
 import { LoginSocialFacebook } from "reactjs-social-login";
 import Swal from "sweetalert2";
+import { te } from "date-fns/locale";
 
 
 const Login = () => {
@@ -18,7 +19,13 @@ const Login = () => {
            
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate(-1);
+            const tempURL = localStorage.getItem("tempURL");
+            if(tempURL){
+                navigate(tempURL);
+            }else{
+                navigate('/home');
+
+            }
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -31,9 +38,14 @@ const Login = () => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate(-1);
+            const tempURL = localStorage.getItem("tempURL");
+            if(tempURL){
+                navigate(tempURL);
+            }else{
+                navigate('/home');
+
+            }
         } catch (e) {
-            console.log(e);
             Swal.fire({
                 icon: 'error',
                 title: e.response.data,

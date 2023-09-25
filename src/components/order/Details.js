@@ -53,12 +53,11 @@ export default function Details() {
     const isLoggedIn = infoAppUserByJwtToken();
     if (!isLoggedIn) {
       swal.fire("Vui lòng đăng nhập tài khoản!", "", "warning");
+      localStorage.setItem("tempURL", window.location.pathname);
       navigate("/login");
     } else {
       // extract appUserId from token
       const id = await getIdByUserName(isLoggedIn.sub);
-      console.log("igiigigig");
-      console.log(id.data);
       setAppUserId(id.data);
       // do checking
       const quantity = document.getElementById("quantity-value").value;
