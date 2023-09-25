@@ -26,6 +26,7 @@ function CreateInvoice() {
     const elementRef = useRef(null);
     const [employee, setEmployee] = useState({
     });
+    const [totalPriceMedicine, setTotalPriceMedicine] = useState(0);
 
 
 
@@ -44,7 +45,7 @@ function CreateInvoice() {
             const result = await ServiceInvoice.createInvoice(invoice);
 
             Swal.fire(
-                "Thêm thành công thành công !",
+                "Thêm thành công !",
                 "Hóa đơn " + result.data.code + " đã được thêm!",
                 "success"
             );
@@ -79,6 +80,7 @@ function CreateInvoice() {
     }, [employee.id])
 
 
+
     const getUnit = async (medicineId) => {
         const result = await ServiceInvoice.getUnitDetail(medicineId);
         return result;
@@ -92,8 +94,7 @@ function CreateInvoice() {
             const value = parseInt(element.textContent) || 0;
             totalPrice += value;
         }
-        document.getElementById("medicinePrice").value = totalPrice;
-        document.getElementById("totalPrice").value = totalPrice;
+        setTotalPriceMedicine(totalPrice);
         if (totalPrice - document.getElementById("paid").value < 0)
             document.getElementById("extant").value = 0
         else
@@ -159,7 +160,7 @@ function CreateInvoice() {
                             medicineQuantity: 1,
                             lot: "",
                             expiry: new Date().toISOString().split('T')[0],
-
+                            medicineObject: {}
                         },]
                     }}
                     onSubmit={async (invoiceValue, { setSubmitting, setErrors }) => {
@@ -174,7 +175,7 @@ function CreateInvoice() {
                         paid: Yup.number("Trường nhập vào phải là số")
                             .required("Không được để trống trường này")
                             .min(0, "Trường không được nhỏ hơn 0")
-                            .max(1000000000, "Không được lớn hơn 1 tỷ"),
+                            .max(totalPriceMedicine, "Không được lớn hơn tổng tiền"),
                         note: Yup.string().max(100, "Trường nhập vào phải nhỏ hơn 100 kí tự"),
                         documentNumber: Yup.string().required("Không được để trống trường này").max(10, "Trường nhập vào phải nhỏ hơn 10 kí tự"),
                         // supplierId: Yup.number().required("Không được để trống trường này").test("Trường này không được để trống", value => value !== 0),
@@ -212,13 +213,16 @@ function CreateInvoice() {
                                                             <div className="col-sm-8">
                                                                 <div className="row g-1">
                                                                     <div className="col-10 p-0">
-                                                                        <SelectPicker onChange={(value) => {
-                                                                            let supplierObject = JSON.parse(value);
-                                                                            document.getElementById("supplierId").value = supplierObject.id;
-                                                                            document.getElementById("supplierName").value = supplierObject.name;
-                                                                            document.getElementById("supplierAddress").value = supplierObject.address;
-
-                                                                        }}
+                                                                        <SelectPicker
+                                                                            onClean={() => (values.supplierId = 0)}
+                                                                            onChange={(value) => {
+                                                                                if (value !== null) {
+                                                                                    let supplierObject = JSON.parse(value);
+                                                                                    document.getElementById("supplierId").value = supplierObject.id;
+                                                                                    document.getElementById("supplierName").value = supplierObject.name;
+                                                                                    document.getElementById("supplierAddress").value = supplierObject.address;
+                                                                                }
+                                                                            }}
                                                                             defaultValue="0"
                                                                             locale={{ searchPlaceholder: "Tìm kiếm" }}
                                                                             placeholder={"Tìm kiếm"}
@@ -295,14 +299,14 @@ function CreateInvoice() {
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input8" className="col-sm-4 col-form-label">Tiền thuốc</label>
                                                         <div className="col-sm-8">
-                                                            <input type="text" disabled id="medicinePrice" className="form-control" />
+                                                            <input type="text" disabled id="medicinePrice" value={totalPriceMedicine} className="form-control" />
                                                         </div>
                                                     </div>
 
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input10" className="col-sm-4 col-form-label">Tổng tiền</label>
                                                         <div className="col-sm-8">
-                                                            <input type="text" disabled id="totalPrice" className="form-control" />
+                                                            <input type="text" disabled id="totalPrice" value={totalPriceMedicine} className="form-control" />
                                                         </div>
                                                     </div>
                                                     <div className="mb-3 row">
@@ -348,7 +352,7 @@ function CreateInvoice() {
                                                                 {
                                                                     values.invoiceDetailDtoSet.map(
                                                                         (value, index) => (
-                                                                            <tr key={index} id={index} style={selectedRow === index ? { backgroundColor: '#0d6efd' } : { backgroundColor: 'white' }}
+                                                                            <tr key={index} id={index} className="text-center" style={selectedRow === index ? { backgroundColor: '#0d6efd' } : { backgroundColor: 'white' }}
                                                                                 onClick={() => {
 
                                                                                     if (index === selectedRow) {
@@ -365,14 +369,21 @@ function CreateInvoice() {
                                                                                 }}
 
                                                                             >
-                                                                                <td ><SelectPicker
+                                                                                <td style={{ width: 224 }}><SelectPicker
+                                                                                    onClean={
+                                                                                        () => { values.invoiceDetailDtoSet[index].medicineId = 0 }
+                                                                                    }
                                                                                     preventOverflow virtualized data={dataMedicine}
                                                                                     placeholder={"Tìm kiếm"}
                                                                                     locale={{ searchPlaceholder: "Tìm kiếm" }}
                                                                                     onChange={async (value) => {
-                                                                                        let medicineObject = await JSON.parse(value);
-                                                                                        values.invoiceDetailDtoSet[index].medicineId = await medicineObject.id ? medicineObject.id : 0;
-                                                                                        setInvoiceDetailInfo(medicineObject, index);
+
+                                                                                        if (value !== null) {
+                                                                                            let medicineObject = await JSON.parse(value);
+                                                                                            values.invoiceDetailDtoSet[index].medicineId = await medicineObject.id ? medicineObject.id : 0;
+                                                                                            values.invoiceDetailDtoSet[index].medicineObject = medicineObject;
+                                                                                            setInvoiceDetailInfo(medicineObject, index);
+                                                                                        }
                                                                                     }
 
                                                                                     }
@@ -381,24 +392,24 @@ function CreateInvoice() {
                                                                                     <Field innerRef={fieldNameRef} value={values.invoiceDetailDtoSet[index].medicineId} hidden name={`invoiceDetailDtoSet.${index}.medicineId`} />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineId`} />
                                                                                 </td>
-                                                                                <td></td>
-                                                                                <td>
-                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(value.medicineId, index)} id={`invoiceDetailDtoSet.${index}.medicineQuantity`} name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
+                                                                                <td > {() => (values.invoiceDetailDtoSet[index].medicineObject.price)}</td>
+                                                                                <td style={{ width: 120 }}>
+                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(values.invoiceDetailDtoSet[index].medicineId, index)} id={`invoiceDetailDtoSet.${index}.medicineQuantity`} name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineQuantity`} />
                                                                                 </td>
                                                                                 <td className="unitPrice"></td>
 
-                                                                                <td className="discount">
-                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(value.medicineId, index)} id={`invoiceDetailDtoSet.${index}.discount`} name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
+                                                                                <td className="discount" style={{ width: 100 }}>
+                                                                                    <Field type="number" id={`invoiceDetailDtoSet.${index}.discount`} onKeyUp={() => updateInoviceDetail(values.invoiceDetailDtoSet[index].medicineId, index)} name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.discount`} />
                                                                                 </td>
                                                                                 <td></td>
                                                                                 <td className="realPrice">0</td>
 
-                                                                                <td ><Field type="text" name={`invoiceDetailDtoSet.${index}.lot`} class="form-control" />
+                                                                                <td style={{ width: 224 }}><Field type="text" name={`invoiceDetailDtoSet.${index}.lot`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.lot`} />
                                                                                 </td>
-                                                                                <td className="expiry"><Field type="date" name={`invoiceDetailDtoSet.${index}.expiry`} class="form-control" />
+                                                                                <td className="expiry" style={{ width: 140 }}><Field type="date" name={`invoiceDetailDtoSet.${index}.expiry`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.expiry`} />
                                                                                 </td>
                                                                             </tr>
@@ -418,7 +429,8 @@ function CreateInvoice() {
                                                     discount: 0,
                                                     medicineQuantity: 1,
                                                     lot: "",
-                                                    expiry: new Date().toISOString().split('T')[0]
+                                                    expiry: new Date().toISOString().split('T')[0],
+                                                    medicineObject: {}
                                                 })} type="button" className="btn btn-outline-primary"> <FaPlus className="mx-1" /> Thêm thuốc
                                                 </button>
                                             </fieldset>
