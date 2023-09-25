@@ -33,7 +33,7 @@ function UpdateSupplierComponent() {
         navigate("/dashboard/supplier");
      }
   }
-  const handleSubmit = async (value) => {
+  const handleSubmit = async (value,setErrors) => {
     try {
       await updateSupplierById(idSupplier,value);
       Swal.fire(
@@ -46,7 +46,12 @@ function UpdateSupplierComponent() {
         }
       ).then(() => {navigate("/dashboard/supplier")});
     } catch (err) {
-      console.log(err);
+      if (err.response.data) {
+        setErrors(err.response.data);
+      }
+      if (err.response.status === 500) {
+        setErrors(err.response.data);
+      }
     }
   };
   useEffect(() => {
