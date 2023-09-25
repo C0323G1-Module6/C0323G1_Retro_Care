@@ -15,8 +15,10 @@ function InvoiceDetailMedicine() {
         setInvoiceDetail(data);
     }
 
+
     useEffect(() => {
         getMedicineById();
+        document.title = "RetroCare - Chi tiết hóa đơn nhập kho";
     }, []);
     console.log(invoiceDetail.length > 0 ? invoiceDetail[0].code : null)
     return (
@@ -28,64 +30,101 @@ function InvoiceDetailMedicine() {
                         CHI TIẾT THUỐC TRONG HÓA ĐƠN <span>{invoiceDetail.length > 0 ? invoiceDetail[0].code : null}</span> </h1>
                 </div>
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
-                    <div className="inline-block min-w-full shadow rounded-lg overflow-hidden ">
-                        <div style={{flex: "1"}}>
-                            <table>
-                                <tr style={{background: '#0d6efd', color: '#ffffff'}}>
-                                    <th className=" px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '30px', maxWidth:'30px'}}>
+                    <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+                        <div style={{ flex: "1", minHeight: "27.2rem", overflowX: "auto" }}>
+                            <table
+                                className="min-w-full rounded-3 leading-normal table table-hover overflow-hidden mb-0"
+                                style={{ tableLayout: "fixed" }}
+                            >
+                                <colgroup>
+                                    <col style={{ width: "40px", maxWidth: "40px" }} />
+                                    <col style={{ width: "80px", maxWidth: "80px" }} />
+                                    <col style={{ width: "100px" }} />
+                                    <col style={{ width: "100px" }} />
+                                    <col style={{ width: "150px" }} />
+                                    <col style={{ width: "150px" }} />
+                                    <col style={{ width: "80px"}} />
+                                    <col style={{ width: "130px"}} />
+                                    <col style={{ width: "80px"}} />
+                                    <col style={{ width: "100px"}} />
+                                </colgroup>
+                                <thead style={{ background: "#0d6efd", color: "white" }}>
+                                <tr className="table_header_employee">
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         STT
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '120px', maxWidth:'120px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Mã thuốc
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '150px', maxWidth:'150px'}}>
-                                        Nhóm thuốc
-                                    </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Tên thuốc
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '100px', maxWidth:'100px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
+                                        Nhóm thuốc
+                                    </th>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Hoạt chất
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '250px', maxWidth:'250px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Ghi chú
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '120px', maxWidth:'120px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Xuất xứ
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '150px', maxWidth:'150px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Nhà sản xuất
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '120px', maxWidth:'120px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Số lượng
                                     </th>
-                                    <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider"
-                                        style={{fontSize: '1rem', width: '120px', maxWidth:'120px'}}>
+                                    <th
+                                        className="py-3 border-b border-gray-200  text-sm"
+                                        style={{ fontSize: "1rem" }}
+                                    >
                                         Giá nhập
                                     </th>
                                 </tr>
+                                </thead>
                                 <tbody>
                                 {invoiceDetail.map((ind, index) => (
                                     <tr key={ind.id}>
-                                        <td className="py-3 px-3 border-b border-gray-200">{index + 1}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.codeMedicine}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.nameKind}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.nameMedicine}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.activeElement}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.noteMedicine}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.origin}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.maker}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.quantity}</td>
-                                        <td className="py-3 px-3 border-b border-gray-200">{ind.importPrice}</td>
+                                        <td className="py-3  px-3 border-b border-gray-200">{index + 1}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.codeMedicine}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.nameMedicine}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.nameKind}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.activeElement}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.noteMedicine}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.origin}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.maker}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.quantity}</td>
+                                        <td className="py-3  border-b border-gray-200">{ind.importPrice.toLocaleString('vi-VN')} VNĐ</td>
                                     </tr>
                                 ))}
                                 </tbody>

@@ -165,6 +165,7 @@ function InvoiceList() {
 
     useEffect(() => {
         getListInvoice(currentPage);
+        document.title = "RetroCare - Quản lí hóa đơn nhập kho";
     }, [currentPage]);
 
     const handlePageChange = async (page) => {
@@ -174,8 +175,10 @@ function InvoiceList() {
     useEffect(() => {
         if (sortColumn) {
             handleFilter();
+            document.title = "RetroCare - Quản lí hóa đơn nhập kho";
         }
     }, [sortColumn]);
+
 
 // Duyệt qua từng phần tử và xử lý
     const clearStartTime = () => {
@@ -347,8 +350,8 @@ function InvoiceList() {
                                     <col style={{ width: "80px", maxWidth: "80px" }} />
                                     <col style={{ width: "100px", maxWidth: "100px" }} />
                                     <col style={{ width: "80px", maxWidth: "80px" }} />
-                                    <col style={{ width: "110px", maxWidth: "110px" }} />
-                                    <col style={{ width: "110px", maxWidth: "110px" }} />
+                                    <col style={{ width: "130px", maxWidth: "130px" }} />
+                                    <col style={{ width: "130px", maxWidth: "130px" }} />
                                     <col style={{ width: "200px", maxWidth: "200px" }} />
                                     <col style={{ width: "300px", maxWidth: "300px" }} />
                                 </colgroup>
