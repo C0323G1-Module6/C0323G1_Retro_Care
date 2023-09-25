@@ -6,13 +6,13 @@ import {
   AiOutlinePrinter,
   AiOutlineRollback,
 } from "react-icons/ai";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Field, Form, Formik, ErrorMessage } from "formik";
 import { getReport } from "../../services/report/ReportService";
 import ExcelJS from "exceljs";
+import { parseISO, format } from "date-fns";
 
 const GeneralReport = () => {
-  const [reportName, setReportName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -24,6 +24,7 @@ const GeneralReport = () => {
   const [medicineNeedMore, setMedicineNeedMore] = useState([]);
   const [saleDiary, setSaleDiary] = useState([]);
   const [message, setMessage] = useState("");
+  let currentDate = format(new Date(), "dd/MM/yyyy");
 
   const exportExcel = (dataArray, sheetName, fileName) => {
     const workbook = new ExcelJS.Workbook();
@@ -34,7 +35,6 @@ const GeneralReport = () => {
     switch (sheetName) {
       case "revenue":
         titleName = "BÁO CÁO TỔNG HỢP DOANH THU";
-
         break;
       case "profit":
         titleName = "BÁO CÁO TỔNG HỢP LỢI NHUẬN";
@@ -59,15 +59,21 @@ const GeneralReport = () => {
     }
 
     const titleRow = worksheet.addRow([titleName]);
-    worksheet.mergeCells(1, 1, 1, 4);
+    worksheet.mergeCells(1, 1, 1, 3);
     titleRow.font = { bold: true, size: 16 };
     titleRow.alignment = { horizontal: "center" };
+
+    const reportDate = worksheet.addRow(["Ngày xuất báo cáo: " + currentDate]);
+    reportDate.font = { bold: true, size: 12 };
+
     worksheet.addRow();
 
     // Tạo header
-    const headers = Object.keys(dataArray[0]).map((header) =>
+    let headers = Object.keys(dataArray[0]).map((header) =>
       header.toUpperCase()
     );
+    headers = headers.reverse();
+
     const headersRow = worksheet.addRow(headers);
     const borderStyle = {
       style: "thin",
@@ -93,7 +99,8 @@ const GeneralReport = () => {
 
     // Thêm dữ liệu
     dataArray.forEach((item, index) => {
-      const row = Object.values(item);
+      let row = Object.values(item);
+      row = row.reverse();
       const dataRow = worksheet.addRow(row);
       const fillColor = index % 2 === 0 ? "FFC0C0C0" : "FFD3D3D3";
       dataRow.eachCell((cell) => {
@@ -112,7 +119,7 @@ const GeneralReport = () => {
     });
 
     worksheet.columns.forEach((column) => {
-      column.width = 20;
+      column.width = 30;
       // Độ rộng mong muốn cho các cột
     });
 
@@ -138,8 +145,42 @@ const GeneralReport = () => {
         values.reportName
       );
       setMessage("");
-      setReportName(values.reportName);
-      exportExcel(result, reportName, "report.xlsx");
+      let fileName = values.reportName + " " + currentDate + ".xlsx";
+      const reportTitle = values.reportName;
+      let newResult = [];
+      if (
+        reportTitle === "revenue" ||
+        reportTitle === "profit" ||
+        reportTitle === "saleDiary"
+      ) {
+        newResult = result.map((item) => ({
+          ...item,
+          sellDate: format(parseISO(item.sellDate), "dd/MM/yyyy"),
+          total: new Intl.NumberFormat("vi-VN").format(item.total).toString(),
+        }));
+      }
+      if (reportTitle === "expireMedicine") {
+        newResult = result.map((item) => ({
+          ...item,
+          expiry: format(parseISO(item.expiry), "dd/MM/yyyy"),
+        }));
+      }
+      if (reportTitle === "debt") {
+        newResult = result.map((item) => ({
+          ...item,
+          total: new Intl.NumberFormat("vi-VN").format(item.total).toString(),
+        }));
+      }
+      if (
+        reportTitle === "bestSellerMedicine" ||
+        reportTitle === "medicineNeedMore"
+      ) {
+        newResult = result.map((item) => ({
+          ...item,
+        }));
+      }
+
+      exportExcel(newResult, values.reportName, fileName);
     } catch (err) {
       setMessage("Không có dữ liệu để hiển thị");
       if (err) {
@@ -221,8 +262,11 @@ const GeneralReport = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="row justify-content-center py-3 text-danger" style={{height:"14px"}}>
-                      {message}
+                    <div
+                      className="row justify-content-center py-3 text-danger"
+                      style={{ height: "14px" }}
+                    >
+                      <small style={{ textAlign: "center" }}>{message}</small>
                     </div>
                     <div className=" col-12 my-5  justify-content-center">
                       <h5>Loại báo cáo</h5>

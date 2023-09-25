@@ -16,7 +16,7 @@ export default function ReturnVNPay() {
   const [orderDetails, setOrderDetails] = useState([]);
   const [dataList, setDataList] = useState({});
   let [loading, setLoading] = useState(true);
-  let [color, setColor] = useState("#ffffff");
+  let [color, setColor] = useState("#119cd4");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -39,6 +39,7 @@ export default function ReturnVNPay() {
       const tempOrder = JSON.parse(temp);
       setDataList(tempOrder);
       console.log(JSON.parse(temp));
+      localStorage.removeItem("tempOrder");
 
       try {
         const create = await createOrder(
@@ -46,14 +47,31 @@ export default function ReturnVNPay() {
           tempOrder.loyaltyPoint,
           tempOrder.totalPrice,
           tempOrder.deletedCartIDs,
-          tempOrder.customerToPay
+          tempOrder.customerToPay,
+          true
         );
         dispatch(getAllCarts(tempOrder.appUserId));
-        findOrderDetais(create.data);
+        await findOrderDetais(create.data);
         setLoading(false);
-      } catch (err) {}
+      } catch (err) {
+        Swal.fire({
+          title: "Thanh toán không thành công!",
+          timer: 1500,
+          icon: "error",
+          showConfirmButton: false,
+        }).then(async () => {
+          localStorage.removeItem("tempOrder");
+        });
+      }
     } else {
-      Swal.fire("fail", "", "error");
+      Swal.fire({
+        title: "Xin lỗi chúng tôi không thể thực hiện thanh toán này!",
+        timer: 1500,
+        icon: "error",
+        showConfirmButton: false,
+      }).then(async () => {
+        localStorage.removeItem("tempOrder");
+      });
     }
   };
 
@@ -67,16 +85,23 @@ export default function ReturnVNPay() {
     }
   }, [responseCode]);
 
-  //   useEffect(() => {
-  //     findOrderDetais();
-  //   }, []);
-
   const currency = (money) => {
     return new Intl.NumberFormat("vi-VN").format(money);
   };
 
   if (loading) {
-    return <ClipLoader color={color} loading={loading} size={150} />;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <ClipLoader color={color} loading={loading} size={150} />
+      </div>
+    );
   }
 
   return (
@@ -86,8 +111,8 @@ export default function ReturnVNPay() {
         <div className="d-flex justify-content-center align-items-center flex-column">
           <img src="https://www.pharmacity.vn/images/empty-image.png"></img>
           <p className="col col-md-3 col-8 mb-3 text-center">
-            Tiếc quá! RetroCare không tìm thấy sản phẩm nào trong giỏ hàng của
-            bạn.
+            Tiếc quá! RetroCare không thể thực hiện thanh toán đơn hàng này cho
+            bạn! Vui lòng thử lại nhé!
           </p>
           <div>
             <Link to="/home" className="btn" style={{ background: "orange" }}>

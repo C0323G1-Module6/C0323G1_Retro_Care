@@ -186,6 +186,9 @@ function CustomerList() {
   }
   // --------------------------------------------------------------Use Effect ----------------------------------------------------
   useEffect(() => {
+    document.title = 'RetroCare - Danh sách khách hàng'
+}, []);
+  useEffect(() => {
     loadCustomerList(page, name, code, address, phoneNumber, groupValue, sortItem, sortType);
   }, [page, name, code, address, phoneNumber, groupValue, sortItem, sortType]);
 
