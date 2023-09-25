@@ -177,7 +177,7 @@ const RevenueAndProfitChart = () => {
                 <Form>
                   <div className="row ">
                     <fieldset
-                      className="form-input shadow mx-auto my-3"
+                      className="form-input-report shadow mx-auto my-3"
                       style={{ width: "97%", height: "40%" }}
                     >
                       <legend className="float-none w-auto px-3">
@@ -233,7 +233,7 @@ const RevenueAndProfitChart = () => {
                 </Form>
                 <div className="row">
                   <fieldset
-                    className="form-input shadow mx-auto "
+                    className="form-input-report shadow mx-auto "
                     style={{ width: "97%", height: "60%" }}
                   >
                     <legend className="float-none w-auto px-3">
@@ -296,7 +296,7 @@ const RevenueAndProfitChart = () => {
               <div className="col-8">
                 <div className="row">
                   <fieldset
-                    className="form-input shadow mx-auto my-3"
+                    className="form-input-report shadow mx-auto my-3"
                     style={{ width: "97%", height: "100%" }}
                   >
                     <legend className="float-none w-auto px-3">
