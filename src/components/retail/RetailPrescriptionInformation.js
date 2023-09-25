@@ -9,6 +9,7 @@ import diacriticless from "diacriticless";
 import { addJwtTokenToLocalStorage, getIdByUserName, infoAppUserByJwtToken } from "../../services/user/AppUserService";
 import { AiOutlineRollback } from "react-icons/ai";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa"
+import {AiOutlinePrinter} from "react-icons/ai";
 
 export default function RetailPrescriptionInfomation() {
 
@@ -245,10 +246,10 @@ export default function RetailPrescriptionInfomation() {
                                                     <input className="form-control" value={indication.name} readOnly />
                                                 </div>
 
-                                                <div className="col-sm-2">
+                                                <div style={{width: "80px"}}>
                                                     <input readOnly className="form-control" value={indication.frequency * indication.dosage * duration} />
                                                 </div>
-                                                <label className="col-sm-2 col-form-label">Viên</label>
+                                                <label className="col-form-label" style={{width: "70px"}}>Viên</label>
 
                                                 <div className="col-sm-2">
                                                     <a
@@ -257,20 +258,20 @@ export default function RetailPrescriptionInfomation() {
                                                         className="btn btn-outline-primary"
                                                         onClick={() => openSwal(indication.id)}
                                                     >
-                                                        <FaRegTrashAlt /> Xoá
+                                                        <FaRegTrashAlt />
                                                     </a>
                                                 </div>
                                             </div>
 
                                             <div className="mb-3 row d-flex align-items-center justify-content-start">
                                                 <div className="col-sm-1">&nbsp;</div>
-                                                <label className="col-sm-3 col-form-label">Ngày uống: </label>
-                                                <div className="col-sm-2">
+                                                <label className="col-form-label" style={{width: "120px"}}>Ngày uống: </label>
+                                                <div style={{width: "60px", margin: "0"}} >
                                                     <input className="form-control" readOnly value={indication.frequency} />
                                                 </div>
                                                 <label className="col-sm-1 col-form-label">lần,</label>
                                                 <label className="col-sm-2 col-form-label">Mỗi lần: </label>
-                                                <div className="col-sm-2">
+                                                <div style={{width: "60px", margin: "0"}} >
                                                     <input className="form-control" readOnly value={indication.dosage} />
                                                 </div>
                                                 <label className="col-sm-1 col-form-label">viên</label>
@@ -282,11 +283,12 @@ export default function RetailPrescriptionInfomation() {
 
 
                                 </fieldset>
-                                <a className="btn btn-outline-primary" onClick={() => addToCart()}>Thêm vào hóa đơn</a>
-                                <a className="btn btn-outline-primary" onClick={() => handleGeneratePDF()}>In toa</a>
+                                <a className="btn btn-outline-primary" onClick={() => addToCart()}>
+                                    <FaPlus size={18} className="me-1"/>Thêm vào hóa đơn</a>
+                                <a className="btn btn-outline-primary" onClick={() => handleGeneratePDF()}><AiOutlinePrinter size={18} className="me-1"/>In toa</a>
                                 <a className="btn btn-outline-primary"
                                     onClick={() => backToList()}
-                                ><AiOutlineRollback />Huỷ</a>
+                                ><AiOutlineRollback size={18} className="me-1" />Trở về</a>
                             </div>
                         </fieldset>
                     </div>
