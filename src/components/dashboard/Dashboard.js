@@ -112,7 +112,7 @@ const Dashboard = () => {
             </>
           )}
           <li>
-            <Link className="link" to="/dashboard/retail">
+            <Link className="link" to="/dashboard/list-invoice-order">
               <div>
                 <BiSolidReport className="icon" />
               </div>

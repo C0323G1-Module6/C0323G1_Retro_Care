@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../../img/logo.jpg";
 import { CiSearch } from "react-icons/ci";
 import { FiShoppingCart } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, NavLink } from "react-router-dom";
 import * as userService from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,13 +12,15 @@ import {
   infoAppUserByJwtToken,
 } from "../../services/user/AppUserService";
 import { BiCog, BiLogOutCircle, BiUserCircle } from "react-icons/bi";
+import * as kindOfMedicines from "../../services/kindOfMedicine/KindOfMedicineService";
 
 const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
-  const [keyword, setKeyword] = useState(" ");
+  const [keyword, setKeyword] = useState("");
   const [userId, setUserId] = useState("");
+  const [types, setTypes] = useState([]);
 
   // replace 2 with userId
   const dispatch = useDispatch();
@@ -29,11 +31,18 @@ const Header = ({ inputSearch, onInputChange }) => {
 
   useEffect(() => {
     getAppUserId();
+    getTypesMedicine();
   }, []);
 
   useEffect(() => {
     getUsername();
   }, []);
+
+  const getTypesMedicine = async () => {
+    const response = await kindOfMedicines.getList();
+    setTypes(response);
+    console.log(response);
+  };
 
   const getUsername = async () => {
     const response = await userService.infoAppUserByJwtToken();
@@ -65,8 +74,7 @@ const Header = ({ inputSearch, onInputChange }) => {
   };
 
   const searchMedicines = (keyword) => {
-    const trimKeyword = keyword.trim();
-    navigate(`/home/search/${trimKeyword}`);
+    navigate(`/home/search/${keyword}`);
   };
 
   const handleSearch = (event) => {
@@ -77,21 +85,21 @@ const Header = ({ inputSearch, onInputChange }) => {
   return (
     <header className="site-header">
       <div className="container">
-        <div className="row">
-          <div className="col-lg-2 d-flex align-items-center">
+        <div className="row justify-content-between">
+          <div className="d-flex align-items-center" style={{ width: "12rem" }}>
             <div className="header-logo">
               <Link to={"/home"}>
                 <img src={logo} width={160} height={40} alt="Logo" />
               </Link>
             </div>
           </div>
-          <div className="col-lg-10">
-            <div className="main-navigation d-flex justify-content-between">
+          <div className="col-lg-10 col-md-10">
+            <div className="main-navigation d-flex justify-content-between align-items-center">
               <button className="menu-toggle">
                 <span></span>
                 <span></span>
               </button>
-              <nav className="header-menu col-lg-6">
+              <nav className="header-menu col-lg-6 col-md-6 d-flex">
                 <ul className="menu food-nav-menu">
                   <li>
                     <Link to={"/home"}>Trang chủ</Link>
@@ -100,7 +108,25 @@ const Header = ({ inputSearch, onInputChange }) => {
                     <a href="#about">Về chúng tôi</a>
                   </li>
                   <li>
-                    <a href="#">Danh mục</a>
+                    <a href="#" className="category">
+                      <div
+                        className="category-info"
+                        style={{ overflow: "hidden" }}
+                      >
+                        Danh mục
+                      </div>
+                      <div className="category-dropdown-list ">
+                        {types?.map((type, index) => (
+                          <Link
+                            key={index}
+                            to={`/home/list-medicines/${type.name}`}
+                            className="category-dropdown-item"
+                          >
+                            <div className="dropdown-text">{type.name}</div>
+                          </Link>
+                        ))}
+                      </div>
+                    </a>
                   </li>
                 </ul>
               </nav>

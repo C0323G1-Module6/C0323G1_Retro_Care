@@ -14,7 +14,7 @@ import { FiEdit } from "react-icons/fi";
 
 
 function SupplierListComponent() {
-    const [suppliers, setSuppliers] = useState([]);
+    const [suppliers, setSuppliers] = useState();
     const [supplier, setSupplier] = useState({});
     let [page, setPage] = useState(0)
     let [sortBy, setSortBy] = useState('')
@@ -101,20 +101,29 @@ function SupplierListComponent() {
         }
     }
     const handleClickSearch = () => {
-        switch (optionSearch) {
-            case 'code':
-                setCode(searchInput.trim());
-                break;
-            case 'name':
-                setName(searchInput.trim());
-                break;
-            case 'address':
-                setAddress(searchInput.trim());
-                break;
-            case 'phone_number':
-                setPhoneNumber(searchInput.trim());
-                break;
+        if (optionSearch === null || optionSearch === "") {
+            Swal.fire({
+                icon: 'warning',
+                timer: 1500,
+                title: 'Vui lòng chọn trường để để tìm kiếm'
+            })
+        } else {
+            switch (optionSearch) {
+                case 'code':
+                    setCode(searchInput.trim());
+                    break;
+                case 'name':
+                    setName(searchInput.trim());
+                    break;
+                case 'address':
+                    setAddress(searchInput.trim());
+                    break;
+                case 'phone_number':
+                    setPhoneNumber(searchInput.trim());
+                    break;
+            }
         }
+
         resetInputSearch();
     }
     const handleSortOption = (event) => {
@@ -173,7 +182,9 @@ function SupplierListComponent() {
             })
         }
     };
-
+    if (!suppliers) {
+        return null;
+    }
 
     return (
         <>
@@ -293,7 +304,7 @@ function SupplierListComponent() {
                                                     </thead>
                                                     <tbody>
                                                         {suppliers.content.map((item, index) => (
-                                                            <tr key={`ctm_${item.idSupplier}`} onClick={() => getSupplier(item)}
+                                                            <tr key={`ctm_${item?.idSupplier}`} onClick={() => getSupplier(item)}
                                                                 className={supplier === item ? 'gray' : ''}>
                                                                 <td className="px-3 py-3 border-b border-gray-200  text-sm">
                                                                     <div className="flex items-center">
@@ -323,7 +334,7 @@ function SupplierListComponent() {
                                                                 </td>
                                                                 <td className="px-2 py-3 border-b border-gray-200 text-sm">
                                                                     <p >
-                                                                        {item.phoneNumber}
+                                                                        {item.phoneNumber.replace(/(\d{4})(\d{3})(\d{3})/, '$1-$2-$3')}
                                                                     </p>
                                                                 </td>
                                                                 <td className="px-2 py-3 border-b border-gray-200 text-sm">
@@ -340,44 +351,44 @@ function SupplierListComponent() {
                                                         ))}
                                                     </tbody>
                                                 </table>
-                                             
+
                                             </div>
                                             <div className="justify-content-center d-flex rounded-bottom shadow m-3">
-                                                    {page !== 0 ?
-                                                        <button className="btn btn-primary" style={{ margin: '5px' }}
-                                                            onClick={async () => {
+                                                {page !== 0 ?
+                                                    <button className="btn btn-primary" style={{ margin: '5px' }}
+                                                        onClick={async () => {
 
-                                                                await previousPage()
-                                                            }}>
-                                                            <AiOutlineDoubleLeft />
-                                                        </button> :
-                                                        <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
+                                                            await previousPage()
+                                                        }}>
+                                                        <AiOutlineDoubleLeft />
+                                                    </button> :
+                                                    <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
 
-                                                            <AiOutlineDoubleLeft />
-                                                        </button>
-                                                    }
+                                                        <AiOutlineDoubleLeft />
+                                                    </button>
+                                                }
 
-                                                    <div className="text-sm py-2 px-4" style={{
-                                                        background: '#0d6efd',
-                                                        color: '#ffffff',
-                                                        margin: '5px',
-                                                        borderRadius: '5px'
-                                                    }}>
-                                                        {page + 1}/{suppliers.totalPages}
-                                                    </div>
-                                                    {page !== suppliers.totalPages - 1 ?
-                                                        <button className="btn btn-primary" style={{ margin: '5px' }}
-                                                            onClick={async () => {
+                                                <div className="text-sm py-2 px-4" style={{
+                                                    background: '#0d6efd',
+                                                    color: '#ffffff',
+                                                    margin: '5px',
+                                                    borderRadius: '5px'
+                                                }}>
+                                                    {page + 1}/{suppliers.totalPages}
+                                                </div>
+                                                {page !== suppliers.totalPages - 1 ?
+                                                    <button className="btn btn-primary" style={{ margin: '5px' }}
+                                                        onClick={async () => {
 
-                                                                await nextPage();
-                                                            }}>
-                                                            <AiOutlineDoubleRight />
-                                                        </button> :
-                                                        <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
-                                                            <AiOutlineDoubleRight />
-                                                        </button>
-                                                    }
-                                                </div>  
+                                                            await nextPage();
+                                                        }}>
+                                                        <AiOutlineDoubleRight />
+                                                    </button> :
+                                                    <button className="btn btn-primary" disabled style={{ margin: '5px' }}>
+                                                        <AiOutlineDoubleRight />
+                                                    </button>
+                                                }
+                                            </div>
                                         </div>
                                         :
                                         <table className="min-w-full leading-normal table table-hover " id="myTable">
@@ -413,6 +424,7 @@ function SupplierListComponent() {
                                                 </tr>
                                             </tbody>
                                         </table>
+
                                     }
 
 

@@ -312,7 +312,8 @@ function CustomerList() {
                     {customer?.name.length > 20 ? `${customer?.name.slice(0, 20)}...` : customer?.name}
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200  text-sm">
-                    {format(parseISO(customer?.birthDay), 'dd/MM/yyyy')}
+                    {format(parseISO(customer?.birthDay), 'dd-MM-yyyy')}
+                   
                   </td>
                   <td className="px-3 py-3 border-b border-gray-200 text-sm">
                     {customer?.address.length > 20 ? `${customer?.address.slice(0, 20)}...` : customer?.address}

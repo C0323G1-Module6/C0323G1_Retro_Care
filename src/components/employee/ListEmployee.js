@@ -299,10 +299,12 @@ export default function ListEmployee() {
                                                 {showContent && nameEmployee === employee.nameEmployee &&
                                                     <div>{employee.nameEmployee}</div>}
                                             </td>
-                                            <td className={`px-3 py-3 `}>{format(parseISO(employee.birthday), 'dd/MM/yyyy')}</td>
+                                            <td className={`px-3 py-3 `}>{format(parseISO(employee.birthday), 'dd-MM-yyyy')}</td>
                                             <td className={`px-3 py-3 `}>{employee.idCard}</td>
                                             <td className={`px-3 py-3 `}>{employee.phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')}</td>
-                                            <td className={`px-3 py-3 `}>{format(parseISO(employee.startDay), 'dd/MM/yyyy')}</td>
+                                            <td className={`px-3 py-3 `}>
+                                                {format(parseISO(employee.startDay), 'dd-MM-yyyy')}
+                                            </td>
                                             <td className={`px-3 py-3 `}>{employee.appUser.userName}</td>
                                             <td className={`px-3 py-3 `}>{employee.address}</td>
                                             <td className={`px-3 py-3 `}>{employee.note}</td>

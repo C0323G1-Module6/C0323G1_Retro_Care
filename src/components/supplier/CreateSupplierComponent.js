@@ -32,13 +32,12 @@ function CreateSupplierComponent() {
       );
       navigate("/dashboard/supplier");
     } catch (err) {
-      if (err.response.data) {
-        setErrors(err.response.data);
-      }
+      console.log(err);
+  
       if (err.response.status === 406) {
         setErrors(err.response.data);
       }
-    }
+    } 
   };
   return (
     <>

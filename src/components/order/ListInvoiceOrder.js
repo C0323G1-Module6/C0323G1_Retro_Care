@@ -82,10 +82,10 @@ const ListInvoiceOrder = () => {
                             <div className="row">
                                 <div className="d-flex col-9">
                                     <label className="me-2 p-2">Từ ngày</label>
-                                    <Field name="startDateTime" type={"datetime-local"} className={"form-control"}
+                                    <Field name="startDateTime" type={"date"} className={"form-control"}
                                            style={{width: "240px"}}/>
                                     <label className="mx-2 p-2">Đến ngày</label>
-                                    <Field name="endDateTime" type={"datetime-local"} className={"form-control"}
+                                    <Field name="endDateTime" type={"date"} className={"form-control"}
                                            style={{width: "240px"}}/>
                                     <button type="submit" className="btn btn-outline-primary mx-2"><i className="fa-solid fa-magnifying-glass" />Tìm kiếm </button>
                                 </div>
@@ -120,8 +120,8 @@ const ListInvoiceOrder = () => {
                                     </th>
                                     <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Ngày lập
                                     </th>
-                                    <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Giờ lập
-                                    </th>
+                                    {/* <th className="px-3 py-2 bg-primary " style={{width:"130px"}}>Giờ lập
+                                    </th> */}
                                     <th className="px-3 py-2 bg-primary " style={{width:"260px"}}>Người lập
                                     </th>
                                     <th className="px-3 py-2 bg-primary " style={{width:"150px"}}>Tổng tiền (VNĐ)
@@ -136,8 +136,8 @@ const ListInvoiceOrder = () => {
                                             <tr>
                                                 <td className={`px-3 py-3 `}>{invoice.code}</td>
                                                {invoice.nameCustomer ==null ?<td className={`px-3 py-3 `}>Khách lẻ</td>:<td className={`px-3 py-3 `}>{invoice.nameCustomer}</td> } 
-                                                <td className={`px-3 py-3 `}>{format(parseISO(invoice.orderDate), "dd/MM/yyyy")}</td>
-                                                <td className={`px-3 py-3 `}>{invoice.orderTime}</td>
+                                                <td className={`px-3 py-3 `}>{format(parseISO(invoice.orderDate), "dd-MM-yyyy")}</td>
+                                                {/* <td className={`px-3 py-3 `}>{invoice.orderTime}</td> */}
                                                 {invoice.nameEmployee ==null ?<td className={`px-3 py-3 `}>Không có</td>:<td className={`px-3 py-3 `}>{invoice.nameEmployee}</td> } 
                                                 <td className={`px-3 py-3 `}>{new Intl.NumberFormat("vi-VN").format(
                                                     invoice.orderDetailsPrice

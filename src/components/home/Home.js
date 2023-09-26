@@ -24,6 +24,7 @@ import {
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import Sliders from "./Sliders";
+import * as kindOfMedicines from "../../services/kindOfMedicine/KindOfMedicineService";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -69,10 +70,9 @@ const Home = () => {
       toast.success("Thêm sản phẩm thành công");
     }
   };
-  const doNothing = () => {};
   return (
     <div>
-      <Header onInputChange={doNothing} />
+      <Header onInputChange={() => {}} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
