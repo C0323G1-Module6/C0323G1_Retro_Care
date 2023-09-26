@@ -26,6 +26,7 @@ export const editMedicine = async (id, medicine) => {
 export const getMedicineById = async (id) => {
     try {
         const result = await axios.get(`http://localhost:8080/api/medicine/${id}`);
+        console.log(result);
         return result.data;
     } catch (error) {
         console.log(error)

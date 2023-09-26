@@ -214,7 +214,6 @@ export default function MedicineCreate() {
                                                         type="text"
                                                         name="code"
                                                         id="code"
-                                                        placeholder="00024419"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -225,7 +224,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="name"
-                                                        placeholder="Vitamin B2"
                                                     />
                                                 </div>
                                                 <div className="row">
@@ -250,7 +248,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="activeElement"
-                                                        placeholder="Vitamin B2"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -348,7 +345,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="price"
-                                                        placeholder="4,329"
                                                     />
                                                     <span>đ/Hộp</span>
                                                 </div>
@@ -360,7 +356,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="retailProfits"
-                                                        placeholder="10.000"
                                                     />
                                                 </div>
                                             </div>
@@ -395,12 +390,11 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="unitDetailDto.conversionRate"
-                                                        placeholder="10.000"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
                                                     <label className="col-md-4">VAT</label>
-                                                    <Field className="col-md-2" type="text" name="vat" placeholder="5" />
+                                                    <Field className="col-md-2" type="text" name="vat" />
                                                     <span>%</span>
                                                 </div>
                                             </div>

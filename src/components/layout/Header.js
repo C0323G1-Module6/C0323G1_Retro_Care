@@ -62,11 +62,12 @@ const Header = ({ inputSearch, onInputChange }) => {
     localStorage.removeItem("JWT");
     setJwtToken(undefined);
     setUsername(undefined);
+    navigate("/home");
     Swal.fire({
       title: "Đăng xuất thành công",
       icon: "success",
     });
-    navigate("/home");
+
   };
 
   const handleInputChange = (event) => {
@@ -193,7 +194,10 @@ const Header = ({ inputSearch, onInputChange }) => {
                           <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div
                             className="dropdown-text"
-                            onClick={() => handleLogOut()}
+                            onClick={() => {
+                              handleLogOut();
+                              navigate('/home');
+                            }}
                           >
                             Đăng xuất
                           </div>

@@ -46,12 +46,14 @@ import CreateInvoice from "./components/invoice/CreateInvoice";
 import MedicinesWithKind from "./components/home/MedicinesWithKind";
 import Error403 from "./components/user/Error403";
 import InvoiceDetailMedicine from "./components/invoice/InvoiceDetailMedicine";
+import Error401 from "./components/user/Error401";
 function App() {
     axiosClient();
     return (
         <>
             <ScrollToTop />
             <Routes>
+                <Route path="/401" element={<Error401 />} />
                 <Route path="*" element={<Home />}></Route>
                 <Route path="/home" element={<Home />}></Route>
                 <Route path="/home/search/:keyword" element={<SearchPage />} />
