@@ -24,12 +24,14 @@ import {
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
 import Sliders from "./Sliders";
-import * as kindOfMedicines from "../../services/kindOfMedicine/KindOfMedicineService";
 
 const Home = () => {
   const navigate = useNavigate();
   const [medicineList, setMedicineList] = useState([]);
   const [favoriteList, setFavoriteList] = useState([]);
+  const [medicineListWithKind, setMedicineListWithKind] = useState([]);
+  const [medicineForChildren, setMedicineForChildren] = useState([]);
+
   const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
@@ -41,11 +43,23 @@ const Home = () => {
   useEffect(() => {
     getMedicineList();
     getFavoriteList();
+    getMedicineListWithKind();
+    getMedicineForChildren();
   }, []);
 
   const getMedicineList = async () => {
     const response = await homeService.findMedicineForHomepage("", "");
     setMedicineList(response.data);
+  };
+
+  const getMedicineListWithKind = async () => {
+    const response = await homeService.findMedicineForHomepage("", "bổ");
+    setMedicineListWithKind(response.data);
+  };
+
+  const getMedicineForChildren = async () => {
+    const response = await homeService.findMedicineForHomepage("", "cảm cúm");
+    setMedicineForChildren(response.data);
   };
 
   const getFavoriteList = async () => {
@@ -362,7 +376,7 @@ const Home = () => {
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-5 w-50">Dược phẩm</p>
+                <p className="sec-sub-title mb-5 w-50">Danh mục thuốc bổ</p>
               </div>
             </div>
           </div>
@@ -386,7 +400,109 @@ const Home = () => {
                 modules={[Navigation]}
                 className="mySwiper"
               >
-                {favoriteList?.map((el, index) => {
+                {medicineListWithKind?.map((el, index) => {
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+                ;
+              </Swiper>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-light repeat-img pt-2 pb-2">
+        <div className="sec-wp">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="sec-title text-center">
+                <p className="sec-sub-title mb-5 w-50">
+                  Thuốc cảm dành cho trẻ em
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="product">
+            <button className="pre-btn" id="arrow-prev-4">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <button className="nxt-btn" id="arrow-nxt-4">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <div className="product-container">
+              <Swiper
+                slidesPerView={5}
+                spaceBetween={30}
+                cssMode={true}
+                navigation={{ nextEl: "#arrow-nxt-4", prevEl: "#arrow-prev-4" }}
+                loop={true}
+                speed={500}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                modules={[Navigation]}
+                className="mySwiper"
+              >
+                {medicineForChildren?.map((el, index) => {
                   const discountPercentage = utils.getDiscount(
                     el.medicinePrice
                   );
