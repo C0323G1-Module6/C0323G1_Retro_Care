@@ -6,11 +6,11 @@ const Error403 = () => {
     return (
         <>
             <div class="d-flex align-items-center  justify-content-center vh-100 bg-light">
-                <div>
-                    <h1 class="display-1 fw-bold text-dark mb-4">403 Forbiden</h1>
+                <div className="text-center">
+                    <h3 class="display-1 fw-bold text-dark mb-4">403 Forbiden</h3>
                     <div>Xin Lỗi bạn không được vào đường dẫn này, hãy bấm quay lại</div>
                     <div className="text-center mt-3">
-                    <button onClick={() => navigate(-1)} className="btn btn-primary">Quay lại</button>
+                    <button onClick={() => navigate(-1)} className="btn btn-secondary">Quay lại</button>
                 </div>
             </div>
             </div>

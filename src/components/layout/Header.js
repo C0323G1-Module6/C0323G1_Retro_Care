@@ -115,7 +115,7 @@ const Header = ({ inputSearch, onInputChange }) => {
                       >
                         Danh mục
                       </div>
-                      <div className="category-dropdown-list">
+                      <div className="category-dropdown-list ">
                         {types?.map((type, index) => (
                           <Link
                             key={index}
