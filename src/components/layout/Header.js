@@ -14,7 +14,7 @@ import {
 import { BiCog, BiLogOutCircle, BiUserCircle } from "react-icons/bi";
 import * as kindOfMedicines from "../../services/kindOfMedicine/KindOfMedicineService";
 
-const Header = ({ inputSearch, onInputChange, onClickLogOut }) => {
+const Header = ({ inputSearch, onInputChange }) => {
   const navigate = useNavigate();
   const [JwtToken, setJwtToken] = useState(localStorage.getItem("JWT"));
   const [userName, setUsername] = useState("");
@@ -195,7 +195,9 @@ const Header = ({ inputSearch, onInputChange, onClickLogOut }) => {
                           <BiLogOutCircle className="me-3 ms-0" size={25} />
                           <div
                             className="dropdown-text"
-                            onClick={() => {{handleLogOut, onClickLogOut}}}
+                            onClick={() => {
+                              handleLogOut();
+                            }}
                           >
                             Đăng xuất
                           </div>
