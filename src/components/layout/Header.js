@@ -67,6 +67,7 @@ const Header = ({ inputSearch, onInputChange }) => {
       icon: "success",
     });
     navigate("/home");
+    window.location.reload();
   };
 
   const handleInputChange = (event) => {
