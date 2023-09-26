@@ -384,13 +384,12 @@ export default function Cart() {
   }, [isUpdated]);
 
   const handleLogOut = () => {
-    alert('log')
     window.location.href('/home');
   }
 
   return (
     <>
-      <Header onClickLogOut={handleLogOut} />
+      <Header />
       <div id="hannah" className="pb-5 pt-5">
         <div className="container-fluid p-1 position-relative">
           <h1 className="text-center my-5 mx-auto" style={{ color: "#0340c1" }}>
