@@ -72,30 +72,28 @@ const GeneralReport = () => {
     console.log(Object.keys(dataArray[0]));
 
     // Tạo header
-    let headers = Object.keys(dataArray[0]).map(
-      (header) => {
-        switch (header) {
-          case "sellDate":
-            return header = "NGÀY BÁN";
-          case "total":
-            return header = "TỔNG TIỀN (VNĐ)";
-          case "id":
-            return header = "MÃ";
-          case "name":
-            return header = "TÊN";
-          case "quantity":
-            return header = "SỐ LƯỢNG HIỆN CÓ";
-          case "amount":
-            return header = "SỐ LƯỢNG ĐÃ BÁN";
-          case "company":
-            return header = "TÊN CÔNG TY";
-          case "expiry":
-            return header = "HẠN SỬ DỤNG";
-          default:
-            return header.toUpperCase();
-        }
+    let headers = Object.keys(dataArray[0]).map((header) => {
+      switch (header) {
+        case "sellDate":
+          return (header = "NGÀY BÁN");
+        case "total":
+          return (header = "TỔNG TIỀN (VNĐ)");
+        case "id":
+          return (header = "MÃ");
+        case "name":
+          return (header = "TÊN");
+        case "quantity":
+          return (header = "SỐ LƯỢNG HIỆN CÓ");
+        case "amount":
+          return (header = "SỐ LƯỢNG ĐÃ BÁN");
+        case "company":
+          return (header = "TÊN CÔNG TY");
+        case "expiry":
+          return (header = "HẠN SỬ DỤNG");
+        default:
+          return header.toUpperCase();
       }
-    );
+    });
     headers = headers.reverse();
     console.log(headers);
 
@@ -181,10 +179,9 @@ const GeneralReport = () => {
         newResult = result.map((item) => ({
           ...item,
           sellDate: format(parseISO(item.sellDate), "dd/MM/yyyy"),
-          total:
-            new Intl.NumberFormat("vi-VN")
-              .format(Math.ceil(item.total))
-              .toString()
+          total: new Intl.NumberFormat("vi-VN")
+            .format(Math.ceil(item.total))
+            .toString(),
         }));
       }
       if (reportTitle === "expireMedicine") {
@@ -196,10 +193,9 @@ const GeneralReport = () => {
       if (reportTitle === "debt") {
         newResult = result.map((item) => ({
           ...item,
-          total:
-            new Intl.NumberFormat("vi-VN")
-              .format(Math.ceil(item.total))
-              .toString()
+          total: new Intl.NumberFormat("vi-VN")
+            .format(Math.ceil(item.total))
+            .toString(),
         }));
       }
       if (

@@ -77,6 +77,7 @@ const RevenueAndProfitChart = () => {
       },
     };
 
+    console.log(profits);
     let finishDate = new Date(endDate);
     let dates = [];
     let revenueData = [];
