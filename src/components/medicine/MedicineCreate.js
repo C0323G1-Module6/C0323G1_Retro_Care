@@ -126,9 +126,12 @@ export default function MedicineCreate() {
             reader.readAsDataURL(file);
         }
     };
+    
     if (medicineCode == "") {
         return null;
     }
+
+
     return (
         <>
             <div id="tincute">
@@ -214,7 +217,6 @@ export default function MedicineCreate() {
                                                         type="text"
                                                         name="code"
                                                         id="code"
-                                                        placeholder="00024419"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -225,7 +227,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="name"
-                                                        placeholder="Vitamin B2"
                                                     />
                                                 </div>
                                                 <div className="row">
@@ -250,7 +251,6 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="activeElement"
-                                                        placeholder="Vitamin B2"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -348,9 +348,8 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="price"
-                                                        placeholder="4,329"
                                                     />
-                                                    <span>đ/Hộp</span>
+                                                    <span>đ/hộp</span>
                                                 </div>
                                                 <div className="col-md-6">
                                                     <label className="col-md-4"
@@ -371,6 +370,7 @@ export default function MedicineCreate() {
                                                         marginLeft: "34%",
                                                         marginBottom: "1.3rem"
                                                     }}>
+                                                    
                                                         <ErrorMessage className="text-danger" name="price"
                                                             component="small" />
                                                     </div>
@@ -395,13 +395,12 @@ export default function MedicineCreate() {
                                                         className="col-md-2"
                                                         type="text"
                                                         name="unitDetailDto.conversionRate"
-                                                        placeholder="10.000"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
                                                     <label className="col-md-4">VAT</label>
-                                                    <Field className="col-md-2" type="text" name="vat" placeholder="5" />
-                                                    <span>%</span>
+                                                    <Field className="col-md-2" type="text" name="vat" />
+                                                    <span>% </span>
                                                 </div>
                                             </div>
                                             <div className="row">
