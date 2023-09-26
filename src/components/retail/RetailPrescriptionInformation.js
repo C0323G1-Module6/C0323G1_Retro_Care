@@ -101,6 +101,7 @@ export default function RetailPrescriptionInfomation() {
             showCancelButton: true,
             showConfirmButton: true,
             confirmButtonText: "Có",
+            cancelButtonText: "Huỷ",
             icon: "question",
         }).then((result) => {
             if (result.isConfirmed) {
