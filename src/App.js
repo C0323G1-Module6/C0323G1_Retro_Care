@@ -45,6 +45,7 @@ import EditInvoice from "./components/invoice/EditInvoice";
 import CreateInvoice from "./components/invoice/CreateInvoice";
 import MedicinesWithKind from "./components/home/MedicinesWithKind";
 import Error403 from "./components/user/Error403";
+import InvoiceDetailMedicine from "./components/invoice/InvoiceDetailMedicine";
 function App() {
     axiosClient();
     return (
@@ -148,6 +149,7 @@ function App() {
                                     element={<UpdateSupplierComponent />}
                                 />
                                 <Route path="/dashboard/invoice" element={<InvoiceList />} />
+                                <Route path="/dashboard/invoice/detail/:id" element={<InvoiceDetailMedicine />} />
                                 <Route path="/dashboard/report" element={<GeneralReport />} />
                                 <Route
                                     path="/dashboard/report/chart"

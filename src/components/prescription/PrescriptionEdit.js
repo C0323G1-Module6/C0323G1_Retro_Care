@@ -206,7 +206,7 @@ function PrescriptionEdit() {
                                                         <div className="mb-3 row d-flex align-items-center justify-content-start">
                                                             <label className="col-sm-1 col-form-label">{index + 1}.</label>
                                                             <div className="col-sm-4">
-                                                                {/* <Field
+                                                                <Field
                                                                     type="text"
                                                                     className="form-control"
                                                                     placeholder="Tìm thuốc..."
@@ -220,14 +220,14 @@ function PrescriptionEdit() {
                                                                     {chooseMedicines.map((medicine, index) => (
                                                                         <option value={medicine.name}>{medicine.name}</option>
                                                                     ))}
-                                                                </datalist> */}
-                                                                <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
+                                                                </datalist>
+                                                                {/* <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
                                                                     {
                                                                         chooseMedicines.map((t) => (
                                                                             <option value={t.name}>{t.name}</option>
                                                                         ))
                                                                     }
-                                                                </Field>
+                                                                </Field> */}
 
                                                             </div>
                                                             <label className="col-sm-3 col-form-label">Số viên:</label>
