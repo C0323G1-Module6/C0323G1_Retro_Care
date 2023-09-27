@@ -25,6 +25,7 @@ export default function MedicineEdit() {
     const inputFileRef = useRef(null);
     const [imageUpload, setImageUpload] = useState(null);
     const [countries, setCountries] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const getListUnits = async () => {
         const result = await getAllUnit();
         setUnits(result);
@@ -58,124 +59,127 @@ export default function MedicineEdit() {
         getListKindOfMedicines();
     }, [])
     const edit = async (medicine, setErrors) => {
-        if (imageUpload != null) {
-            const fileName = `medicine/${imageUpload.name + v4()}`;
-            const imageRef = ref(storage, fileName);
-            await uploadBytes(imageRef, imageUpload).then((snapshot) => {
-                getDownloadURL(snapshot.ref).then(async (url) => {
-                    const initialValues = {
-                        id: medicines?.id,
-                        code: "",
-                        name: "",
-                        price: "",
-                        vat: "",
-                        note: "",
-                        maker: "",
-                        activeElement: "",
-                        origin: "",
-                        retailProfits: "",
-                        kindOfMedicineDto: JSON.parse(medicine?.kindOfMedicineDto),
-                        unitDetailDto: {
-                            id: medicines?.unitDetailDto?.id,
-                            conversionRate: "",
-                            conversionUnit: "",
-                            medicine: medicines?.unitDetailDto?.medicine,
-                            unit: ""
-                        },
-                        imageMedicineDto: {
-                            id: medicines?.imageMedicineDto?.id,
-                            imagePath: medicines?.imageMedicineDto?.imagePath,
-                            medicine: medicines?.imageMedicineDto?.medicine,
-                        },
-                    };
+        if (!isSubmitting) {
+            setIsSubmitting(true);
+            if (imageUpload != null) {
+                const fileName = `medicine/${imageUpload.name + v4()}`;
+                const imageRef = ref(storage, fileName);
+                await uploadBytes(imageRef, imageUpload).then((snapshot) => {
+                    getDownloadURL(snapshot.ref).then(async (url) => {
+                        const initialValues = {
+                            id: medicines?.id,
+                            code: "",
+                            name: "",
+                            price: "",
+                            vat: "",
+                            note: "",
+                            maker: "",
+                            activeElement: "",
+                            origin: "",
+                            retailProfits: "",
+                            kindOfMedicineDto: JSON.parse(medicine?.kindOfMedicineDto),
+                            unitDetailDto: {
+                                id: medicines?.unitDetailDto?.id,
+                                conversionRate: "",
+                                conversionUnit: "",
+                                medicine: medicines?.unitDetailDto?.medicine,
+                                unit: ""
+                            },
+                            imageMedicineDto: {
+                                id: medicines?.imageMedicineDto?.id,
+                                imagePath: medicines?.imageMedicineDto?.imagePath,
+                                medicine: medicines?.imageMedicineDto?.medicine,
+                            },
+                        };
 
 // Lấy giá trị từ các trường đầu vào và gán cho thuộc tính tương ứng trong đối tượng
-                    initialValues.code = document.getElementById("code").value;
-                    initialValues.name = document.getElementById("name").value;
-                    initialValues.price = document.getElementById("price").value;
-                    initialValues.vat = document.getElementById("vat").value;
-                    initialValues.note = document.getElementById("note").value;
-                    initialValues.maker = document.getElementById("maker").value;
-                    initialValues.activeElement = document.getElementById("active-element").value;
-                    initialValues.origin = document.getElementById("origin").value;
-                    initialValues.retailProfits = document.getElementById("retail-profits").value;
-                    // initialValues.kindOfMedicineDto = document.getElementById("kind-of-medicine").value;
-                    initialValues.unitDetailDto.conversionRate = document.getElementById("conversion-rate").value;
-                    initialValues.unitDetailDto.conversionUnit = document.getElementById("conversion-unit").value;
-                    initialValues.unitDetailDto.unit = document.getElementById("unit").value;
-                    if (url !== null) {
-                        initialValues.imageMedicineDto.imagePath = url;
-                    }
-// Sử dụng đối tượng initialValues có các thuộc tính đã được gán giá trị
-                    try {
-                        await editMedicine(id, initialValues);
-                        await Swal.fire(
-                            'Cập nhật thành công !',
-                            'Thuốc ' + medicine.name + ' đã được cập nhật !',
-                            'success'
-                        );
-                        await navigate("/dashboard/medicine");
-                    } catch (err) {
-                        if (err.response.data) {
-                            setErrors(err.response.data);
+                        initialValues.code = document.getElementById("code").value;
+                        initialValues.name = document.getElementById("name").value;
+                        initialValues.price = document.getElementById("price").value;
+                        initialValues.vat = document.getElementById("vat").value;
+                        initialValues.note = document.getElementById("note").value;
+                        initialValues.maker = document.getElementById("maker").value;
+                        initialValues.activeElement = document.getElementById("active-element").value;
+                        initialValues.origin = document.getElementById("origin").value;
+                        initialValues.retailProfits = document.getElementById("retail-profits").value;
+                        // initialValues.kindOfMedicineDto = document.getElementById("kind-of-medicine").value;
+                        initialValues.unitDetailDto.conversionRate = document.getElementById("conversion-rate").value;
+                        initialValues.unitDetailDto.conversionUnit = document.getElementById("conversion-unit").value;
+                        initialValues.unitDetailDto.unit = document.getElementById("unit").value;
+                        if (url !== null) {
+                            initialValues.imageMedicineDto.imagePath = url;
                         }
-                    }
+// Sử dụng đối tượng initialValues có các thuộc tính đã được gán giá trị
+                        try {
+                            await editMedicine(id, initialValues);
+                            await Swal.fire(
+                                'Cập nhật thành công !',
+                                'Thuốc ' + medicine.name + ' đã được cập nhật !',
+                                'success'
+                            );
+                            await navigate("/dashboard/medicine");
+                        } catch (err) {
+                            if (err.response.data) {
+                                setErrors(err.response.data);
+                            }
+                        }
+                    });
                 });
-            });
-        } else {
-            const initialValues = {
-                id: medicines?.id,
-                code: "",
-                name: "",
-                price: "",
-                vat: "",
-                note: "",
-                maker: "",
-                activeElement: "",
-                origin: "",
-                retailProfits: "",
-                kindOfMedicineDto: JSON.parse(medicine?.kindOfMedicineDto),
-                unitDetailDto: {
-                    id: medicines?.unitDetailDto?.id,
-                    conversionRate: "",
-                    conversionUnit: "",
-                    medicine: medicines?.unitDetailDto?.medicine,
-                    unit: ""
-                },
-                imageMedicineDto: {
-                    id: medicines?.imageMedicineDto?.id,
-                    imagePath: medicines?.imageMedicineDto?.imagePath,
-                    medicine: medicines?.imageMedicineDto?.medicine,
-                },
-            };
+            } else {
+                const initialValues = {
+                    id: medicines?.id,
+                    code: "",
+                    name: "",
+                    price: "",
+                    vat: "",
+                    note: "",
+                    maker: "",
+                    activeElement: "",
+                    origin: "",
+                    retailProfits: "",
+                    kindOfMedicineDto: JSON.parse(medicine?.kindOfMedicineDto),
+                    unitDetailDto: {
+                        id: medicines?.unitDetailDto?.id,
+                        conversionRate: "",
+                        conversionUnit: "",
+                        medicine: medicines?.unitDetailDto?.medicine,
+                        unit: ""
+                    },
+                    imageMedicineDto: {
+                        id: medicines?.imageMedicineDto?.id,
+                        imagePath: medicines?.imageMedicineDto?.imagePath,
+                        medicine: medicines?.imageMedicineDto?.medicine,
+                    },
+                };
 
 // Lấy giá trị từ các trường đầu vào và gán cho thuộc tính tương ứng trong đối tượng
-            initialValues.code = document.getElementById("code").value;
-            initialValues.name = document.getElementById("name").value;
-            initialValues.price = document.getElementById("price").value;
-            initialValues.vat = document.getElementById("vat").value;
-            initialValues.note = document.getElementById("note").value;
-            initialValues.maker = document.getElementById("maker").value;
-            initialValues.activeElement = document.getElementById("active-element").value;
-            initialValues.origin = document.getElementById("origin").value;
-            initialValues.retailProfits = document.getElementById("retail-profits").value;
-            // initialValues.kindOfMedicineDto = document.getElementById("kind-of-medicine").value;
-            initialValues.unitDetailDto.conversionRate = document.getElementById("conversion-rate").value;
-            initialValues.unitDetailDto.conversionUnit = document.getElementById("conversion-unit").value;
-            initialValues.unitDetailDto.unit = document.getElementById("unit").value;
-            initialValues.imageMedicineDto.imagePath = medicines?.imageMedicineDto?.imagePath;
+                initialValues.code = document.getElementById("code").value;
+                initialValues.name = document.getElementById("name").value;
+                initialValues.price = document.getElementById("price").value;
+                initialValues.vat = document.getElementById("vat").value;
+                initialValues.note = document.getElementById("note").value;
+                initialValues.maker = document.getElementById("maker").value;
+                initialValues.activeElement = document.getElementById("active-element").value;
+                initialValues.origin = document.getElementById("origin").value;
+                initialValues.retailProfits = document.getElementById("retail-profits").value;
+                // initialValues.kindOfMedicineDto = document.getElementById("kind-of-medicine").value;
+                initialValues.unitDetailDto.conversionRate = document.getElementById("conversion-rate").value;
+                initialValues.unitDetailDto.conversionUnit = document.getElementById("conversion-unit").value;
+                initialValues.unitDetailDto.unit = document.getElementById("unit").value;
+                initialValues.imageMedicineDto.imagePath = medicines?.imageMedicineDto?.imagePath;
 // Sử dụng đối tượng initialValues có các thuộc tính đã được gán giá trị
-            try {
-                await editMedicine(id, initialValues);
-                await Swal.fire(
-                    'Cập nhật thành công !',
-                    'Thuốc ' + medicine.name + ' đã được cập nhật !',
-                    'success'
-                );
-                await navigate("/dashboard/medicine");
-            } catch (err) {
-                if (err.response.data) {
-                    setErrors(err.response.data);
+                try {
+                    await editMedicine(id, initialValues);
+                    await Swal.fire(
+                        'Cập nhật thành công !',
+                        'Thuốc ' + medicine.name + ' đã được cập nhật !',
+                        'success'
+                    );
+                    await navigate("/dashboard/medicine");
+                } catch (err) {
+                    if (err.response.data) {
+                        setErrors(err.response.data);
+                    }
                 }
             }
         }
@@ -281,7 +285,7 @@ export default function MedicineEdit() {
                                                         type="text"
                                                         name="code"
                                                         id="code"
-                                                        placeholder="00024419"
+                                                        placeholder="MD024419"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -419,7 +423,7 @@ export default function MedicineEdit() {
                                                         type="text"
                                                         name="price"
                                                         id="price"
-                                                        placeholder="4,329"
+                                                        placeholder="4329"
                                                     />
                                                     <span>đ/Hộp</span>
                                                 </div>
@@ -432,7 +436,7 @@ export default function MedicineEdit() {
                                                         type="text"
                                                         name="retailProfits"
                                                         id="retail-profits"
-                                                        placeholder="10.000"
+                                                        placeholder="10"
                                                     />
                                                 </div>
                                             </div>
@@ -468,7 +472,7 @@ export default function MedicineEdit() {
                                                         type="text"
                                                         name="conversionRate"
                                                         id="conversion-rate"
-                                                        placeholder="10.000"
+                                                        placeholder="1"
                                                     />
                                                 </div>
                                                 <div className="col-md-6">
@@ -598,7 +602,7 @@ export default function MedicineEdit() {
                                                     <button
                                                         type="submit"
                                                         className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
-                                                    >
+                                                        disabled={isSubmitting}>
                                                         <i className="fa-solid fa-plus"></i>
                                                         Hoàn thành
                                                     </button>
