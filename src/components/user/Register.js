@@ -26,10 +26,12 @@ const Register = () => {
             navigate("/login");
         } catch (e) {
             if (e.response.status === 406) {
-                console.log(e);
                 setErrors(e.response.data);
             } else {
-                alert(e.response.data);
+                Swal.fire({
+                    icon: 'error',
+                    title: e.response.data,
+                })
             }
         }
     }

@@ -35,20 +35,22 @@ function InvoiceList() {
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [sortColumn, setSortColumn] = useState(null);
+    const [sortType, setSortType] = useState(null);
     const [displayedList, setDisplayedList] = useState([]);
     const [isSearching, setIsSearching] = useState(false);
 
     const [idClick, setIdClick] = useState({});
-    const [invoiceDetail, setInvoiceDetail] = useState([]);
-
+    const [showContent, setShowContent] = useState(false);
+    const [medicine, setMedicine] = useState("");
+    const quantity = 19;
 
     const getListInvoice = async (page) => {
         if (isSearching) {
-            const datasearch = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, page, 5);
+            const datasearch = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, sortType, page, 5);
             setInvoiceList(datasearch.content);
             setTotalPages(datasearch.totalPages);
         } else {
-            const data = await searchInvoice(null, null, null, null, null, page, 5);
+            const data = await searchInvoice(null, null, null, null, null, 'DESC', page, 5);
             if (data.content != null || data.content != undefined) {
                 setInvoiceList(data.content);
                 setTotalPages(data.totalPages);
@@ -65,7 +67,15 @@ function InvoiceList() {
             }
         }
     };
-
+    const handleMouseEnter = (activeElement) => {
+        if (activeElement.length > quantity) {
+            setShowContent(true);
+            setMedicine(activeElement);
+        }
+    };
+    const handleMouseLeave = () => {
+        setShowContent(false);
+    };
 
     const handleClickRow = (id) => {
         if (idClick === id) {
@@ -129,12 +139,11 @@ function InvoiceList() {
     }
 
 
-
     const handleFilter = async () => {
 
         setCurrentPage(0);
-        const data = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, 0, 5);
-
+        const data = await searchInvoice(startDate, endDate, startTime, endTime, sortColumn, sortType, 0, 5);
+        console.log(data)
         if (data.content == undefined || data.content.length === 0) {
             setInvoiceList([]);
             setDisplayedList([]);
@@ -154,23 +163,39 @@ function InvoiceList() {
             return;
         }
 
-        console.log(data);
         setIsSearching(true);
         setInvoiceList(data.content);
         setDisplayedList(data.content);
         setTotalPages(data.totalPages);
         setSearchPage(searchPage);
     };
-    console.log(startTime)
+
 
     useEffect(() => {
         getListInvoice(currentPage);
+        document.title = "RetroCare - Quản lí hóa đơn nhập kho";
     }, [currentPage]);
 
     const handlePageChange = async (page) => {
         setCurrentPage(page);
         setSearchPage(page);
     };
+    // const handleMouseEnter = (medicine) => {
+    //     setShowContent(true);
+    //     setMedicine(medicine);
+    // };
+    // const handleMouseLeave = () => {
+    //     setShowContent(false);
+    // };
+
+    useEffect(() => {
+        if (sortColumn || sortType) {
+            console.log(sortColumn)
+            console.log(sortType)
+            handleFilter();
+            document.title = "RetroCare - Quản lí hóa đơn nhập kho";
+        }
+    }, [sortColumn, sortType]);
 
 
 // Duyệt qua từng phần tử và xử lý
@@ -188,6 +213,25 @@ function InvoiceList() {
         setEndDate("");
     };
 
+
+    // const handleSort = (event) => {
+    //     if (event === 'asc') {
+    //         setSortType('desc');
+    //     } else {
+    //         setSortType('asc');
+    //     }
+    // };
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = String(date.getFullYear());
+
+        return `${day}-${month}-${year}`;
+    }
+
     return (
         <div>
             {/*<meta charSet="UTF-8"/>*/}
@@ -203,50 +247,65 @@ function InvoiceList() {
                 <div className="row">
                     {/*                <div class="row text-center" style="border: 2px solid #5f8ef3; border-radius: 10px; padding: 10px">*/}
                     <div className="col">
-                        <label style={{ marginLeft: '1.5px' }}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
-                        <input
-                            style={{ width: '9rem', marginLeft: '', height: '40px' }}
-                            type="date"
-                            id="start-date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                        />
-                        {startDate && (
-                            <button className="clear-button btn btn-outline-primary"
-                                    style={{height:'2.5rem',
-                                        border: 'solid 1px #d6d8d9',
-                                        paddingLeft:'6px', paddingRight:'6px',
-                                        borderRadius: '3px'}}
-                                    onClick={clearStartDate}>
-                                Xóa
-                            </button>
-                        )}
+                        <label style={{marginLeft: '1.5px'}}>Từ ngày:&nbsp;&nbsp;&nbsp;</label>
+                        <div style={{display: 'flex'}}>
+                            <input
+                                style={{width: '9rem', marginLeft: '', height: '40px'}}
+                                type="date"
+                                id="start-date"
+                                value={startDate}
+                                onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            {startDate && (
+                                <button className="clear-button btn btn-outline-primary"
+                                        style={{
+
+                                            marginBottom: '2px',
+                                            height: '2.5rem',
+                                            border: 'solid 1px #d6d8d9',
+                                            paddingLeft: '6px',
+                                            paddingRight: '6px',
+                                            borderRadius: '3px'
+                                        }}
+                                        onClick={clearStartDate}>
+                                    Xóa
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="col">
-                        <label style={{ marginLeft: '3px' }}>Đến ngày:</label>
-                        <input
-                            style={{ width: '9rem', marginLeft: '', height: '40px' }}
-                            type="date"
-                            id="end-date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                        />
-                        {endDate && (
-                            <button className="clear-button btn btn-outline-primary"
-                                    style={{height:'2.5rem',
+                        <label style={{marginLeft: '3px'}}>Đến ngày:</label>
+                        <div style={{display: 'flex'}}>
+                            <input
+                                style={{width: '9rem', marginLeft: '', height: '40px'}}
+                                type="date"
+                                id="end-date"
+                                value={endDate}
+                                onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            {endDate && (
+                                <button
+                                    className="clear-button btn btn-outline-primary"
+                                    style={{
+                                        marginBottom: '2px',
+                                        height: '2.5rem',
                                         border: 'solid 1px #d6d8d9',
-                                        paddingLeft:'6px', paddingRight:'6px',
-                                        borderRadius: '3px'}}
-                                    onClick={clearEndDate}>
-                                Xóa
-                            </button>
-                        )}
+                                        paddingLeft: '6px',
+                                        paddingRight: '6px',
+                                        borderRadius: '3px',
+                                    }}
+                                    onClick={clearEndDate}
+                                >
+                                    Xóa
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="col">
                         <label>Từ giờ:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <div style={{ display: "flex" }}>
+                        <div style={{display: "flex"}}>
                             <input
-                                style={{ width: "9rem", height: "40px" }}
+                                style={{width: "9rem", height: "40px"}}
                                 type="time"
                                 id="start-time"
                                 step="1"
@@ -257,10 +316,12 @@ function InvoiceList() {
                             />
                             {startTime && (
                                 <button className="clear-button btn btn-outline-primary"
-                                        style={{height:'2.5rem',
-                                            paddingLeft:'6px', paddingRight:'6px',
+                                        style={{
+                                            height: '2.5rem',
+                                            paddingLeft: '6px', paddingRight: '6px',
                                             border: 'solid 1px #d6d8d9',
-                                            borderRadius: '3px'}}
+                                            borderRadius: '3px'
+                                        }}
                                         onClick={clearStartTime}>
                                     Xóa
                                 </button>
@@ -269,9 +330,9 @@ function InvoiceList() {
                     </div>
                     <div className="col">
                         <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                        <div style={{ display: "flex" }}>
+                        <div style={{display: "flex"}}>
                             <input
-                                style={{ width: "9rem", height: "40px" }}
+                                style={{width: "9rem", height: "40px"}}
                                 type="time"
                                 id="end-time"
                                 step="1"
@@ -282,15 +343,18 @@ function InvoiceList() {
                             />
                             {endTime && (
                                 <button className="clear-button btn btn-outline-primary"
-                                        style={{height:'2.5rem',
-                                            paddingLeft:'6px', paddingRight:'6px',
+                                        style={{
+                                            height: '2.5rem',
+                                            paddingLeft: '6px', paddingRight: '6px',
                                             border: 'solid 1px #d6d8d9',
-                                            borderRadius: '3px'}}
+                                            borderRadius: '3px'
+                                        }}
                                         onClick={clearEndTime}>
                                     Xóa
                                 </button>
                             )}
                         </div>
+
                     </div>
                     {/*<div className="col">*/}
                     {/*    <label style={{marginLeft: '2px'}}>Đến giờ:&nbsp;&nbsp;&nbsp;&nbsp;</label>*/}
@@ -299,23 +363,37 @@ function InvoiceList() {
                     {/*           min="00:00:00" max="23:59:59"*/}
                     {/*           onChange={(e) => setEndTime(e.target.value)}/>*/}
                     {/*</div>*/}
-                    <div className="col">
+                    <div className="col" style={{marginTop:'-5px'}}>
                         <label>Sắp xếp theo: </label>
-                        <select style={{
-                            height: '40px',
-                            width: '9rem',
-                            border: 'solid 1px #d6d8d9',
-                            borderRadius: '3px'
-                        }}
-                                onChange={(e) => setSortColumn(e.target.value)}>
-                            <option value="code">Mã hóa đơn</option>
-                            <option value="documentNumber">Số CT</option>
-                            <option value="creationDay">Ngày lập</option>
-                            <option value="creationTime">Giờ lập</option>
-                            <option value="total">Tổng tiền</option>
-                            <option value="billOwed">Nợ hóa đơn</option>
-                            <option value="nameSupplier">Nhà cung cấp</option>
-                        </select>
+                        <div className='col' style={{display: 'flex', alignItems: 'center'}}>
+                            <select style={{
+                                height: '40px',
+                                width: '9rem',
+                                border: 'solid 1px #d6d8d9',
+                                borderRadius: '3px',
+                            }}
+                                    onChange={(e) => setSortColumn(e.target.value)}>
+                                <option value="code">Mã hóa đơn</option>
+                                <option value="documentNumber">Số CT</option>
+                                <option value="creationDay">Ngày lập</option>
+                                <option value="creationTime">Giờ lập</option>
+                                <option value="total">Tổng tiền</option>
+                                <option value="billOwed">Nợ hóa đơn</option>
+                                <option value="nameSupplier">Nhà cung cấp</option>
+                            </select>
+                            <select
+                                onChange={(e) => setSortType(e.target.value)} className="form-select m-1 "
+                                style={{
+                                    height: '40px',
+                                    width: '9rem',
+                                    marginLeft: '0',
+                                    borderRadius: '3px',
+
+                                }}>
+                                <option value="DESC">Giảm dần</option>
+                                <option value="ASC">Tăng dần</option>
+                            </select>
+                        </div>
                     </div>
                     <div className="col"
                          style={{
@@ -332,75 +410,75 @@ function InvoiceList() {
                 {/*                </div>*/}
                 <div className="-mx-2 sm:-mx-7 py-4 overflow-x-auto">
                     <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
-                        <div style={{ flex: "1", minHeight: "27.2rem", overflowX: "auto" }}>
+                        <div style={{flex: "1", minHeight: "27.2rem", overflowX: "auto"}}>
                             <table
                                 className="min-w-full rounded-3 leading-normal table table-hover overflow-hidden mb-0"
-                                style={{ tableLayout: "fixed" }}
+                                style={{tableLayout: "fixed"}}
                             >
                                 <colgroup>
-                                    <col style={{ width: "40px", maxWidth: "40px" }} />
-                                    <col style={{ width: "80px", maxWidth: "80px" }} />
-                                    <col style={{ width: "80px", maxWidth: "80px" }} />
-                                    <col style={{ width: "100px", maxWidth: "100px" }} />
-                                    <col style={{ width: "80px", maxWidth: "80px" }} />
-                                    <col style={{ width: "110px", maxWidth: "110px" }} />
-                                    <col style={{ width: "110px", maxWidth: "110px" }} />
-                                    <col style={{ width: "200px", maxWidth: "200px" }} />
-                                    <col style={{ width: "300px", maxWidth: "300px" }} />
+                                    <col style={{width: "40px", maxWidth: "40px"}}/>
+                                    <col style={{width: "80px", maxWidth: "80px"}}/>
+                                    <col style={{width: "80px", maxWidth: "80px"}}/>
+                                    <col style={{width: "120px",}}/>
+                                    <col style={{width: "80px", maxWidth: "80px"}}/>
+                                    <col style={{width: "140px", maxWidth: "150px"}}/>
+                                    <col style={{width: "140px", maxWidth: "150px"}}/>
+                                    <col style={{width: "210px",}}/>
+                                    <col style={{width: "250px",}}/>
                                 </colgroup>
-                                <thead style={{ background: "#0d6efd", color: "white" }}>
+                                <thead style={{background: "#0d6efd", color: "white"}}>
                                 <tr className="table_header_employee">
                                     <th
                                         className="py-2 border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         STT
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Mã HĐ
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Số CT
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Ngày Lập
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Giờ Lập
                                     </th>
                                     <th
                                         className="px-2 border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Tổng Tiền
                                     </th>
                                     <th
                                         className="px-2 border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Nợ HĐ
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Nhà Cung Cấp
                                     </th>
                                     <th
                                         className="border-b-2 text-left text-xs tracking-wider"
-                                        style={{ fontSize: "1rem" }}
+                                        style={{fontSize: "1rem"}}
                                     >
                                         Địa Chỉ
                                     </th>
@@ -413,7 +491,7 @@ function InvoiceList() {
                                             background: idClick && idClick.id === i.id ? "#629eec" : "transparent",
                                         }}>
                                         <td className="  py-3 px-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{(currentPage * 5)+ index + 1}</p>
+                                            <p className="text-gray-900 whitespace-no-wrap">{(currentPage * 5) + index + 1}</p>
                                         </td>
                                         <td className="  py-3 border-b border-gray-200  text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap"
@@ -424,11 +502,7 @@ function InvoiceList() {
                                         </td>
                                         <td className="py-3 border-b border-gray-200 text-sm">
                                             <p className="text-gray-900 whitespace-no-wrap">
-                                                {new Date(i.creationDay).toLocaleDateString('en-GB', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric',
-                                                })}
+                                                {formatDate(i.creationDay)}
                                             </p>
                                         </td>
 
@@ -447,27 +521,57 @@ function InvoiceList() {
                                             </p>
                                         </td>
 
-                                        <td className=" py-3 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap"
-                                            >{i.nameSupplier}</p>
-                                        </td>
-
-                                        <td className="py-3 border-b border-gray-200 text-sm">
-                                            {i.address.length > 20 ? (
-                                                <p
-                                                    className="text-gray-900 whitespace-no-wrap"
-                                                    title={i.address}
+                                        <td
+                                            className="py-3 border-b border-gray-200 text-sm"
+                                            style={{position: 'relative'}}
+                                            onMouseEnter={() => {
+                                                handleMouseEnter(i.nameSupplier);
+                                            }}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {i.nameSupplier.length > 19
+                                                ? `${i.nameSupplier.slice(0, 19)}...`
+                                                : i.nameSupplier
+                                            }
+                                            {showContent && medicine === i.nameSupplier &&
+                                                <div
                                                     style={{
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                >
-                                                    {i.address}
-                                                </p>
-                                            ) : (
-                                                <p className="text-gray-900 whitespace-no-wrap">{i.address}</p>
-                                            )}
+                                                        position: 'absolute',
+                                                        background: '#f3f3f5',
+                                                        top: '-1%',
+                                                        boxSizing: 'border-box',
+                                                        width: '190px',
+                                                        height: 'auto',
+                                                        minHeight: '82px',
+                                                        zIndex: 99
+                                                    }}>{i.nameSupplier}</div>
+                                            }
+                                        </td>
+                                        <td
+                                            className="py-3 border-b border-gray-200 text-sm"
+                                            style={{position: 'relative'}}
+                                            onMouseEnter={() => {
+                                                handleMouseEnter(i.address);
+                                            }}
+                                            onMouseLeave={handleMouseLeave}
+                                        >
+                                            {i.address.length > quantity
+                                                ? `${i.address.slice(0, quantity)}...`
+                                                : i.address
+                                            }
+                                            {showContent && medicine === i.address &&
+                                                <div
+                                                    style={{
+                                                        position: 'absolute',
+                                                        background: '#f3f3f5',
+                                                        top: '-1%',
+                                                        boxSizing: 'border-box',
+                                                        width: '190px',
+                                                        height: 'auto',
+                                                        minHeight: '82px',
+                                                        zIndex: 99
+                                                    }}>{i.address}</div>
+                                            }
                                         </td>
                                     </tr>
                                 ))}
@@ -538,9 +642,9 @@ function InvoiceList() {
                 <div className=" " style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
                     <div className=" ">
                         <Link to={`/dashboard/invoice/create`}><a className="btn btn-outline-primary"
-                                                        href="#"
-                                                        title="Thêm"
-                                                        style={{marginLeft: '5px'}}>
+                                                                  href="#"
+                                                                  title="Thêm"
+                                                                  style={{marginLeft: '5px'}}>
                             <FaPlus style={{marginBottom: '5px'}}/> Thêm mới</a></Link>
 
                         <Link to={`/dashboard/invoice/detail/${idClick.id}`}>
@@ -548,7 +652,7 @@ function InvoiceList() {
                                 className="btn btn-outline-primary"
                                 href="#"
                                 title="Chi tiết"
-                                style={{ marginLeft: '5px' }}
+                                style={{marginLeft: '5px'}}
                                 onClick={(e) => {
                                     if (idClick.id == null || idClick.id == undefined) {
                                         e.preventDefault();
@@ -582,8 +686,8 @@ function InvoiceList() {
                                        return false;
                                    }
                                }}>
-                            <FiEdit style={{fontSize: '20px', marginBottom: '5px'}}/> Sửa
-                        </a></Link>
+                                <FiEdit style={{fontSize: '20px', marginBottom: '5px'}}/> Sửa
+                            </a></Link>
 
                         <a style={{marginLeft: '5px'}}
                            title="Xóa"
@@ -599,7 +703,7 @@ function InvoiceList() {
                 </div>
             </div>
 
-    <ToastContainer/>
+            <ToastContainer/>
         </div>
     );
 

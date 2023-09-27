@@ -270,13 +270,7 @@ export default function MedicineEdit() {
                                 <legend className="float-none w-auto px-3"><h2>Thông tin thuốc</h2></legend>
                                 <Form>
                                     <div className="row">
-                                        <div className="col-4  d-flex justify-content-center align-items-center">
-                                            <img
-                                                src={medicines?.imageMedicineDto?.imagePath}
-                                                ref={imgPreviewRef} width="250" height="300"
-                                                style={{borderRadius: "10px", objectFit: "cover"}}/>
-                                        </div>
-                                        <div className="col-8">
+                                        <div className="col-12">
                                             <div className="row">
                                                 <div className="col-md-6">
                                                     <label className="col-md-4">Mã thuốc<span
@@ -548,30 +542,51 @@ export default function MedicineEdit() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="row">
-                                                <div className="d-flex justify-content-start">
-                                                    <label className="col-md-2" style={{height: "60%"}}
-                                                           htmlFor="inputGroupFile01">
-                                                        Chọn ảnh
-                                                    </label>
-                                                    <Field
-                                                        type="file"
-                                                        name="imagePath"
-                                                        className="form-control form-control-sm w-75"
-                                                        id="inputGroupFile01"
-                                                        aria-describedby="inputGroupFileAddon03"
-                                                        aria-label="Upload"
-                                                        accept="image/png, image/gif, image/jpeg"
-                                                        ref={inputFileRef}
-                                                        onChange={handleInputChange}
-                                                    />
+                                            <div className={"row"}>
+                                                <div className={"col-6"}>
+                                                    <div>
+                                                        <div className="row">
+                                                            <div className="d-flex justify-content-start">
+                                                                <label className="col-md-4" style={{height: "60%"}}
+                                                                       htmlFor="inputGroupFile01">
+                                                                    Chọn ảnh
+                                                                </label>
+                                                                <Field
+                                                                    type="file"
+                                                                    name="imagePath"
+                                                                    className="form-control form-control-sm w-50"
+                                                                    id="inputGroupFile01"
+                                                                    aria-describedby="inputGroupFileAddon03"
+                                                                    aria-label="Upload"
+                                                                    accept="image/png, image/gif, image/jpeg"
+                                                                    ref={inputFileRef}
+                                                                    onChange={handleInputChange}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="row">
+                                                            <label className="col-md-4">Ghi
+                                                                chú</label>
+                                                            <Field component="textarea" className="form-control w-50"
+                                                                   style={{height: "227px"}}
+                                                                   name="note" id="note"/>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className="row">
-                                                <label style={{width: "17.66666667%"}} className="col-md-2">Ghi
-                                                    chú</label>
-                                                <Field component="textarea" className="form-control" name="note"
-                                                       id="note"/>
+                                                <div className={"col-6 row d-flex justify-content-right"}>
+                                                    <img
+                                                        src={medicines?.imageMedicineDto?.imagePath}
+                                                        ref={imgPreviewRef}
+                                                        style={{
+                                                            padding: "0",
+                                                            width: "400px",
+                                                            height: "300px",
+                                                            borderRadius: "10px",
+                                                            objectFit: "cover",
+                                                            border: "1px solid black"
+                                                        }}/>
+                                                </div>
                                             </div>
                                             <br/>
                                             <div className="row">

@@ -19,7 +19,7 @@ const AuthorOfCustomer = ({ allowedRoles }) => {
 
   return roles && (roleAdmin || roleManager)  ? (
     <Outlet />
-  ) : <Navigate to={`/home`} />
+  ) : <Navigate to={`/403`} />
 
 }
 

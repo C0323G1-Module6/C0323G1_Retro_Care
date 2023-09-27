@@ -31,7 +31,7 @@ const Authentication = ({ allowedRoles }) => {
 
   return roles && hasValueInAuthorProperty(allowedRoles, roles) ? (
     <Outlet />
-  ) : <Navigate to={`/home`} />
+  ) : <Navigate to={`/401`} />
 
 }
 
