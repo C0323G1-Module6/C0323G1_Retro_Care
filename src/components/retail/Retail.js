@@ -4,13 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 // import { addMedicineToCart, getCartDetailEmployee, getCustomerByPhone, getMedicineList } from "../services/retail/RetailService";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { FaPlus } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { format } from 'date-fns';
-import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell, getNameEmployee } from "../../services/retail/RetailService";
+import { getCustomerByPhone, addMedicineToCart, getCartDetailEmployee, getMedicineList, setQuantityOfCart, deleteMedicineFromCart, payWhenSell, getNameEmployee, getOneMedicineByName } from "../../services/retail/RetailService";
 import { addJwtTokenToLocalStorage, getIdByUserName, infoAppUserByJwtToken } from "../../services/user/AppUserService";
 import jsPDF from "jspdf";
 import diacriticless from "diacriticless";
+import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import {AiOutlineRollback, AiOutlinePrinter} from "react-icons/ai";
+import {BsReceiptCutoff} from "react-icons/bs"
+
 
 
 
@@ -35,16 +38,14 @@ export default function Retail() {
 
 
     useEffect(() => {
-
         getStart();
-
+        document.title="RetroCare - bán lẻ";
     }, [])
 
     const getStart = async () => {
-        await getCart();
-        setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString())
+        setCode("OR" + Math.floor(1000 + Math.random() * 9000).toString())
         const currentDate = new Date();
-        const currentDateString = format(currentDate, 'dd/MM/yyyy');
+        const currentDateString = format(currentDate, 'dd-MM-yyyy');
         setDate(currentDateString)
         getUser();
     }
@@ -85,9 +86,6 @@ export default function Retail() {
         } catch (e) {
 
         }
-
-
-
     }
 
 
@@ -114,6 +112,11 @@ export default function Retail() {
 
     const openSwal = async () => {
         if (idCartDetail === 0) {
+            Swal.fire({
+                text: "Bạn chưa chọn gì để xóa",
+                icon: "warning",
+                timer: 1000,
+            });
             return;
         }
         Swal.fire({
@@ -156,10 +159,14 @@ export default function Retail() {
     }
 
     const addMedicine = async () => {
-        if (chooseMedicines.length == 1) {
-            await addMedicineToCart(app_user_id, chooseMedicines[0].id, 1);
-            await getCart();
-        }
+        try {
+            const medicine = await getOneMedicineByName(inputMedicine);
+            if (medicine !== null) {
+              await addMedicineToCart(app_user_id, medicine.id, 1);
+              await getCart();
+            }
+          } catch (error) {
+          }
     }
 
 
@@ -196,9 +203,10 @@ export default function Retail() {
     const pay = async () => {
         if (customer.app_user_id === 0) {
             Swal.fire({
-                text: "Chưa có khách hàng",
+                title: "Chưa có khách hàng",
+                text: "Xóa ô số điện thoại và bấm tìm để ra khách lẻ",
                 icon: "warning",
-                timer: 1500,
+                timer: 3000,
             });
             return;
         }
@@ -211,12 +219,12 @@ export default function Retail() {
             return;
         }
         const res = await payWhenSell(customer.app_user_id, app_user_id, code, note);
-        if(res.data==="" ){
-        await getCart();
-        clickSprintBill("da thanh toan");
-        openSwalWhenSuccess();
-        setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString());
-        } else{
+        if (res.data == true) {
+            await getCart();
+            clickSprintBill("da thanh toan");
+            openSwalWhenSuccess();
+            setCode("HDL-" + Math.floor(100000 + Math.random() * 900000).toString());
+        } else {
             Swal.fire({
                 text: `Thuốc ${res.data} không đủ, hãy kiểm tra lại`,
                 icon: "error",
@@ -226,6 +234,22 @@ export default function Retail() {
     }
 
     const clickSprintBill = (status) => {
+        if (customer.app_user_id === 0) {
+            Swal.fire({
+                text: "Chưa có khách hàng",
+                icon: "warning",
+                timer: 1500,
+            });
+            return;
+        }
+        if (listCart.length === 0) {
+            Swal.fire({
+                text: "Chưa có gì để in hoá đơn",
+                icon: "warning",
+                timer: 1500,
+            });
+            return;
+        }
         const content = {
             "customer": customer,
             "listCart": listCart,
@@ -241,80 +265,83 @@ export default function Retail() {
     const handleGeneratePDF = async (content, status) => {
         // Tạo đối tượng jsPDF
         const doc = new jsPDF();
-
+      
         const billContent = `
         HOA DON      ${status}
         -----------------------------
         Ma hoa don: ${code}
         -----------------------------
-        Khanh hang: ${diacriticless(content.customer.name)}
+        Khach hang: ${diacriticless(content.customer.name)}
         -----------------------------
         
-        `
-
+        `;
+      
         // Định dạng và vẽ nội dung hóa đơn
         doc.setFont('Arial', 'bold');
         doc.setFontSize(16);
         doc.text(billContent, 10, 10);
-
+      
         // Vẽ tiêu đề bảng
         const tableHeader = ['STT', 'Ten san pham', 'So luong', 'Gia', 'Thanh tien'];
         const tableHeaderX = 30;
         const tableHeaderY = 70;
         const tableHeaderFontSize = 12;
-
+      
         doc.setFont('Arial', 'bold');
         doc.setFontSize(tableHeaderFontSize);
-        doc.text(tableHeader.join('                        '), tableHeaderX, tableHeaderY);
-
+        doc.text(tableHeader.join('        '), tableHeaderX, tableHeaderY);
+      
         // Vẽ dữ liệu sản phẩm
         const tableDataX = 30;
         const tableDataY = 80;
         const tableDataFontSize = 12;
-
+      
         doc.setFont('Arial', 'normal');
         doc.setFontSize(tableDataFontSize);
         listCart.forEach((product, index) => {
-            const { name, cd_quantity, price } = product;
-            const rowData = [
-                index + 1,
-                diacriticless(name),
-                cd_quantity,
-                price,
-                cd_quantity * price,
-            ];
-            const rowY = tableDataY + index * 10;
-            rowData.forEach((data, columnIndex) => {
-                const columnX = tableDataX + columnIndex * 40;
-                doc.text(data.toString(), columnX, rowY);
-            });
+          const { name, cd_quantity, price } = product;
+          const rowData = [
+            index + 1,
+            diacriticless(name),
+            cd_quantity,
+            price,
+            cd_quantity * price,
+          ];
+          const rowY = tableDataY + index * 10;
+          rowData.forEach((data, columnIndex) => {
+            const columnX = tableDataX + columnIndex * 30;
+            doc.text(data.toString(), columnX, rowY);
+          });
         });
-
+      
         // Vẽ tổng giá trị hóa đơn
         const sumX = 30;
         const sumY = tableDataY + listCart.length * 10 + 10;
-
+      
         doc.setFont('Arial', 'bold');
         doc.text(`Tong: ${sum}`, sumX, sumY);
-
+      
         // Vẽ ghi chú
         const noteX = 30;
         const noteY = sumY + 10;
-
+      
         doc.setFont('Arial', 'normal');
-        doc.text(note, noteX, noteY);
-
+        doc.text(diacriticless(note), noteX, noteY);
+      
         // Lưu tài liệu PDF
         doc.save('example.pdf');
-    };
+      };
 
     return (
         <>
 
 
             <div className="container">
+            <div className="row header">
+                    <h1 className="mt-4 mb-3" style={{textAlign: 'center', color: '#0D6EFD'}}>HỆ THỐNG BÁN LẺ</h1>
+                </div>
                 <div className="row">
-                    <div className="col-md-4">
+                    <div className="col-md-4 mb-2">
                         <div>
                             <label htmlFor="id">Số phiếu</label>
                             <input id="id" name="id" value={code} readOnly className="form-control" />
@@ -326,8 +353,12 @@ export default function Retail() {
                         </div>
                         <div className="align-center d-flex align-items-center">
                             <input id="phoneNumber" className="form-control" value={phoneNumber}
-                                onChange={(event) => setPhoneNumber(event.target.value)} />
-                            <button className="btn btn-primary" onClick={() => getCustomer()}>Tìm</button>
+                                onChange={(event) => {
+                                    if (event.target.value.length <= 15) {
+                                        setPhoneNumber(event.target.value)
+                                    }
+                                }} />
+                            <button className="btn btn-outline-primary ms-2" onClick={() => getCustomer()}>Tìm</button>
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -339,18 +370,24 @@ export default function Retail() {
                 </div>
                 <div className="row">
                     <div className="col-md-4">
-                        <div>
+                        <div className="mb-2">
                             <label htmlFor="employee">Nhân viên</label>
                             <input id="employee" name="employee" value={employeeName} readOnly className="form-control" />
-                            <label htmlFor="date">Ngày lập</label>
+                        </div>
+                        <div>
+                        <label htmlFor="date">Ngày lập</label>
                             <input id="date" name="date" value={date} className="form-control" readOnly />
                         </div>
                     </div>
                     <div className="col-md-4">
                         <div className="row">
                             <label htmlFor="note">Ghi chú</label>
-                            <textarea cols="20" rows="3" id="note" name="note" className="form-control"
-                                value={note} onChange={(event) => setNote(event.target.value)} />
+                            <textarea cols="20" rows="4" id="note" name="note" className="form-control"
+                                value={note} onChange={(event) => {
+                                    if (event.target.value.length < 255) {
+                                        setNote(event.target.value)
+                                    }
+                                }} />
                         </div>
                     </div>
                     <div className="col-md-4" style={{ paddingTop: '28px', textAlign: 'center' }}>
@@ -368,25 +405,29 @@ export default function Retail() {
                 <div className="note-frame border border-dark rounded-3">
                     <table className="table rounded-3 overflow-hidden">
                         <thead>
-                            <tr style={{ backgroundColor: 'rgb(13, 110, 253)', height: '40px' }}>
+                            <tr className="text-light" style={{ backgroundColor: 'rgb(13, 110, 253)', height: '40px' }}>
                                 <th>Tên thuốc</th>
-                                <th>Đơn vị tính</th>
                                 <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Thành tiền</th>
+                                <th>Đơn vị tính</th>
+                                <th>Đơn giá (VNĐ)</th>
+                                <th>Thành tiền (VNĐ)</th>
                             </tr>
                         </thead>
                         <tbody>
                             {listCart.map((cart) => (
                                 <tr key={cart.cd_id}
-                                    style={idCartDetail === cart.cd_id ? { backgroundColor: "yellow" } : {}}
-                                    onClick={() => handleRowClick(cart.cd_id)} >
-                                    <td>{cart.name}</td>
-                                    <td>{cart.conversion_unit}</td>
-                                    <td><input type="number" value={cart.cd_quantity} defaultValue={cart.cd_quantity}
-                                        onChange={(event) => setQuantity(event.target.value, cart)} /></td>
-                                    <td>{cart.price}</td>
-                                    <td>{cart.price * cart.cd_quantity}</td>
+                                    style={idCartDetail === cart.cd_id ? { backgroundColor: 'rgb(98, 158, 236)' } : {}}
+                                >
+                                    <td  onClick={() => handleRowClick(cart.cd_id)}>{cart.name}</td>
+                                    <td><input type="number" value={cart.cd_quantity} style={{width:"50px"}} defaultValue={cart.cd_quantity}
+                                        onChange={(event) => setQuantity(event.target.value, cart)} />
+                                        {cart.cd_quantity > cart.m_quantity && 
+                                        <p style={{ margin: "0 5px 0" }}>  Chỉ còn {cart.m_quantity} {cart.conversion_unit}</p>
+                                        }
+                                    </td>
+                                    <td onClick={() => handleRowClick(cart.cd_id)}>{cart.conversion_unit.toLocaleString()}</td>
+                                    <td onClick={() => handleRowClick(cart.cd_id)}>{new Intl.NumberFormat("vi-VN").format(cart.price)}</td>
+                                    <td onClick={() => handleRowClick(cart.cd_id)}>{new Intl.NumberFormat("vi-VN").format(cart.price * cart.cd_quantity)}</td>
                                 </tr>
                             ))}
                             <tr>
@@ -401,7 +442,7 @@ export default function Retail() {
 
                                     />
                                     <a
-                                        className="btn btn-outline-primary"
+                                        className="btn btn-outline-primary mt-2"
                                         onClick={() => addMedicine()}
                                     >
                                         <FaPlus className="mx-1" />
@@ -423,23 +464,22 @@ export default function Retail() {
                     </table>
                 </div>
                 <br />
-                <div className="row" style={{ textAlign: 'right', display: 'flex' }}>
-                    <div className="col-7" style={{ textAlign: 'left' }}>
-                        <b>TỔNG TIỀN: </b>
-                        <b>{sum} Đồng</b>
+                <div className="row d-flex align-items-center justify-content-between" style={{ textAlign: 'right'}}>
+                    <div className="col-7 border border-1 border-dark w-25 rounded ms-2 d-flex justify-content-center p-2" style={{ textAlign: 'left' }}>
+                        <b>TỔNG TIỀN: {new Intl.NumberFormat("vi-VN").format(sum)} VNĐ</b>
                     </div>
-                    <div className="col-5">
-                        <button className="btn btn-outline-primary" onClick={() => pay()}>Thanh toán</button>
+                    <div className="col-5 d-flex align-items-center justify-content-end gap-2">
+                        <button className="btn btn-outline-primary" onClick={() => pay()}><BsReceiptCutoff size={18} className="me-1"/>Thanh toán</button>
                         <a
                             type="button"
                             onClick={() => openSwal()}
                             class="btn btn-outline-primary"
                         >
-                            <i className="fa-solid fa-trash"></i> Xoá
+                            <FaRegTrashAlt/> Xoá
                         </a>
-                        <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}>In phiếu</button>
-                        <a className="btn btn-outline-primary" >
-                            <i class="fa-regular fa-circle-left"></i>Trở về </a>
+                        <button className="btn btn-outline-primary" onClick={() => clickSprintBill("Chua thanh toan")}><AiOutlinePrinter size={18} className="me-1"/>In phiếu</button>
+                        <Link to={'/dashboard/ListInvoiceOrder'} className="btn btn-outline-primary" >
+                            <AiOutlineRollback size={18} className="me-1" />Trở về </Link>
                     </div>
                 </div>
             </div>

@@ -33,14 +33,11 @@ function CreateSupplierComponent() {
       navigate("/dashboard/supplier");
     } catch (err) {
       console.log(err);
-      if (err.response.data) {
-        setErrors(err.response.data);
-      }
+  
       if (err.response.status === 406) {
-        console.log(err);
         setErrors(err.response.data);
       }
-    }
+    } 
   };
   return (
     <>

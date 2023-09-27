@@ -27,7 +27,7 @@ img {
 
 .site-header {
   position: fixed;
-  padding: 30px 0;
+  padding: 1.5rem 0;
   display: flex;
   align-items: center;
   top: 0;
@@ -91,11 +91,6 @@ ul {
   width: 200px;
 }
 
-.main-navigation .menu li:hover > ul,
-.main-navigation .menu li.focus > ul {
-  left: auto;
-}
-
 .main-navigation .menu li a {
   display: flex;
   transition: 0.3s;
@@ -118,7 +113,6 @@ ul {
 }
 
 .header-right {
-  margin-left: 40px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -141,14 +135,15 @@ ul {
   position: absolute;
   top: -10px;
   right: -10px;
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 25px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   background: #ffffff;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 600;
   border: 1px solid #bfbfbf;
   color: #ff8243;
 }
@@ -182,8 +177,14 @@ ul {
 .header-search-form #form-input-home {
   font-size: 14px;
   padding-right: 40px;
-  width: 200px;
+  width: 300px;
   height: 40px;
+}
+
+#form-input-home::-webkit-search-cancel-button {
+  position: relative;
+  right: 5px;
+  cursor: pointer;
 }
 
 #form-input-home::placeholder {
@@ -272,16 +273,67 @@ ul {
   padding-left: 0.5rem;
 }
 
-.user-dropdown-item .bx {
-  padding: 0 1rem 0;
+/* Category------------ */
+.category {
+  display: inline-block;
+  justify-content: flex-start;
+  align-items: center;
+  min-width: 200px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.category:hover,
+.category-info:hover,
+.category-dropdown-item:hover {
+  color: #ff8243;
+}
+.category-info {
+  color: #0d0d25;
+  font-weight: 500;
+  position: relative;
+  text-align: center;
+  width: 100%;
+}
+
+#login {
+  position: absolute;
+}
+
+.category:hover .category-dropdown-list {
+  display: block;
+}
+
+/* Menu dropdown list */
+.category-dropdown-list {
+  position: absolute;
+  padding-top: 0.5rem;
+  top: 100%;
+  max-width: 200px;
+  width: 100%;
+  color: #0d0d25;
+  text-transform: capitalize;
+  font-weight: 500;
+  display: none;
+  background-color: rgb(243, 243, 245);
+}
+
+.category-dropdown-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  border-radius: 4rem;
+  color: #0d0d25;
+  text-transform: capitalize;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 0.5rem;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
-}
-
-.uil {
-  color: #ff8243;
 }
 
 @media screen and (min-width: 992px) {
@@ -314,7 +366,11 @@ ul {
     margin-left: 10px;
   }
   .main-navigation .menu li {
+    width: 150px;
     margin: 0 3px;
+  }
+  .header-div {
+    width: 150px;
   }
 }
 
@@ -334,6 +390,15 @@ ul {
   }
   .header-search-form #form-input-home {
     width: 170px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .header-search-form #form-input-home {
+    width: 200px;
+  }
+  .category {
+    width: 150px;
   }
 }
 
@@ -523,7 +588,7 @@ ul {
 }
 
 .main-banner {
-  padding: 10rem 0 5rem;
+  padding: 10rem 0 2rem;
   position: relative;
 }
 
@@ -676,11 +741,12 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .brands-box:hover {
-  filter: brightness(0.3);
   opacity: 0.9;
+  transform: scale(1.2);
 }
 
 .brand-title .h5-title {
@@ -706,7 +772,8 @@ p {
   padding: 3px 20px;
   border-radius: 60px;
   color: #ff8243;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .h2-title {
@@ -935,6 +1002,15 @@ p {
   width: 30px;
 }
 
+/* Swiper Bottom Wrapper */
+
+.book-table-img {
+  width: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
 /* *************** */
 
 .social-icon {
@@ -1137,7 +1213,7 @@ p {
 }
 
 .product-container {
-  padding: 0 10vw;
+  padding: 0 5vw;
   display: flex;
   overflow-x: auto;
   scroll-behavior: smooth;
@@ -1150,14 +1226,14 @@ p {
 .product-card {
   flex: 0 0 auto;
   width: 250px;
-  height: 450px;
+  height: 370px;
   /* margin-right: 40px; */
 }
 
 .product-image {
   position: relative;
   width: 100%;
-  height: 350px;
+  height: 250px;
   overflow: hidden;
   border-radius: 5px;
   background: linear-gradient(145deg, #e6e6e6, #ffffff);
@@ -1250,7 +1326,7 @@ p {
 .pre-btn,
 .nxt-btn {
   border: none;
-  width: 10vw;
+  width: 5vw;
   height: 100%;
   position: absolute;
   top: 0;
@@ -1618,7 +1694,7 @@ p {
 }
 
 .dropdown-menu {
-  width: auto;
+  width: 200px;
 }
 
 .dropend .dropdown-toggle {
@@ -1633,12 +1709,11 @@ p {
   display: none;
 }
 
-.dropdown:hover > .dropdown-menu,
-.dropend:hover > .dropdown-menu {
-  display: block;
-  margin-right: 0.125em;
-  position: relative;
-  right: 100%;
+.dropdown:hover > .dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 2rem;
 }
 @media screen and (min-width: 769px) {
   .dropend:hover > .dropdown-menu {
@@ -1649,4 +1724,26 @@ p {
   .dropend .dropdown-toggle {
     margin-left: 0.5em;
   }
+}
+
+.loading-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.5
+  ); /* Optional: semi-transparent background for overlay effect */
+  z-index: 9999; /* Higher z-index to overlay all other elements */
+}
+
+.loading-spinner {
+  /* Adjust styles for the loader if needed */
 }

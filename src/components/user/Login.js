@@ -1,4 +1,4 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Field, Form, Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import * as appUserService from '../../services/user/AppUserService';
 import { BsFacebook } from "react-icons/bs"
@@ -6,6 +6,7 @@ import { AiFillGoogleCircle } from "react-icons/ai"
 import { Link, useNavigate } from "react-router-dom";
 import { LoginSocialFacebook } from "reactjs-social-login";
 import Swal from "sweetalert2";
+import { te } from "date-fns/locale";
 
 
 const Login = () => {
@@ -13,26 +14,58 @@ const Login = () => {
     useEffect(() => {
         document.title = 'RetroCare - Đăng nhập'
     }, [])
-    const loginWithFacebook = async (resolve) => {
+
+    const handleLogin = async (resolve) => {
         try {
-            console.log(resolve.data.email)
+
             const result = await appUserService.loginWithFacebook({ facebookMail: resolve.data.email });
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            navigate("/home");
+            const tempURL = localStorage.getItem("tempURL");
+            localStorage.removeItem("tempURL");
+            if (tempURL) {
+                navigate(tempURL);
+            } else {
+                navigate('/home');
+
+            }
         } catch (e) {
             Swal.fire({
                 icon: 'error',
                 title: e.response.data,
             })
-        }
+        }   
+    }
+
+    const loginWithFacebook = async (resolve) => {
+        console.log(resolve);
+        Swal.fire({
+            text: 'Chào '+resolve.data.name+', bạn có muốn đăng nhập thông qua facebook ' + resolve.data.email+" không?",
+            showDenyButton: true,
+            confirmButtonText: 'Xác nhận',
+            denyButtonText: `Thoát`,
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+                handleLogin(resolve)
+            } else if (result.isDenied) {
+                return;
+            }
+        })
+
     }
 
     const loginByUserName = async (appUser) => {
         try {
             const result = await appUserService.loginByUserName(appUser);
             appUserService.addJwtTokenToLocalStorage(result.data.jwtToken);
-            const checkRoleEmployee = appUserService.checkRoleAppUser("ROLE_EMPLOYEE");
-            navigate("/home");
+            const tempURL = localStorage.getItem("tempURL");
+            localStorage.removeItem("tempURL");
+            if (tempURL) {
+                navigate(tempURL);
+            } else {
+                navigate('/home');
+
+            }
         } catch (e) {
             Swal.fire({
                 icon: 'error',
@@ -109,7 +142,7 @@ const Login = () => {
                                     <AiFillGoogleCircle style={{ color: '#ff0000', fontSize: 35 }} />
                                 </a>
                             </div>
-                        
+
 
                             <div className="mb-0">
                                 Bạn chưa có tài khoản?&nbsp;
@@ -117,7 +150,7 @@ const Login = () => {
                                     Đăng ký
                                 </Link>
                             </div>
-                  
+
 
                         </div>
                     </div>

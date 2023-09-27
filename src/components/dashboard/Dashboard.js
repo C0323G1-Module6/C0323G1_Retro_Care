@@ -18,6 +18,8 @@ import * as userService from "../../services/user/AppUserService";
 
 const Dashboard = () => {
   const [userName, setUsername] = useState("");
+  const roleAdmin = userService.checkRoleAppUser("ROLE_ADMIN");
+  const roleManager = userService.checkRoleAppUser("ROLE_MANAGER");
 
   useEffect(() => {
     getUsername();
@@ -35,9 +37,21 @@ const Dashboard = () => {
   };
 
   const menus = [
-    { name: "Báo cáo", link: "/dashboard/report", icon: AiOutlineAreaChart },
-    { name: "Khách hàng", link: "/dashboard/customer", icon: GiHumanTarget },
-    { name: "Thuốc", link: "/dashboard/medicine", icon: GiMedicines },
+    {
+      name: "Báo cáo",
+      link: "/dashboard/report",
+      icon: AiOutlineAreaChart,
+    },
+    {
+      name: "Khách hàng",
+      link: "/dashboard/customer",
+      icon: GiHumanTarget,
+    },
+    {
+      name: "Thuốc",
+      link: "/dashboard/medicine",
+      icon: GiMedicines,
+    },
     {
       name: "Nhóm thuốc",
       link: "/dashboard/kind-of-medicine",
@@ -48,10 +62,21 @@ const Dashboard = () => {
       link: "/dashboard/prescription",
       icon: TbReportMedical,
     },
-    { name: "Nhân viên", link: "/dashboard/employee", icon: IoIosPeople },
-    { name: "Bán lẻ", link: "/dashboard/retail", icon: BiSolidReport },
-    { name: "Nhà cung cấp", link: "/dashboard/supplier", icon: BiGrid },
-    { name: "Nhập kho", link: "/dashboard/invoice", icon: BiSolidTruck },
+    {
+      name: "Nhân viên",
+      link: "/dashboard/employee",
+      icon: IoIosPeople,
+    },
+    {
+      name: "Nhà cung cấp",
+      link: "/dashboard/supplier",
+      icon: BiGrid,
+    },
+    {
+      name: "Nhập kho",
+      link: "/dashboard/invoice",
+      icon: BiSolidTruck,
+    },
   ];
 
   return (
@@ -71,17 +96,30 @@ const Dashboard = () => {
           ></BiMenu>
         </div>
         <ul className="nav-list">
-          {menus?.map((menu, i) => (
-            <li key={i}>
-              <Link className="link" to={menu?.link}>
-                <div>
-                  {React.createElement(menu?.icon, { className: "icon" })}
-                </div>
-                <span className="links_name">{menu?.name}</span>
-              </Link>
-              <span className="tooltip">{menu?.name}</span>
-            </li>
-          ))}
+          {(roleAdmin || roleManager) && (
+            <>
+              {menus?.map((menu, i) => (
+                <li key={i}>
+                  <Link className="link" to={menu?.link}>
+                    <div>
+                      {React.createElement(menu?.icon, { className: "icon" })}
+                    </div>
+                    <span className="links_name">{menu?.name}</span>
+                  </Link>
+                  <span className="tooltip">{menu?.name}</span>
+                </li>
+              ))}
+            </>
+          )}
+          <li>
+            <Link className="link" to="/dashboard/list-invoice-order">
+              <div>
+                <BiSolidReport className="icon" />
+              </div>
+              <span className="links_name">Bán lẻ</span>
+            </Link>
+            <span className="tooltip">Bán lẻ</span>
+          </li>
           <li className="profile">
             <div className="profile-details">{userName?.sub}</div>
             <Link id="log_out" to={"/home"}>

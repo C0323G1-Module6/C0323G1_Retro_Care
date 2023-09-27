@@ -19,6 +19,7 @@ const CreationEmployee = () => {
   const inputFileRef = useRef(null);
   const [imageUpload, setImageUpload] = useState(null);
   const saveEmployee = async (employee, setErrors) => {
+    if(imageUpload !== null){
     const fileName = `images/${imageUpload.name + v4()}`;
     const imageRef = ref(storage, fileName);
     await uploadBytes(imageRef, imageUpload).then((snapshot) => {
@@ -28,20 +29,20 @@ const CreationEmployee = () => {
             ...employee,
             image: url,
           })
-            .then(() => {
-              navigate("/dashboard/employee");
-            })
-            .then(() => {
-              Swal.fire({
-                icon: "success",
-                title: "Tạo mới thành công !",
-                showConfirmButton: false,
-                timer: 2000,
-                customClass: {
-                  icon: "icon-post",
-                },
+              .then(() => {
+                navigate("/dashboard/employee");
+              })
+              .then(() => {
+                Swal.fire({
+                  icon: "success",
+                  title: "Tạo mới thành công !",
+                  showConfirmButton: false,
+                  timer: 2000,
+                  customClass: {
+                    icon: "icon-post",
+                  },
+                });
               });
-            });
         } catch (err) {
           if (err.response.data) {
             setErrors(err.response.data);
@@ -49,6 +50,31 @@ const CreationEmployee = () => {
         }
       });
     });
+    }else {
+      try {
+      await crateEmployee({
+        ...employee,
+        image:"https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/02/avatar-trang-y-nghia.jpeg?fit=512%2C20000&quality=95&ssl=1"
+      }).then(() => {
+        navigate("/dashboard/employee");
+      })
+          .then(() => {
+            Swal.fire({
+              icon: "success",
+              title: "Tạo mới thành công !",
+              showConfirmButton: false,
+              timer: 2000,
+              customClass: {
+                icon: "icon-post",
+              },
+            });
+          });
+      } catch (err) {
+        if (err.response.data) {
+          setErrors(err.response.data);
+        }
+      }
+    }
   };
   const handleInputChange = (event) => {
     const file = event.target.files[0];
@@ -76,6 +102,7 @@ const CreationEmployee = () => {
   };
 
   useEffect(() => {
+    document.title = "RetroCare - Thêm mới nhân viên";
     loadNewEmployee();
   }, []);
 
@@ -109,7 +136,8 @@ const CreationEmployee = () => {
             "Tên nhân viên chỉ được chứa chữ cái và khoảng trắng."),
         address: Yup.string()
           .required("Vui lòng nhập địa chỉ.")
-          .max(100, "Vui lòng nhập dưới 100 kí tự."),
+          .max(100, "Vui lòng nhập dưới 100 kí tự.")
+            .matches(/^[\p{L}\p{N}\s]+$/u,"Địa chỉ chỉ chứa số, chữ và dấu '/'"),
         phoneNumber: Yup.string()
           .required("Vui lòng nhập số điện thoại.")
           .min(10, "Vui lòng chỉ nhập từ 10 đến 11 số.")
@@ -132,7 +160,9 @@ const CreationEmployee = () => {
           .matches(
             /^\d{9}(\d{3})?$/u,
             "Vui lòng chỉ nhập số và độ dài là 9 hoặc 12."),
-        appUser: Yup.string().required("Vui lòng nhập tên tài khoản."),
+        appUser: Yup.string().required("Vui lòng nhập tên tài khoản.")
+            .max(30,"Vui lòng nhập dưới 30 kí tự")
+            .matches(/^[0-9a-zA-Z]+$/u,"Tên tài khoản chỉ chứa chữ và số"),
         note: Yup.string().max(100,"Vui lòng nhập note dưới 100 kí tự")
       })}
       onSubmit={(value, { setErrors }) => {
@@ -314,103 +344,103 @@ const CreationEmployee = () => {
                     </div>
                   </div>
 
-                  <div className="col-3 p-2">
-                    <label style={{ fontWeight:"bold"}}>
-                      CCCD/CMND <sup style={{color:"red"}}>*</sup>
-                    </label>
-                  </div>
-                  <div className="col-9">
-                    <Field
-                      name="idCard"
-                      className="form-control border border-dark mt-2"
-                      type="text"
-                    />
+                    <div className="col-3 p-2">
+                      <label style={{ fontWeight:"bold"}}>
+                        CCCD/CMND <sup style={{color:"red"}}>*</sup>
+                      </label>
+                    </div>
+                    <div className="col-9">
+                      <Field
+                          name="idCard"
+                          className="form-control border border-dark mt-2"
+                          type="text"
+                      />
+                      <div style={{ height: "16px" }}>
+                        <ErrorMessage
+                            name="idCard"
+                            style={{ color: "red", marginLeft: "20px" }}
+                            component={"small"}
+                        />
+                      </div>
+                    </div>
+                    {/*<div className="col-3 p-2">*/}
+                    {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
+                    {/*</div>*/}
+                    {/*<div className="col-9">*/}
+                    {/*    <select  className="form-select border border-dark mt-2">*/}
+                    {/*        <option value="1">Nhân viên</option>*/}
+                    {/*        <option value="2">Quản lý</option>*/}
+                    {/*    </select>*/}
+                    {/*    /!*<div style={{height: '16px'}}>*!/*/}
+                    {/*    /!*    <small style={{color: 'red',marginLeft: '20px'}}>error</small>*!/*/}
+                    {/*    /!*</div>*!/*/}
+                    {/*</div>*/}
+                    <div className="col-3 p-2">
+                      <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
+                    </div>
+                    <div className="col-9">
+                      <div className="input-group mt-2 ">
+                        <Field
+                            type="file"
+                            class="form-control"
+                            aria-describedby="inputGroupFileAddon03"
+                            aria-label="Upload"
+                            accept="image/png, image/gif, image/jpeg"
+                            ref={inputFileRef}
+                            onChange={handleInputChange}
+                            name="image"
+                        />
+                      </div>
+                    </div>
+                    <div className="form-floating  mt-2">
+                      <Field
+                          as="textarea"
+                          name="note"
+                          className="form-control border border-dark"
+                          placeholder="Leave a comment here"
+                          id="floatingTextarea"
+                      />
+                      <label htmlFor="floatingTextarea">Note</label>
+                    </div>
                     <div style={{ height: "16px" }}>
                       <ErrorMessage
-                        name="idCard"
-                        style={{ color: "red", marginLeft: "20px" }}
-                        component={"small"}
+                          name="image"
+                          style={{ color: "red", marginLeft: "20px" }}
+                          component={"small"}
                       />
                     </div>
-                  </div>
-                  {/*<div className="col-3 p-2">*/}
-                  {/*    <label style={{ fontWeight:"bold"}}>Chức vụ <sup style={{color:"red"}}>*</sup></label>*/}
-                  {/*</div>*/}
-                  {/*<div className="col-9">*/}
-                  {/*    <select  className="form-select border border-dark mt-2">*/}
-                  {/*        <option value="1">Nhân viên</option>*/}
-                  {/*        <option value="2">Quản lý</option>*/}
-                  {/*    </select>*/}
-                  {/*    /!*<div style={{height: '16px'}}>*!/*/}
-                  {/*    /!*    <small style={{color: 'red',marginLeft: '20px'}}>error</small>*!/*/}
-                  {/*    /!*</div>*!/*/}
-                  {/*</div>*/}
-                  <div className="col-3 p-2">
-                    <label style={{ fontWeight:"bold"}}>Ảnh nhân viên</label>
-                  </div>
-                  <div className="col-9">
-                    <div className="input-group mt-2 ">
-                      <Field
-                        type="file"
-                        class="form-control"
-                        aria-describedby="inputGroupFileAddon03"
-                        aria-label="Upload"
-                        accept="image/png, image/gif, image/jpeg"
-                        ref={inputFileRef}
-                        onChange={handleInputChange}
-                        name="image"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-floating  mt-2">
-                    <Field
-                      as="textarea"
-                      name="note"
-                      className="form-control border border-dark"
-                      placeholder="Leave a comment here"
-                      id="floatingTextarea"
-                    />
-                    <label htmlFor="floatingTextarea">Note</label>
-                  </div>
-                  <div style={{ height: "16px" }}>
-                    <ErrorMessage
-                      name="image"
-                      style={{ color: "red", marginLeft: "20px" }}
-                      component={"small"}
-                    />
-                  </div>
-                  <div className="col-4 p-2 mt-3">
+                    <div className="col-4 p-2 mt-3">
                     <span>
                       (<span style={{ color: "red" }}>*</span>) Thông tin bắt
                       buộc
                     </span>
-                  </div>
-                  <div className="col-8 mt-3">
-                    <div>
-                      <Link to={"/dashboard/employee"}>
-                        <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow">
-                          <i className="fa-solid fa-rotate-left"></i> Trở về
+                    </div>
+                    <div className="col-8 mt-3">
+                      <div>
+                        <Link to={"/dashboard/employee"}>
+                          <button className="btn btn-outline-secondary float-end  mx-1 mt-2 shadow">
+                            <i className="fa-solid fa-rotate-left"></i> Trở về
+                          </button>
+                        </Link>
+                        <button type="reset" className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
+                          <i className="fa-solid fa-rotate-right"></i>
+                          Làm mới
                         </button>
-                      </Link>
-                      <button type="reset" className="btn btn-outline-primary float-end mx-1 mt-2 shadow">
-                        <i className="fa-solid fa-rotate-right"></i>
-                        Làm mới
-                      </button>
-                      <button
-                        type={"submit"}
-                        className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
-                      >
-                        <i className="fa-solid fa-plus"></i> Thêm Mới
-                      </button>
+                        <button
+                            type={"submit"}
+                            className="btn btn-outline-primary float-end mx-1 mt-2 shadow"
+                        >
+                          <i className="fa-solid fa-plus"></i> Thêm Mới
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </fieldset>
+                </fieldset>
+              </div>
             </div>
           </div>
-        </div>
-      </Form>
-    </Formik>
+        </Form>
+      </Formik>
   );
 };
 

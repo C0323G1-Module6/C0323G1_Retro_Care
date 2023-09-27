@@ -51,6 +51,7 @@ function PrescriptionEdit() {
         const res = await getListIndication(param.id);
         setIndications(res.data);
     }
+    console.log(indications);
     console.log(indication);
 
     const totals = indication.indicationDto?.map((i) => (
@@ -59,15 +60,15 @@ function PrescriptionEdit() {
 
 
     const editNewPrescription = async (value) => {
-        
-            const result = await editPrescription(value);
-            Swal.fire(
-                "Sửa thành công !",
-                "Toa thuốc " + value.name + " đã được cập nhật!",
-                "success"
-            );
-            navigate("/dashboard/prescription")
-        
+
+        const result = await editPrescription(value);
+        Swal.fire(
+            "Sửa thành công !",
+            "Toa thuốc " + value.name + " đã được cập nhật!",
+            "success"
+        );
+        navigate("/dashboard/prescription")
+
     }
 
     useEffect(() => {
@@ -100,19 +101,20 @@ function PrescriptionEdit() {
                         code: Yup.string()
                             .required('Không được để trống mã toa thuốc!')
                             .max(6, "Độ dài không được quá 6 ký tự!")
-                            .matches(/^TH-[0-9]{3}/, "Mã không đúng định dạng!"),
+                            .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
                             .required('Không được để trống tên toa thuốc!')
                             .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
-                            .required('Không được để trống triệu chứng!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Triệu chứng không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống triệu chứng!'),
                         duration: Yup.number()
                             .required("Không được để trống!")
                             .max(30, "Không được quá 30 ngày!")
                             .min(1, "Không được nhỏ hơn 0!"),
+                        note: Yup.string()
+                            .max(50, "Không được vượt quá 50 ký tự!"),
                         indicationDto: Yup.array().of(
                             Yup.object().shape({
                                 // medicine: Yup.string.required("Không được để trống thuốc!"),
@@ -188,6 +190,9 @@ function PrescriptionEdit() {
                                     <label className="col-sm-3 col-form-label" id="label-input">Ghi chú</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='note' />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="note" component="small" style={{ color: 'red' }} />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -216,6 +221,13 @@ function PrescriptionEdit() {
                                                                         <option value={medicine.name}>{medicine.name}</option>
                                                                     ))}
                                                                 </datalist>
+                                                                {/* <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
+                                                                    {
+                                                                        chooseMedicines.map((t) => (
+                                                                            <option value={t.name}>{t.name}</option>
+                                                                        ))
+                                                                    }
+                                                                </Field> */}
 
                                                             </div>
                                                             <label className="col-sm-3 col-form-label">Số viên:</label>

@@ -45,7 +45,11 @@ export const getIdByUserName = async (userName) => {
 };
 
 export const checkRoleAppUser = (roleName) => {
-  const roleList = jwt_decode(localStorage.getItem("JWT")).roleList;
-  const checkRole = roleList.some((role) => role.authority === roleName);
-  return checkRole;
+  const jwtToken = localStorage.getItem("JWT");
+  if (jwtToken) {
+    const roleList = jwt_decode(jwtToken).roleList;
+    const checkRole = roleList.some((role) => role.authority === roleName);
+    return checkRole;
+  }
+
 };

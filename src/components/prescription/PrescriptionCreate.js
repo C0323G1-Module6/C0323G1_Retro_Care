@@ -8,8 +8,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import {
-  AiOutlineRollback,
- 
+    AiOutlineRollback,
+
 } from "react-icons/ai";
 function PrescriptionCreate() {
     const [patients, setPatients] = useState([]);
@@ -21,7 +21,7 @@ function PrescriptionCreate() {
         const res = await getAllPatient();
         setPatients(res)
     };
-    console.log(indications);
+    console.log(chooseMedicines);
 
     const total = indications.indicationDto?.map((i) => (
         indications.duration * i.frequency * i.dosage
@@ -46,10 +46,10 @@ function PrescriptionCreate() {
             navigate("/dashboard/prescription")
         } catch (err) {
             console.log(err.response.data);
-            
-                if (err.response.data) {
-                    setErrors(err.response.data);
-                }
+
+            if (err.response.data) {
+                setErrors(err.response.data);
+            }
         }
     }
 
@@ -80,19 +80,19 @@ function PrescriptionCreate() {
                         code: Yup.string()
                             .required('Không được để trống mã toa thuốc!')
                             .max(6, "Độ dài không được quá 6 ký tự!")
-                            .matches(/^TH-[0-9]{3}/, "Mã không đúng định dạng!"),
+                            .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
                             .required('Không được để trống tên toa thuốc!')
                             .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
-                            .required('Không được để trống triệu chứng!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Triệu chứng không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống triệu chứng!'),
                         duration: Yup.number()
                             .required("Không được để trống!")
                             .max(30, "Không được quá 30 ngày!")
                             .min(1, "Không được nhỏ hơn 0!"),
+                        note: Yup.string(50, "Không được quá 50 ký tự!"),
                         indicationDto: Yup.array().of(
                             Yup.object().shape({
                                 medicine: Yup.string().required("Không được để trống!"),
@@ -108,7 +108,7 @@ function PrescriptionCreate() {
                     })}
 
                     onSubmit={(values, { setErrors }) => {
-                        console.log(values, setErrors);
+                        console.log(values);
                         createNewPrescription(values, setErrors);
                     }}
                 >
@@ -170,6 +170,9 @@ function PrescriptionCreate() {
                                     <label className="col-sm-3 col-form-label" id="label-input" >Ghi chú</label>
                                     <div className="col-sm-9">
                                         <Field type="text" className="form-control" name='note' placeholder="Nhập ghi chú..." />
+                                        <div style={{ height: '15px' }}>
+                                            <ErrorMessage name="note" component="small" style={{ color: 'red' }} />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -198,6 +201,15 @@ function PrescriptionCreate() {
                                                                         </>
                                                                     ))}
                                                                 </datalist>
+                                                                {/* <Field as='select' className="form-select" aria-label="Default select example" name={`indicationDto[${index}].medicine`}>
+                                                                    {
+                                                                        chooseMedicines.map((t) => (
+                                                                            <>
+                                                                            <option value={t.name}>{t.name}</option>
+                                                                            </>
+                                                                        ))
+                                                                    }
+                                                                </Field> */}
                                                                 <div className="col-sm-10"><ErrorMessage name={`indicationDto[${index}].medicine`} component="small" style={{ color: 'red' }} /></div>
 
                                                             </div>

@@ -9,12 +9,14 @@ import {
 import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
+import "./Prescription.css"
 
 const PrescriptionList = () => {
+  const [showContent, setShowcontent] = useState(false);
+  const [notes, setNotes] = useState("");
   const [prescriptions, setPrescriptions] = useState([]);
   const [totalPage, setTotalPage] = useState(0);
   const [page, setPage] = useState(0);
-  const [prescription, setPrescription] = useState();
   const [seletedPrescription, setSelecdPrescription] = useState({
     id: null,
     code: ""
@@ -23,8 +25,8 @@ const PrescriptionList = () => {
   const [sortBy, setSortBy] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const navigate = useNavigate();
-  const findAllPrescription = async (page,searchInput,searchInMedicine,sortBy) => {
-    const res = await getAllPrescription(page,searchInput,searchInMedicine,sortBy);
+  const findAllPrescription = async (page, searchInput, searchInMedicine, sortBy) => {
+    const res = await getAllPrescription(page, searchInput, searchInMedicine, sortBy);
     setTotalPage(res.data.totalPages);
     setPrescriptions(res.data.content)
   }
@@ -42,16 +44,27 @@ const PrescriptionList = () => {
     }
   }
 
+  const handleMouseEnter = (notes) => {
+    setShowcontent(true);
+    setNotes(notes);
+  }
+
+  const handleMouseLeave = () => {
+    setShowcontent(false);
+  }
+
+  const quantity = 15;
+
   const handleSearchOption = (e) => {
     setSearchInMedicine(e.target.value);
   }
-  
+
   const handleSortOption = (e) => {
     console.log(e);
     setSortBy(e.target.value);
   }
   console.log(sortBy);
-  
+
 
   const handleSearch = async () => {
     setSearchInput(document.getElementById("search").value);
@@ -79,39 +92,39 @@ const PrescriptionList = () => {
         text: 'Vui lòng chọn toa thuốc trước khi thực hiện thao tác này!',
       })
     } else {
-    Swal.fire({
-      title: "Xác nhận xoá !",
-      text: "Bạn có xác nhận xoá toa thuốc có mã :" + seletedPrescription.code,
-      showCancelButton: true,
-      showConfirmButton: true,
-      confirmButtonText: "Xoá",
-      cancelButtonText: "Huỷ",
-      icon: "question",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const response = await removePrescription(seletedPrescription.id);
-        if (response.status === 200) {
+      Swal.fire({
+        title: "Xác nhận xoá !",
+        text: "Bạn có xác nhận xoá toa thuốc có mã :" + seletedPrescription.code,
+        showCancelButton: true,
+        showConfirmButton: true,
+        confirmButtonText: "Xoá",
+        cancelButtonText: "Huỷ",
+        icon: "question",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const response = await removePrescription(seletedPrescription.id);
+          if (response.status === 200) {
+            Swal.fire({
+              text: "Xoá thành công ! ",
+              icon: "success",
+              timer: 1500,
+            });
+          }
+          await findAllPrescription(page, searchInput, searchInMedicine, sortBy);
+        } else {
           Swal.fire({
-            text: "Xoá thành công ! ",
-            icon: "success",
+            text: "Huỷ xoá toa thuốc ! ",
+            icon: "warning",
             timer: 1500,
           });
         }
-        await findAllPrescription(page,searchInput,searchInMedicine,sortBy);
-      } else {
-        Swal.fire({
-          text: "Huỷ xoá toa thuốc ! ",
-          icon: "warning",
-          timer: 1500,
-        });
-      }
-    });
-  }
+      });
+    }
   };
 
   useEffect(() => {
-    findAllPrescription(page,searchInput,searchInMedicine,sortBy);
-  }, [page,searchInMedicine,searchInput,sortBy])
+    findAllPrescription(page, searchInput, searchInMedicine, sortBy);
+  }, [page, searchInMedicine, searchInput, sortBy])
 
 
   return (
@@ -132,7 +145,7 @@ const PrescriptionList = () => {
 
 
             <div className="btn-group">
-              <select 
+              <select
                 onChange={(e) => handleSearchOption(e)}
                 style={{ width: '150px', borderRadius: '5px', color: 'blue' }}
                 id="select" className="appearance-none pl-8 pr-6 py-2 px-2">
@@ -162,16 +175,16 @@ const PrescriptionList = () => {
           <div className="col-3 d-flex align-items-center justify-content-end gap-3">
             <label>Sắp xếp</label>
             <div className="btn-group">
-            <div className="btn-group">
-              <select 
-                onChange={handleSortOption}
-                style={{ width: '150px', borderRadius: '5px', color: 'blue' }}
-                id="select" className="appearance-none pl-8 pr-6 py-2 px-2">
-                <option selected value={"code"}>Mã toa thuốc</option>
-                <option value={"name"}>Tên toa thuốc</option>
-                <option value={"symptoms"}>Triệu chứng</option>
-              </select>
-            </div>
+              <div className="btn-group">
+                <select
+                  onChange={handleSortOption}
+                  style={{ width: '150px', borderRadius: '5px', color: 'blue' }}
+                  id="select" className="appearance-none pl-8 pr-6 py-2 px-2">
+                  <option selected value={"code"}>Mã toa thuốc</option>
+                  <option value={"name"}>Tên toa thuốc</option>
+                  <option value={"symptoms"}>Triệu chứng</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -180,7 +193,7 @@ const PrescriptionList = () => {
             <table className="w-100 leading-normal overflow-hidden rounded-3 table table-hover m-0">
               <thead>
                 <tr style={{ background: "#0d6efd", color: "#ffffff" }}>
-                  <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">STT</th> 
+                  <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">STT</th>
                   <th className="px-3 py-3 border-b-2 text-left text-xs uppercase tracking-wider">
                     Mã toa thuốc
                   </th>
@@ -199,57 +212,61 @@ const PrescriptionList = () => {
                 </tr>
               </thead>
               {prescriptions && prescriptions.length !== 0 ?
-              <tbody>
-                {
-                  prescriptions.map((p, index) => (
-                    <tr key={p.id} onClick={() => {
-                      if (seletedPrescription.id === null || seletedPrescription.id != p?.id ) {
-                        setSelecdPrescription({ id: p?.id, code: p?.code });
+                <tbody>
+                  {
+                    prescriptions.map((p, index) => (
+                      <tr key={p.id} onClick={() => {
+                        if (seletedPrescription.id === null || seletedPrescription.id != p?.id) {
+                          setSelecdPrescription({ id: p?.id, code: p?.code });
                         } else {
-                          setSelecdPrescription({id: null, code: ""});
+                          setSelecdPrescription({ id: null, code: "" });
                         }
-                      // setSelecdPrescription({ id: p?.id, code: p?.code })
-                    }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#629eec' } : {}}>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <div className="flex items-center">
-                          <div className="ml-3">
-                            <p className="text-gray-900 whitespace-no-wrap">{index + 1}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">{p.code}</p>
-                      </td>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {p.name}
-                        </p>
-                      </td>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">{p.patient.name}</p>
-                      </td>
-                      <td className="px-3 py-3 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {p.symptoms}
-                        </p>
-                      </td>
-                      <td className="px-3 py-3 border-b border-gray-200text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap">
-                          {p.note}
-                        </p>
-                      </td>
-                    </tr>
-                  ))
-                }
-              </tbody> :
-            <tbody>
-              <tr style={{ height: '150px' }}>
-                <td style={{ fontSize: '30px', textAlign: 'center' }} colSpan="8">Không có dữ
-                  liệu
-                </td>
-              </tr>
-            </tbody>
-          }
+                        // setSelecdPrescription({ id: p?.id, code: p?.code })
+                      }} style={(seletedPrescription.id === p?.id) ? { backgroundColor: '#629eec' } : {}}>
+                        <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                          {index + 1}
+                        </td>
+                        <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                          {p.code}
+                        </td>
+                        <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                      
+                            {p.name}
+                          
+                        </td>
+                        <td className="px-3 py-3 border-b border-gray-200 text-sm">
+                          {p.patient.name}
+                        </td>
+                        <td className="px-3 py-3 border-b border-gray-200 text-sm prescription-hide"
+                          onMouseEnter={() => handleMouseEnter(p.symptoms)}
+                          onMouseLeave={handleMouseLeave}>
+                          {/* <p className="text-gray-900 whitespace-no-wrap"> */}
+                          {p.symptoms.length > quantity ? `${p.symptoms.slice(0, quantity)} ...` : p.symptoms}
+                          {showContent && notes === p.symptoms && <div>{p.symptoms}</div>}
+                          {/* </p> */}
+                        </td>
+                        <td className="px-3 py-3 border-b border-gray-200text-sm prescription-hide"
+                          onMouseEnter={() => handleMouseEnter(p.note)}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          
+                            {p.note.length > quantity ? `${p.note.slice(0, quantity)} ...` : p.note}
+                            {showContent && notes === p.note && <div>{p.note}</div>}
+
+                          
+                        </td>
+                      </tr>
+                    ))
+                  }
+                </tbody> :
+                <tbody>
+                  <tr style={{ height: '150px' }}>
+                    <td style={{ fontSize: '30px', textAlign: 'center' }} colSpan="8">Không có dữ
+                      liệu
+                    </td>
+                  </tr>
+                </tbody>
+              }
             </table>
             <div className="px-5 py-3 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
               <div className="justify-content-center d-flex">
@@ -288,8 +305,8 @@ const PrescriptionList = () => {
             <FaPlus className="mx-1" />
             Thêm mới
           </Link>
-          <button className="btn btn-outline-primary" onClick={()=>handleEdit()}>
-          <FiEdit className="mx-1" />
+          <button className="btn btn-outline-primary" onClick={() => handleEdit()}>
+            <FiEdit className="mx-1" />
             Sửa
           </button>
           <button
@@ -300,7 +317,7 @@ const PrescriptionList = () => {
             <FaRegTrashAlt className="mx-1" />
             Xoá
           </button>
-          
+
           <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
         </div>
       </div>

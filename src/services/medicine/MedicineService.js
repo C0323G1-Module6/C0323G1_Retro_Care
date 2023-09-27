@@ -5,6 +5,11 @@ export const getAllUnit = async () => {
     return result.data;
 }
 
+export const getMedicineCode = async () => {
+    const result = await axios.get(`http://localhost:8080/api/medicine/code/create`);
+    return result.data;
+}
+
 export const addMedicine = async (medicine) => {
     await axios.post("http://localhost:8080/api/medicine", medicine);
 }
@@ -21,6 +26,7 @@ export const editMedicine = async (id, medicine) => {
 export const getMedicineById = async (id) => {
     try {
         const result = await axios.get(`http://localhost:8080/api/medicine/${id}`);
+        console.log(result);
         return result.data;
     } catch (error) {
         console.log(error)

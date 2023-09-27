@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlus, FaRegTrashAlt } from "react-icons/fa";
+import { FaPlus, FaRegTrashAlt, } from "react-icons/fa";
 import { FiEdit } from "react-icons/fi";
 import {
     AiOutlineRollback,
@@ -10,6 +10,9 @@ import { add, deleteKindOfMedicine, edit, getListById, pagination } from '../../
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
+import XRegExp from 'xregexp'
+import { Link } from 'react-router-dom';
+
 
 function KindOfMedicineList(props) {
     const [kindOfMedicines, setKindOfMedicine] = useState([]);
@@ -20,74 +23,91 @@ function KindOfMedicineList(props) {
     const [choseRow, setChoseRow] = useState([]);
     const [dataId, setDataId] = useState({});
     const [editKindOfMedicine, setEditKindOfMedicine] = useState()
-    // const [inputValue, setInputValue] = useState('');
-    const resetInput = () => {
-        const resetCode = document.getElementById("code");
-        resetCode.value = "";
-        const resetName = document.getElementById("name");
 
-        resetName.value = "";
-}
+
     // edit
     const showListById = async (id) => {
-
         const data = await getListById(id);
-        console.log(data);
         setEditKindOfMedicine(data)
     }
-
-    // const handleInputChange = (event) => {
-    //     setInputValue(event.target.value)
-    // }
-    // console.log(inputValue);
- 
-
-    // delete
+    const handleEdit = () => {
+        console.log(55);
+        if (choseRow.length < 1) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
+    // Create
+    const handleCreate = () => {
+        if (choseRow.length > 0) {
+            console.log(66);
+            Swal.fire({
+                text: "Bạn hãy bỏ chọn nhóm thuốc ",
+                icon: "warning",
+                timer: 2000,
+            });
+        }
+    }
+    // choseRow
     const choseDelete = (kindOfMedicine) => {
         const checkExists = choseRow.some(choice => choice === kindOfMedicine.id);
         if (checkExists) {
             const choseRowNew = choseRow.filter(choice => choice !== kindOfMedicine.id);
             setDataId({ id: undefined, code: undefined, name: undefined })
             setChoseRow(choseRowNew);
-            // document.getElementById("code").value = "";
-            // document.getElementById("name").value = "";
-          
+            setEditKindOfMedicine({
+                id: "",
+                code: "",
+                name: "",
+            })
         } else {
             setChoseRow([kindOfMedicine.id])
             setDataId({ id: kindOfMedicine.id, code: kindOfMedicine.code, name: kindOfMedicine.name })
-            
+
         }
 
 
     }
-
+    //delete
     const handleDelete = async () => {
-        if (dataId !== '') {
+        if ( dataId.id !== undefined) {
+            console.log(1);
             Swal.fire({
-                title: "Delete Confirmation",
-                text: "Do you want to delete: " + dataId.name,
+                title: " Xác nhận xoá",
+                text: "Bạn có muốn xoá: " + dataId.name,
                 showCancelButton: true,
+                cancelButtonText: "Hoàn tác",
                 showConfirmButton: true,
-                confirmButtonText: "Yes, delete it",
+                confirmButtonText: "Vâng, xoá",
                 icon: "question",
             }).then(async (result) => {
                 if (result.isConfirmed) {
+                    console.log(2);
                     const response = await deleteKindOfMedicine(dataId.id);
-                    const data = await pagination(page, searchCodes, searchNames);
-                    setKindOfMedicine(data.content);
-                    if (response?.status === 200) {
-                        Swal.fire({
-                            text: "Delete successfully ",
-                            icon: "success",
-                            timer: 1500,
-                        });
-                    }
+                    setDataId({ id: undefined, code: undefined, name: undefined })
                     await showList();
+
+                    Swal.fire({
+                        text: " Xoá thành công ",
+                        icon: "success",
+                        timer: 3000,
+                    });
+
+                    setEditKindOfMedicine({
+                        id: "",
+                        code: "",
+                        name: "",
+                    })
+                    setChoseRow([])
                 } else {
                     Swal.fire({
-                        text: "You choose cancel ",
+                        text: "Bạn chọn hoàn tác ",
                         icon: "warning",
-                        timer: 1500,
+                        timer: 3000,
                     });
                 }
             });
@@ -95,26 +115,42 @@ function KindOfMedicineList(props) {
             Swal.fire({
                 text: "Chọn nhóm thuốc ",
                 icon: "warning",
-                timer: 1500,
+                timer: 3000,
             });
         }
 
     };
     // List
 
-    const showList = async () => {
-        const data = await pagination(page, searchCodes, searchNames);
-        setTotalPage(data.totalPages)
-        setKindOfMedicine(data.content);
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleButtonSearch()
+        }
     }
-
+    const showList = async () => {
+        try {
+            const data = await pagination(page, searchCodes, searchNames);
+            setKindOfMedicine(data);
+            setKindOfMedicine(data?.content);
+            setTotalPage(data?.totalPages)
+        } catch (error) {
+            console.log(error);
+            await Swal.fire({
+                text: "Không tìm thấy dữ liệu cần tìm ",
+                icon: "warning",
+                timer: 1500,
+            })
+            setSearchCode(document.getElementById('medicineCode').value = "");
+            setSearchName(document.getElementById('medicineName').value = "");
+        }
+    }
 
     // search
     const handleButtonSearch = () => {
-        setSearchCode(document.getElementById('medicineCode').value)
-        setSearchName(document.getElementById('medicineName').value)
-    }
+        setSearchCode(document.getElementById('medicineCode').value.trim());
+        setSearchName(document.getElementById('medicineName').value.trim());
 
+    }
     // Pagination
     const handlePrevPage = () => {
         const previousPages = page - 1;
@@ -122,8 +158,6 @@ function KindOfMedicineList(props) {
             setPage(previousPages)
         }
     }
-
-
     const handleNextPage = async () => {
         if (page < totalPage - 1) {
             const nextPage = page + 1;
@@ -132,9 +166,8 @@ function KindOfMedicineList(props) {
     }
 
 
-
     useEffect(() => {
-        showList()
+        showList(page, searchCodes, searchNames)
     }, [page, searchCodes, searchNames, dataId.id]);
 
     useEffect(() => {
@@ -143,6 +176,7 @@ function KindOfMedicineList(props) {
         }
 
     }, [dataId.id]);
+
 
 
     return (
@@ -164,11 +198,13 @@ function KindOfMedicineList(props) {
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control"
                                 placeholder='Mã nhóm Thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <input id='medicineName'
                                 style={{ width: 250, borderRadius: 5 }}
                                 className="form-control" nhómThuốc
                                 placeholder='Tên nhóm thuốc'
+                                onKeyDown={handleKeyDown}
                             />
                             <button className="btn btn-outline-primary" style={{ width: 120 }} type="submit" onClick={handleButtonSearch} >
                                 <i className="fa-solid fa-magnifying-glass" />
@@ -181,7 +217,7 @@ function KindOfMedicineList(props) {
                         {/* table */}
                         <table className="table table-responsive table-hover ">
                             <thead>
-                                <tr>
+                                <tr style={{ background: "#0D6EFD", color: "#FFFFFF" }}>
                                     <th>STT</th>
                                     <th>Mã nhóm thuốc</th>
                                     <th>Tên nhóm thuốc</th>
@@ -195,13 +231,13 @@ function KindOfMedicineList(props) {
                                             choseDelete(kindOfMedicine)
                                         }
                                         }
-                                        style={choseRow.some(choice => choice === kindOfMedicine.id) ? { backgroundColor: '#FCF54C' } : {}}
+                                        style={choseRow.some(choice => choice === kindOfMedicine.id) ? { backgroundColor: '#629eec' } : {}}
                                     >
                                         <td>{(page * 5) + index + 1}</td>
                                         <td>{kindOfMedicine.code}</td>
                                         <td>{kindOfMedicine.name}</td>
                                     </tr>
-                                ))) : (<h1>Not found data</h1>)}
+                                ))) : (<h1>Không tìm thấy dữ liệu</h1>)}
                             </tbody>
                         </table>
                         {/* pagination */}
@@ -246,108 +282,136 @@ function KindOfMedicineList(props) {
                             flagDeleted: editKindOfMedicine?.flagDeleted
                         }}
                         validationSchema={Yup.object({
-                            name: Yup.string().max(25).required()
+                            name: Yup.string()
+
+                                .max(25,"Không quá 25 ký tự")
+                                .min(3,"Tối thiểu 3 kí tự")
+                                .required("Nhập để thêm mới")
+                                .matches(XRegExp('^(\\p{Lu}\\p{Ll}*([\\s]\\p{Lu}\\p{Ll}*)*)\\d*$'), "Nhập sai định dạng")
+                                .test("check-space", "Nhập không đúng định dạng", (value) => value.trim() !== 0)
+                            ,
                         })}
                         onSubmit={async (value) => {
                             console.log(choseRow);
                             if (choseRow.length > 0) {
-                                console.log(11);
                                 await edit(value)
+                                console.log(33);
                                 await showList()
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                                 Swal.fire({
-                                    text: "Update successfully ",
+                                    text: "Cập nhật thành công ",
                                     icon: "success",
                                     timer: 1500,
                                 });
                             } else {
+
                                 console.log(15);
                                 await add(value);
                                 await showList();
                                 Swal.fire({
-                                    text: "Add successfully ",
+                                    text: "Thêm mới thành công ",
                                     icon: "success",
                                     timer: 1500,
                                 });
+                                setEditKindOfMedicine({
+                                    id: "",
+                                    code: "",
+                                    name: "",
+                                })
                             }
-
+                            // formRef.current.reset();
 
                         }}
                     >
-                        <Form >
-                            <div className="row justify-content-center m-3 h-10">
-                                <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
+                        {({ values }) => (
+                            <Form>
+                                <div className="row justify-content-center m-3 h-10">
+                                    <fieldset className="col-12 border border-dark rounded-3 p-3  d-flex justify-content-center table-responsive">
 
-                                    {/* mã thuốc */}
-                                    <div className=" m-5">
-                                        <label id="pharmacyCode" htmlFor="" className="form-label">
-                                            Mã nhóm thuốc
-                                        </label>
-                                        <Field
-                                            readOnly
-                                            type="text"
-                                            name="code"
-                                            // onChange={handleInputChange}
-                                            id="code"
-                                            defaultValue={dataId?.code}
-                                            className="form-control"
-                                            placeholder=""
-                                            aria-describedby="helpId"
-                                        />
-                                        {/* <ErrorMessage name='code' component="div" /> */}
-                                    </div>
-                                    {/* nhóm thuốc */}
-                                    <div className=" m-5">
-                                        <label id="pharmacyName" htmlFor="" className="form-label">
-                                            Tên nhóm thuốc
-                                        </label>
-                                        <Field
-                                            type="text"
-                                            name="name"
-                                        
-                                            // onChange={handleInputChange}
-                                            id="name"
-                                            className="form-control"
-                                            placeholder=""
-                                            aria-describedby="helpId"
-                                        />
-                                        {/* <ErrorMessage name='name' component="div" /> */}
-                                    </div>
+                                        {/* mã thuốc */}
+                                        <div className=" m-5">
+                                            <label id="pharmacyCode" htmlFor="" className="form-label">
+                                                Mã nhóm thuốc
+                                            </label>
+                                            <Field
+                                                readOnly
+                                                type="text"
+                                                name="code"
+                                                disabled={choseRow.length < 1}
+                                                // onChange={handleInputChange}
+                                                id="code"
+                                                defaultValue={dataId?.code}
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-describedby="helpId"
 
-                                    <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
-                                </fieldset>
-                            </div>
+                                            />
+                                            {/* <ErrorMessage name='code' component="div" /> */}
+                                        </div>
+                                        {/* nhóm thuốc */}
+                                        <div className=" m-5">
+                                            <label id="pharmacyName" htmlFor="" className="form-label">
+                                                Tên nhóm thuốc
+                                            </label>
+                                            <Field
+                                                type="text"
+                                                name="name"
+                                               
+                                                // onChange={handleInputChange}
+                                                id="name"
+                                                className="form-control"
+                                                placeholder=""
+                                                aria-describedby="helpId"
+                                            />
+                                            <ErrorMessage style={{color:"red"}} name='name' component="div" />
+                                        </div>
 
+                                        <legend className="float-none w-auto px-3">Thông tin thuốc</legend>
+                                    </fieldset>
+                                </div>
+                              
 
-                            {/* action */}
-                            <div className="d-flex align-items-center justify-content-end gap-3">
-                                {/* add */}
-                                <button className="btn btn-outline-primary" type='submit'>
-                                    <FaPlus className="mx-1" />
-                                    Thêm mới
-                                </button>
-                                {/* edit */}
-                                <button className="btn btn-outline-primary" type='submit'>
-                                    <FiEdit className="mx-1" />
-                                    Sửa
-                                </button>
-                                {/* delete */}
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-primary"
-                                    // data-bs-toggle="modal"
-                                    // data-bs-target="#exampleModal"
-                                    onClick={() => handleDelete()}
-                                >
-                                    <i className="fa-solid fa-trash" />
-                                    Xoá
-                                </button>
-                                <a className="btn btn-outline-primary" href="/HuyL_home.html">
-                                    <AiOutlineRollback className="mx-1" />
-                                    Trở về
-                                </a>
-                            </div>
-                        </Form>
+                                {/* action */}
+                                <div className="d-flex align-items-center justify-content-end gap-3">
+                                    {/* add */}
+                                    <button className="btn btn-outline-primary" type='submit' onClick={handleCreate} disabled={choseRow.length > 0}>
+                                        <FaPlus className="mx-1" />
+                                        Thêm mới
+                                    </button>
+                                    {/* edit */}
+                                    <button className="btn btn-outline-primary" type='submit' onClick={handleEdit}>
+                                        <FiEdit className="mx-1" />
+                                        Sửa
+                                    </button>
+                                    {/* delete */}
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-primary"
+                                        // data-bs-toggle="modal"
+                                        // data-bs-target="#exampleModal"
+                                        onClick={() => handleDelete()}
+                                    >
+                                        <FaRegTrashAlt className="mx-1" />
+                                        Xoá
+                                    </button>
+                                    <Link to={`/home`} className="btn btn-outline-primary"><AiOutlineRollback className="mx-1" />Trở về</Link>
+
+                                    {/* <a className="btn btn-outline-primary" href="/home">
+                                        <AiOutlineRollback className="mx-1" />
+                                        Trở về
+                                    </a> */}
+                                </div>
+                                {/* <p> Code: {values.code}</p>
+                                <p> Name: {values.name}</p> */}
+                            </Form> 
+                        )}
+                       
                     </Formik>
+                
                     {/* MOdal action */}
                     <div className="modal fade" id="exampleModal" tabIndex={-1}>
                         <div className="modal-dialog">
@@ -373,7 +437,7 @@ function KindOfMedicineList(props) {
                                         Huỷ xoá
                                     </button>
                                     <button type="button" className="btn btn-primary">
-                                        Xoá
+                                        <FaRegTrashAlt className="mx-1" /> Xoá
                                     </button>
                                 </div>
                             </div>

@@ -4,15 +4,11 @@ import "bootstrap/dist/js/bootstrap";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "./Home.css";
 import arrow from "../../img/arrow.png";
+import drugStoreImage from "../../img/drug-store.png";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import {
-  Pagination,
-  Navigation,
-  Autoplay,
-  EffectCoverflow,
-} from "swiper/modules";
+import { Navigation, Autoplay, EffectCoverflow } from "swiper/modules";
 import * as homeService from "../../services/home/HomeService";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
@@ -27,28 +23,48 @@ import {
   getIdByUserName,
 } from "../../services/user/AppUserService";
 import Swal from "sweetalert2";
+import Sliders from "./Sliders";
 
 const Home = () => {
   const navigate = useNavigate();
   const [medicineList, setMedicineList] = useState([]);
   const [favoriteList, setFavoriteList] = useState([]);
+  const [medicineListWithKind, setMedicineListWithKind] = useState([]);
+  const [medicineForChildren, setMedicineForChildren] = useState([]);
+
   const [appUserId, setAppUserId] = useState(null);
   const dispatch = useDispatch();
   const carts = useSelector((state) => state.cartReducer);
 
   useEffect(() => {
+    document.title = "RetroCare - Trang chủ";
+  }, []);
+
+  useEffect(() => {
     getMedicineList();
     getFavoriteList();
+    getMedicineListWithKind();
+    getMedicineForChildren();
   }, []);
 
   const getMedicineList = async () => {
     const response = await homeService.findMedicineForHomepage("", "");
-    setMedicineList(response);
+    setMedicineList(response.data);
+  };
+
+  const getMedicineListWithKind = async () => {
+    const response = await homeService.findMedicineForHomepage("", "bổ");
+    setMedicineListWithKind(response.data);
+  };
+
+  const getMedicineForChildren = async () => {
+    const response = await homeService.findMedicineForHomepage("", "cảm cúm");
+    setMedicineForChildren(response.data);
   };
 
   const getFavoriteList = async () => {
     const response = await homeService.findFavoriteMedicineForHomepage();
-    setFavoriteList(response);
+    setFavoriteList(response.data);
   };
   const addToCart = async (medicineId) => {
     const isLoggedIn = infoAppUserByJwtToken();
@@ -68,10 +84,9 @@ const Home = () => {
       toast.success("Thêm sản phẩm thành công");
     }
   };
-  const doNothing = () => {};
   return (
     <div>
-      <Header onInputChange={doNothing} />
+      <Header onInputChange={() => {}} />
       <section className="main-banner" id="home">
         <div className="sec-wp">
           <div className="container">
@@ -152,12 +167,14 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="our-menu bg-light repeat-img pt-5 pb-5" id="menu">
+      <Sliders />
+
+      <section className="bg-light repeat-img pt-2 pb-2">
         <div className="sec-wp">
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-5">Sản phẩm</p>
+                <p className="sec-sub-title mb-5 w-50">Sản phẩm mới nhất</p>
               </div>
             </div>
           </div>
@@ -170,13 +187,17 @@ const Home = () => {
             </button>
             <div className="product-container">
               <Swiper
-                slidesPerView={4}
+                slidesPerView={5}
                 spaceBetween={30}
                 cssMode={true}
-                navigation={{ nextEl: "#arrow-prev-1", prevEl: "#arrow-nxt-1" }}
+                navigation={{
+                  nextEl: "#arrow-nxt-1",
+                  prevEl: "#arrow-prev-1",
+                }}
                 loop={true}
-                speed={6000}
-                modules={[Navigation, Pagination]}
+                speed={500}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                modules={[Navigation]}
                 className="mySwiper"
               >
                 {medicineList?.map((el, index) => {
@@ -250,12 +271,12 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="our-menu bg-light repeat-img pt-5 pb-5" id="menu">
+      <section className="bg-light repeat-img pt-2 pb-2">
         <div className="sec-wp">
           <div className="row">
             <div className="col-lg-12">
               <div className="sec-title text-center">
-                <p className="sec-sub-title mb-5">Được yêu thích</p>
+                <p className="sec-sub-title mb-5 w-50">Sản phẩm bán chạy</p>
               </div>
             </div>
           </div>
@@ -269,13 +290,14 @@ const Home = () => {
             </button>
             <div className="product-container">
               <Swiper
-                slidesPerView={4}
+                slidesPerView={5}
                 spaceBetween={30}
                 cssMode={true}
-                navigation={{ nextEl: "#arrow-prev-2", prevEl: "#arrow-nxt-2" }}
+                navigation={{ nextEl: "#arrow-nxt-2", prevEl: "#arrow-prev-2" }}
                 loop={true}
-                speed={6000}
-                modules={[Navigation, Pagination]}
+                speed={500}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                modules={[Navigation]}
                 className="mySwiper"
               >
                 {favoriteList?.map((el, index) => {
@@ -349,13 +371,217 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="book-table bg-light pt-5 pb-5">
+      <section className="bg-light repeat-img pt-2 pb-2">
+        <div className="sec-wp">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="sec-title text-center">
+                <p className="sec-sub-title mb-5 w-50">Danh mục thuốc bổ</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="product">
+            <button className="pre-btn" id="arrow-prev-3">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <button className="nxt-btn" id="arrow-nxt-3">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <div className="product-container">
+              <Swiper
+                slidesPerView={5}
+                spaceBetween={30}
+                cssMode={true}
+                navigation={{ nextEl: "#arrow-nxt-3", prevEl: "#arrow-prev-3" }}
+                loop={true}
+                speed={500}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                modules={[Navigation]}
+                className="mySwiper"
+              >
+                {medicineListWithKind?.map((el, index) => {
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+                ;
+              </Swiper>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-light repeat-img pt-2 pb-2">
+        <div className="sec-wp">
+          <div className="row">
+            <div className="col-lg-12">
+              <div className="sec-title text-center">
+                <p className="sec-sub-title mb-5 w-50">
+                  Thuốc cảm dành cho trẻ em
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="product">
+            <button className="pre-btn" id="arrow-prev-4">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <button className="nxt-btn" id="arrow-nxt-4">
+              <img src={arrow} alt="arrow" />
+            </button>
+            <div className="product-container">
+              <Swiper
+                slidesPerView={5}
+                spaceBetween={30}
+                cssMode={true}
+                navigation={{ nextEl: "#arrow-nxt-4", prevEl: "#arrow-prev-4" }}
+                loop={true}
+                speed={500}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
+                modules={[Navigation]}
+                className="mySwiper"
+              >
+                {medicineForChildren?.map((el, index) => {
+                  const discountPercentage = utils.getDiscount(
+                    el.medicinePrice
+                  );
+                  const actualPrice =
+                    Math.ceil(
+                      el.medicinePrice /
+                        ((100 - discountPercentage) / 100) /
+                        1000
+                    ) * 1000;
+                  return (
+                    <SwiperSlide key={index}>
+                      <div className="product-card">
+                        <div className="product-image">
+                          <span className="discount-tag">
+                            {`${discountPercentage}% off`}
+                          </span>
+                          <Link to={`/details/${el.medicineId}`}>
+                            <img
+                              src={el.medicineImage}
+                              className="product-thumb"
+                              alt=""
+                            />
+                          </Link>
+                          <button
+                            className="card-btn"
+                            onClick={() => addToCart(el.medicineId)}
+                          >
+                            Mua
+                          </button>
+                        </div>
+                        <div className="product-info">
+                          <p className="product-short-description">
+                            {el.medicineName}
+                          </p>
+                          <div className="d-flex justify-content-between">
+                            <span className="price">
+                              {parseFloat(el.medicinePrice).toLocaleString(
+                                "en-US",
+                                {
+                                  minimumFractionDigits: 0,
+                                  maximumFractionDigits: 0,
+                                }
+                              )}{" "}
+                              VNĐ
+                            </span>
+                            <span className="product-unit">
+                              {el.medicineUnit}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="actual-price">
+                              {actualPrice.toLocaleString("en-US", {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                              })}
+                              VNĐ
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </SwiperSlide>
+                  );
+                })}
+                ;
+              </Swiper>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="book-table bg-light pt-2 pb-2">
         <div className="sec-wp">
           <div className="container">
             <div className="row">
               <div className="col-lg-12">
                 <div className="sec-title text-center mb-5">
-                  <p className="sec-sub-title mb-5">Khuyến mãi</p>
+                  <p className="sec-sub-title mb-5 w-50">
+                    Chương trình khuyến mãi
+                  </p>
                 </div>
               </div>
             </div>
@@ -378,45 +604,34 @@ const Home = () => {
                 slideShadows: true,
               }}
               modules={[EffectCoverflow, Autoplay, Navigation]}
-              className="mySwiper"
+              className="mySwiper-bottom"
             >
               <SwiperSlide>
                 <a
-                  href="https://medicare.vn/wp-content/uploads/2023/08/Banner-web-T08_Home.jpg"
+                  href="#"
                   className="book-table-img back-img swiper-slide"
                   style={{
                     backgroundImage:
-                      "url(https://medicare.vn/wp-content/uploads/2023/08/Banner-web-T08_Home.jpg)",
+                      "url(https://data-service.pharmacity.io/pmc-ecm-webapp-config-api/production/banner/WEB-1693476977103.png)",
                   }}
                 />
               </SwiperSlide>
               <SwiperSlide>
                 <a
-                  href="https://medicare.vn/wp-content/uploads/2023/08/1.jpg"
+                  href="https://data-service.pharmacity.io/pmc-ecm-webapp-config-api/production/banner/913-1694600382533.png"
                   className="book-table-img back-img swiper-slide"
                   style={{
                     backgroundImage:
-                      "url(https://medicare.vn/wp-content/uploads/2023/08/1.jpg)",
+                      "url(https://data-service.pharmacity.io/pmc-ecm-webapp-config-api/production/banner/913-1694600382533.png)",
                   }}
                 />
               </SwiperSlide>
               <SwiperSlide>
                 <a
-                  href="https://medicare.vn/wp-content/uploads/2023/08/1.jpg"
+                  href="#"
                   className="book-table-img back-img swiper-slide"
                   style={{
-                    backgroundImage:
-                      "url(https://medicare.vn/wp-content/uploads/2023/08/1.jpg)",
-                  }}
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <a
-                  href="https://medicare.vn/wp-content/uploads/2023/08/5-1400x658.jpg"
-                  className="book-table-img back-img swiper-slide"
-                  style={{
-                    backgroundImage:
-                      "url(https://medicare.vn/wp-content/uploads/2023/08/5-1400x658.jpg)",
+                    backgroundImage: `url(${drugStoreImage})`,
                   }}
                 />
               </SwiperSlide>
@@ -437,7 +652,9 @@ const Home = () => {
               <div className="row">
                 <div className="col-lg-12">
                   <div className="sec-title text-center pt-5 mb-3">
-                    <p className="sec-sub-title mb-5">Blog</p>
+                    <p className="sec-sub-title mb-5 w-50">
+                      Chuyên mục sức khoẻ
+                    </p>
                   </div>
                 </div>
               </div>
