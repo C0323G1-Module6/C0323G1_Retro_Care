@@ -104,8 +104,8 @@ function PrescriptionEdit() {
                             .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
-                            .required('Không được để trống tên toa thuốc!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống tên toa thuốc!'),
+                           
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
                             .required('Không được để trống triệu chứng!'),

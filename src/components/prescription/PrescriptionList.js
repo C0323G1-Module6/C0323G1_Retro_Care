@@ -6,7 +6,7 @@ import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
 } from "react-icons/ai";
-import { getAllPrescription, getPrescriptionById, removePrescription } from "../../services/prescription/prescription";
+import { getAllPrescription,  removePrescription } from "../../services/prescription/prescription";
 import Swal from "sweetalert2";
 import { Link, useNavigate } from "react-router-dom";
 import "./Prescription.css"
