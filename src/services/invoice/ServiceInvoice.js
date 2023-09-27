@@ -38,6 +38,7 @@ export async function getUnitDetail(id) {
 }
 export async function createInvoice(invoice) {
     const result = await axios.post(`http://localhost:8080/api/invoice/create`, invoice);
+    console.log(result);
     return result;
 }
 export async function editInvoice(invoice) {
