@@ -2,7 +2,7 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { useEffect, useMemo, useState } from "react";
 import { getAllPatient } from "../../services/prescription/patient";
 import { getMedicineList } from "../../services/medicine/MedicineService";
-import { createPrescription } from "../../services/prescription/prescription";
+import { createPrescription, getMaxCode } from "../../services/prescription/prescription";
 import * as Yup from 'yup';
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -16,12 +16,11 @@ function PrescriptionCreate() {
     const [chooseMedicines, setChooseMedicines] = useState([]);
     const [indications, setIndications] = useState([]);
     const navigate = useNavigate();
-
+    const [maxCode, setMaxCode] = useState("");
     const findAllPatient = async () => {
         const res = await getAllPatient();
         setPatients(res)
     };
-    console.log(chooseMedicines);
 
     const total = indications.indicationDto?.map((i) => (
         indications.duration * i.frequency * i.dosage
@@ -33,11 +32,18 @@ function PrescriptionCreate() {
         setChooseMedicines(res);
     }
 
+    const codePrescription = async () => {
+        const res = await getMaxCode();
+        setMaxCode(res.data);
+    }
+
+    console.log(maxCode);
+
     const createNewPrescription = async (value, setErrors) => {
         console.log(value);
 
         try {
-            const result = await createPrescription(value);
+         await createPrescription(value);
             Swal.fire(
                 "Thêm mới thành công !",
                 "Toa thuốc " + value.name + " đã được thêm mới!",
@@ -56,6 +62,7 @@ function PrescriptionCreate() {
     useEffect(() => {
         findAllPatient();
         findAllMedicine();
+        codePrescription()
     }, [])
 
     return (
@@ -77,14 +84,9 @@ function PrescriptionCreate() {
                     }}
 
                     validationSchema={Yup.object({
-                        code: Yup.string()
-                            .required('Không được để trống mã toa thuốc!')
-                            .max(6, "Độ dài không được quá 6 ký tự!")
-                            .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
-                            .required('Không được để trống tên toa thuốc!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống tên toa thuốc!'),
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
                             .required('Không được để trống triệu chứng!'),
@@ -119,7 +121,7 @@ function PrescriptionCreate() {
                                 <div className="mb-3 row">
                                     <label className="col-sm-3 col-form-label" id="label-input" >Mã toa thuốc</label>
                                     <div className="col-sm-9">
-                                        <Field type="text" className="form-control" name='code' placeholder="Nhập mã toa thuốc..." />
+                                        <Field type="text" className="form-control" name='code' value={maxCode} disabled placeholder="Nhập mã toa thuốc..." />
                                         <div style={{ height: '15px' }}>
                                             <ErrorMessage name="code" component="small" style={{ color: 'red' }} />
                                         </div>
@@ -230,12 +232,12 @@ function PrescriptionCreate() {
                                                             <div className="col-sm-1">&nbsp;</div>
                                                             <label className="col-sm-2 col-form-label">Ngày : </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                             <div className="col-sm-6 text-center" style={{ marginLeft: '-0.4rem' }}>

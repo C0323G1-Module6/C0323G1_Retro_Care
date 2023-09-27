@@ -104,8 +104,8 @@ function PrescriptionEdit() {
                             .matches(/^TH[0-9]{3}/, "Mã không đúng định dạng!"),
                         name: Yup.string()
                             .max(25, "Độ dài không được quá 25 ký tự!")
-                            .required('Không được để trống tên toa thuốc!')
-                            .matches(/^[a-zA-ZÀ-ỹ ]*$/, "Tên không được chứa ký tự đặc biệt!"),
+                            .required('Không được để trống tên toa thuốc!'),
+                           
                         symptoms: Yup.string()
                             .max(50, "Độ dài không quá 50 ký tự!")
                             .required('Không được để trống triệu chứng!'),
@@ -245,12 +245,12 @@ function PrescriptionEdit() {
                                                             <div className="col-sm-1">&nbsp;</div>
                                                             <label className="col-sm-2 col-form-label">Ngày : </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].frequency`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">lần,</label>
                                                             <label className="col-sm-2 col-form-label">Mỗi lần: </label>
                                                             <div className="col-sm-2">
-                                                                <Field type="text" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
+                                                                <Field type="number" className="form-control" name={`indicationDto[${index}].dosage`} placeholder="..." />
                                                             </div>
                                                             <label className="col-sm-1 col-form-label">viên</label>
                                                             <div className="col-sm-6 text-center" style={{ marginLeft: '-0.4rem' }}>
