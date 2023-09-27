@@ -16,6 +16,8 @@ import * as ServiceUser from "../../services/user/AppUserService"
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import Swal from "sweetalert2";
+import { set } from "date-fns";
+import { validate } from "uuid";
 function CreateInvoice() {
     const navigate = useNavigate();
     const [supplier, setSupplier] = useState([]);
@@ -27,6 +29,8 @@ function CreateInvoice() {
     const [employee, setEmployee] = useState({
     });
     const [totalPriceMedicine, setTotalPriceMedicine] = useState(0);
+    const [paid, setPaid] = useState(0);
+    const [flag, setFlag] = useState(false);
 
 
 
@@ -85,20 +89,17 @@ function CreateInvoice() {
         const result = await ServiceInvoice.getUnitDetail(medicineId);
         return result;
     };
-    const setInvoiceInfo = async () => {
-        const elements = await elementRef.current.getElementsByClassName("realPrice");
-        // Sử dụng các phần tử đã lấy được
-        let totalPrice = 0;
-        for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            const value = parseInt(element.textContent) || 0;
-            totalPrice += value;
-        }
-        setTotalPriceMedicine(totalPrice);
-        if (totalPrice - document.getElementById("paid").value < 0)
-            document.getElementById("extant").value = 0
-        else
-            document.getElementById("extant").value = totalPrice - document.getElementById("paid").value;
+    const setInvoiceInfo = async (value) => {
+        // const elements = await elementRef.current.getElementsByClassName("realPrice");
+        // // Sử dụng các phần tử đã lấy được
+        // let totalPrice = 0;
+        // for (let i = 0; i < elements.length; i++) {
+        //     const element = elements[i];
+        //     const value = parseInt(element.textContent) || 0;
+        //     totalPrice += value;
+        // }
+        // setTotalPriceMedicine(totalPrice);
+        alert(value)
     }
 
 
@@ -125,9 +126,9 @@ function CreateInvoice() {
         let price = (unitPrice - (unitPrice * discount / 100)) * quantity;
         const element = document.getElementById(`${index}`);
         element.getElementsByTagName('td')[1].textContent = unit;
-        element.getElementsByTagName('td')[3].textContent = unitPrice;
+        element.getElementsByTagName('td')[3].textContent = new Intl.NumberFormat("vi-VN").format(unitPrice) || 0;
         element.getElementsByTagName('td')[5].textContent = value.vat;
-        element.getElementsByTagName('td')[6].textContent = price;
+        element.getElementsByTagName('td')[6].textContent = new Intl.NumberFormat("vi-VN").format(price) || 0;
         await setInvoiceInfo();
     }
 
@@ -299,27 +300,27 @@ function CreateInvoice() {
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input8" className="col-sm-4 col-form-label">Tiền thuốc</label>
                                                         <div className="col-sm-8">
-                                                            <input type="text" disabled id="medicinePrice" value={totalPriceMedicine} className="form-control" />
+                                                            <input type="text" disabled id="medicinePrice" value={new Intl.NumberFormat("vi-VN").format(totalPriceMedicine)} className="form-control" />
                                                         </div>
                                                     </div>
 
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input10" className="col-sm-4 col-form-label">Tổng tiền</label>
                                                         <div className="col-sm-8">
-                                                            <input type="text" disabled id="totalPrice" value={totalPriceMedicine} className="form-control" />
+                                                            <input type="text" disabled id="totalPrice" value={new Intl.NumberFormat("vi-VN").format(totalPriceMedicine)} className="form-control" />
                                                         </div>
                                                     </div>
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input11" className="col-sm-4 col-form-label">Thanh toán</label>
                                                         <div className="col-sm-8">
-                                                            <Field type="number" onKeyUp={() => setInvoiceInfo()} name="paid" className="form-control" id="paid" />
+                                                            <Field type="number" onKeyUp={() => setPaid(values.paid)} name="paid" className="form-control" id="paid" />
                                                             <ErrorMessage style={{ color: 'red' }} component='span' name="paid" />
                                                         </div>
                                                     </div>
                                                     <div className="mb-3 row">
                                                         <label htmlFor="input12" className="col-sm-4 col-form-label">Còn lại</label>
                                                         <div className="col-sm-8">
-                                                            <input type="number" id="extant" disabled className="form-control" />
+                                                            <input type="number" id="extant" value={totalPriceMedicine - paid >= 0 ? totalPriceMedicine - paid : 0} disabled className="form-control" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -356,6 +357,7 @@ function CreateInvoice() {
                                                                                 onClick={() => {
 
                                                                                     if (index === selectedRow) {
+
                                                                                         document.getElementById(index).style.backgroundColor = "white";
                                                                                         setSelectedRow(-1)
 
@@ -371,18 +373,31 @@ function CreateInvoice() {
                                                                             >
                                                                                 <td style={{ width: 224 }}><SelectPicker
                                                                                     onClean={
-                                                                                        () => { values.invoiceDetailDtoSet[index].medicineId = 0 }
+                                                                                        () => {
+                                                                                            values.invoiceDetailDtoSet[index].medicineId = 0;
+
+
+                                                                                            setFlag(prev => !prev);
+                                                                                        }
+
                                                                                     }
                                                                                     preventOverflow virtualized data={dataMedicine}
                                                                                     placeholder={"Tìm kiếm"}
                                                                                     locale={{ searchPlaceholder: "Tìm kiếm" }}
-                                                                                    onChange={async (value) => {
-
+                                                                                    onSelect={async (value) => {
+                                                                                        let medicineObject = await JSON.parse(value);
                                                                                         if (value !== null) {
-                                                                                            let medicineObject = await JSON.parse(value);
+                                                                                            setInvoiceInfo(values.invoiceDetailDtoSet);
+                                                                                            let unit = await getUnit(medicineObject.id);
                                                                                             values.invoiceDetailDtoSet[index].medicineId = await medicineObject.id ? medicineObject.id : 0;
-                                                                                            values.invoiceDetailDtoSet[index].medicineObject = medicineObject;
-                                                                                            setInvoiceDetailInfo(medicineObject, index);
+                                                                                            values.invoiceDetailDtoSet[index].medicineObject = await medicineObject;
+                                                                                            document.getElementById(`invoiceDetailDtoSet.${index}.vat`).textContent = medicineObject.vat;
+                                                                                            document.getElementById(`invoiceDetailDtoSet.${index}.unit`).textContent = await unit;
+                                                                                            setFlag(prev => !prev);
+
+
+                                                                                        } else {
+                                                                                            setFlag(prev => !prev);
                                                                                         }
                                                                                     }
 
@@ -392,19 +407,30 @@ function CreateInvoice() {
                                                                                     <Field innerRef={fieldNameRef} value={values.invoiceDetailDtoSet[index].medicineId} hidden name={`invoiceDetailDtoSet.${index}.medicineId`} />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineId`} />
                                                                                 </td>
-                                                                                <td > {() => (values.invoiceDetailDtoSet[index].medicineObject.price)}</td>
+                                                                                <td id={`invoiceDetailDtoSet.${index}.unit`}></td>
                                                                                 <td style={{ width: 120 }}>
-                                                                                    <Field type="number" onKeyUp={() => updateInoviceDetail(values.invoiceDetailDtoSet[index].medicineId, index)} id={`invoiceDetailDtoSet.${index}.medicineQuantity`} name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
+                                                                                    <Field type="number" id={`invoiceDetailDtoSet.${index}.medicineQuantity`} onKeyUp={() => {
+
+                                                                                        // setInvoiceInfo();
+
+                                                                                        setFlag(prev => !prev);
+                                                                                    }} name={`invoiceDetailDtoSet.${index}.medicineQuantity`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.medicineQuantity`} />
                                                                                 </td>
-                                                                                <td className="unitPrice"></td>
+                                                                                <td className="unitPrice"> {new Intl.NumberFormat("vi-VN").format(parseInt(value.medicineObject.price - (value.medicineObject.price * value.medicineObject.vat * value.medicineObject.retailProfits / 100)))} </td>
 
                                                                                 <td className="discount" style={{ width: 100 }}>
-                                                                                    <Field type="number" id={`invoiceDetailDtoSet.${index}.discount`} onKeyUp={() => updateInoviceDetail(values.invoiceDetailDtoSet[index].medicineId, index)} name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
+                                                                                    <Field type="number" id={`invoiceDetailDtoSet.${index}.discount`} name={`invoiceDetailDtoSet.${index}.discount`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.discount`} />
                                                                                 </td>
-                                                                                <td></td>
-                                                                                <td className="realPrice">0</td>
+                                                                                <td id={`invoiceDetailDtoSet.${index}.vat`}></td>
+                                                                                <td className="realPrice">{
+
+                                                                                    new Intl.NumberFormat("vi-VN").format(parseInt((value.medicineObject.price - (value.medicineObject.price * value.medicineObject.vat * value.medicineObject.retailProfits * value.discount / 100)) * value.medicineQuantity))
+
+
+
+                                                                                }</td>
 
                                                                                 <td style={{ width: 224 }}><Field type="text" name={`invoiceDetailDtoSet.${index}.lot`} class="form-control" />
                                                                                     <ErrorMessage style={{ color: 'red' }} component='span' name={`invoiceDetailDtoSet.${index}.lot`} />
